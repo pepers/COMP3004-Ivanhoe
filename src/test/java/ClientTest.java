@@ -7,7 +7,7 @@ import org.junit.Test;
 public class ClientTest {
 
 	@Test
-	public void test() {
+	public void connect() {
 		fail("Not yet implemented");
 	}
 
