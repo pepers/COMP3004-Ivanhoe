@@ -1,5 +1,7 @@
 package test.java;
 
+import static org.junit.Assert.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +28,7 @@ public class ServerTest {
 	public void TestClientAdded(){
 		Client c = new Client();
 		c.connect("localhost", Config.DEFAULT_PORT);
-		assert(s.getConnected() == 1);
+		assertEquals(s.getConnected(), 1);
 	}
 	
 	@After
