@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import main.java.Client;
 import main.java.Server;
 import main.resources.Config;
 
@@ -16,7 +17,17 @@ public class ServerTest {
 		s.startup();
 	}
 	
+	@Test
+	public void TestInit(){
+		
+	}
 	
+	@Test
+	public void TestClientAdded(){
+		Client c = new Client();
+		c.connect("localhost", Config.DEFAULT_PORT);
+		assert(s.getConnected() == 1);
+	}
 	
 	@After
 	public void after(){

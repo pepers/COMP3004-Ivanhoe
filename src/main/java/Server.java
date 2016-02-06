@@ -2,15 +2,20 @@ package main.java;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Set;
 
 public class Server {
 	
 	ServerSocket serverSocket;
 	int port;
+	int numClients;
+	
 	
 	public Server(int port) {
 		this.port = port;
+	}
+	
+	public int getConnected(){
+		return numClients;
 	}
 	
 	public void startup(){
@@ -25,6 +30,7 @@ public class Server {
 	
 	public void shutdown(){
 		try {
+			System.out.println("Shutting down server @ " + port + ", please wait  ...");
 			serverSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
