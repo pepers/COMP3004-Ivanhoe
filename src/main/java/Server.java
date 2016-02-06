@@ -38,8 +38,12 @@ public class Server implements Runnable{
 	public void shutdown(){
 		try {
 			System.out.println("Shutting down server @ " + port + ", please wait  ...");
-			searchThread = null;
 			search = false;
+			searchThread = null;
+			
+			//Added this so the .accept will stop blocking; avoid a socket close error
+			new Socket("localhost", port);
+			
 			serverSocket.close();
 			
 		} catch (IOException e) {
