@@ -5,8 +5,8 @@
 
 
 ### Feb. 8th
-- public class Truck implements Serializable
-  - enum objectType
+- public class SerializableObject implements Serializable
+  - use ObjectOutputStream, with instanceOf on the receiving end to determine type of object
   - objects:
     - error
     - clientAction
