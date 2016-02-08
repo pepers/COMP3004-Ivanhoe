@@ -3,6 +3,9 @@ package main.java;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+
+import main.resources.Config;
 
 public class Server implements Runnable{
 	
@@ -10,11 +13,13 @@ public class Server implements Runnable{
 	ServerSocket serverSocket;
 	int port;
 	int numClients;
+	private HashMap<Integer, ServerThread> clients;
 	
 	boolean search;
 	
 	public Server(int port) {
 		this.port = port;
+		clients = new HashMap<Integer, ServerThread>();
 	}
 	
 	public int getConnected(){
@@ -32,6 +37,20 @@ public class Server implements Runnable{
 			searchThread.start();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void addThread(Socket socket) {
+		System.out.println("Client Requesting connection: " + socket.getPort());
+		if (numClients < Config.MAX_PLAYERS) {
+			ServerThread serverThread = new ServerThread(this, socket);
+			serverThread.start();
+			clients.put(serverThread.getID(), serverThread);
+			this.numClients++;
+			System.out.println("Client Accepted: " + socket.getPort());
+		} else {
+			System.out.println("Client Tried to connect:" + socket.getLocalSocketAddress());
+			System.out.println("Client refused: maximum number of clients reached ("+ numClients +")");
 		}
 	}
 	
@@ -54,8 +73,7 @@ public class Server implements Runnable{
 	public void run() {
 		while (search){
 			try {
-				Socket s = serverSocket.accept();
-				System.out.println("Connection recieved");
+				addThread(serverSocket.accept());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}	
