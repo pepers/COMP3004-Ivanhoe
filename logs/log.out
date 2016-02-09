@@ -1,0 +1,3 @@
+[ INFO] [Time: 2016-Feb-09 01:58:23:793] [Class: Client      ] attempting to connect to server...
+[ERROR] [Time: 2016-Feb-09 01:58:23:804] [Class: Client      ] Exception thrown: Connection refused 
+

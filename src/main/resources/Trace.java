@@ -6,18 +6,15 @@ package main.resources;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.io.*;
-import java.sql.SQLException;
 import java.text.*;
 import java.util.Date;
 
 public class Trace {
 	private static Trace _instance = null;
-	final static Logger clientLogger = Logger.getLogger("CLIENT");
-	final static Logger serverLogger = Logger.getLogger("SERVER");
-	final static Logger logger = Logger.getLogger("FILE");
+	final static Logger log = Logger.getLogger("FILE");
+	private String level;
 	   
-	public static void main(String[] args) throws IOException, SQLException{
+	public Trace() {
 		PropertyConfigurator.configure("logs/log4j.properties");
 	}
 	
@@ -30,24 +27,23 @@ public class Trace {
 		return _instance;
 	}
 	
-	public void exception(Object o, Exception e) {
+	public void exception (Object o, Exception e) {
 		String message = String.format("Exception thrown: %s \n", e.getMessage());
-		write(o, message);
+		level = "ERROR";
+		log.error(format(level, o, message));
 	}
 	
-	public void write(Object o, String message) {
-		switch (o.getClass().getSimpleName()) {
-			case "Client":
-				clientLogger.info(format(o,message));
-			case "Server":
-				serverLogger.info(format(o,message));
-			default:
-				logger.info(format(o,message));				
-		}
+	public void client (Object o, String message) {
+		level = "INFO";
+		log.info(format(level, o, message));
 	}
 	
-	private String format (Object o, String message) {
-		return String.format ("[Time: %23s] Class: %-12s: %s", getDateTime(), o.getClass().getSimpleName(), message) ;
+	private String format (String level, Object o, String message) {
+		return String.format ("[%5s] [Time: %23s] [Class: %-12s] %s", 
+				level,
+				getDateTime(), 
+				o.getClass().getSimpleName(), 
+				message) ;
 	}
 	
 	private String getDateTime () {
