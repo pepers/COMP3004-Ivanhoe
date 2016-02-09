@@ -10,10 +10,6 @@ public class Client {
 	
 	private Socket socket = null;
 	
-	public Client() {
-		Trace.exception(this, new IOException());  // just testing Trace, remove after!
-	}
-	
 	public static void main (String args[]) {
 		Client client = new Client();
 		client.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
@@ -28,10 +24,10 @@ public class Client {
 	    	return true;
 		} catch(UnknownHostException uhe) {  
 			System.out.println("Unknown Host");
-			Trace.exception(this, uhe);
+			Trace.getInstance().exception(this, uhe);
 		} catch(IOException ioe) {  
 			System.out.println("Unexpected exception");
-			Trace.exception(this, ioe);
+			Trace.getInstance().exception(this, ioe);
 		}
 		return false;
 	}
