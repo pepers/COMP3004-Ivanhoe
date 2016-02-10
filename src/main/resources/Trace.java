@@ -12,9 +12,9 @@ import java.util.Date;
 public class Trace {
 	private static Trace _instance = null;
 	final static Logger log = Logger.getLogger("FILE");
-	private enum Level {ERROR, INFO};
+	private enum Level {DEBUG, ERROR, INFO};
 	private Level level = Level.INFO;
-	   
+
 	public Trace() {
 		PropertyConfigurator.configure("logs/log4j.properties");
 	}
@@ -28,12 +28,20 @@ public class Trace {
 		return _instance;
 	}
 	
+	// for error logging
 	public void exception (Object o, Exception e) {
 		String message = String.format("Exception thrown: %s \n", e.getMessage());
 		level = Level.ERROR;
 		log.error(format(o, message));
 	}
 	
+	// for test logging
+	public void test (Object o, String message) {
+		level = Level.DEBUG;
+		log.debug(format(o, message));
+	}
+	
+	// for normal behaviour logging
 	public void write (Object o, String message) {
 		level = Level.INFO;
 		log.info(format(o, message));

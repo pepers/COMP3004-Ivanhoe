@@ -1,9 +1,11 @@
 package test.java;
 
+import static org.junit.Assert.*;
 import org.junit.*;
 
 import main.java.Client;
 import main.resources.Config;
+import main.resources.Trace;
 
 public class ClientTest {
 
@@ -21,7 +23,10 @@ public class ClientTest {
 
 	@Test
 	public void connect() {
-		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+		Trace.getInstance().test(this, "@Test(): connect");
+
+		// attempt to connect (should fail if Server is not reachable
+		assertTrue(c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT));
 	}
 
 }
