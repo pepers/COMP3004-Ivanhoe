@@ -12,7 +12,8 @@ import java.util.Date;
 public class Trace {
 	private static Trace _instance = null;
 	final static Logger log = Logger.getLogger("FILE");
-	private String level;
+	private enum Level {ERROR, INFO};
+	private Level level = Level.INFO;
 	   
 	public Trace() {
 		PropertyConfigurator.configure("logs/log4j.properties");
@@ -29,18 +30,18 @@ public class Trace {
 	
 	public void exception (Object o, Exception e) {
 		String message = String.format("Exception thrown: %s \n", e.getMessage());
-		level = "ERROR";
-		log.error(format(level, o, message));
+		level = Level.ERROR;
+		log.error(format(o, message));
 	}
 	
-	public void client (Object o, String message) {
-		level = "INFO";
-		log.info(format(level, o, message));
+	public void write (Object o, String message) {
+		level = Level.INFO;
+		log.info(format(o, message));
 	}
 	
-	private String format (String level, Object o, String message) {
+	private String format (Object o, String message) {
 		return String.format ("[%5s] [Time: %23s] [Class: %-12s] %s", 
-				level,
+				level.toString(),
 				getDateTime(), 
 				o.getClass().getSimpleName(), 
 				message) ;

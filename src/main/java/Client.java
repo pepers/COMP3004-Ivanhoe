@@ -17,9 +17,9 @@ public class Client {
 	
 	public Boolean connect(String IPAddress,int port) {
 		try {  
-			Trace.getInstance().client(this, "attempting to connect to server...");
+			Trace.getInstance().write(this, "attempting to connect to server...");
 			this.socket = new Socket(IPAddress, port);
-	    	Trace.getInstance().client(this, "connected to server: " + socket.getInetAddress() + 
+	    	Trace.getInstance().write(this, "connected to server: " + socket.getInetAddress() + 
 	    			" : " + socket.getLocalPort());
 	    	return true;
 		} catch(UnknownHostException uhe) {  
