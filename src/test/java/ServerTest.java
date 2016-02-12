@@ -19,7 +19,7 @@ public class ServerTest {
 		s.startup();
 	}
 	
-	//@Test
+	@Test
 	public void TestInit(){
 		
 	}
@@ -28,7 +28,8 @@ public class ServerTest {
 	public void TestClientAdded(){
 		Client c = new Client();
 		c.connect("localhost", Config.DEFAULT_PORT);
-		assertEquals(s.getConnected(), 0);
+		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}
+		assertEquals(s.getConnected(), 1);
 	}
 	
 	@After
