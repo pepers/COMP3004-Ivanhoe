@@ -17,6 +17,16 @@ public class Client {
 		Client client = new Client();  // client object
 		ClientAction action;           // client's action
 		
+		// welcome message
+		System.out.println(" _____                _                ");
+		System.out.println("|_   _|              | |               ");
+		System.out.println("  | |_   ____ _ _ __ | |__   ___   ___ ");
+		System.out.println("  | \\ \\ / / _` | '_ \\| '_ \\ / _ \\ / _ \\");
+		System.out.println(" _| |\\ V / (_| | | | | | | | (_) |  __/");
+		System.out.println("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
+		System.out.println("Client: Welcome brave knight!");
+				                                         
+				                                         
 		// get user's name
 		String username = client.userInput("What is thy name?: ");
 		action = new SetName(username);
@@ -67,12 +77,12 @@ public class Client {
 	public Boolean send(Object o) {
 		try {
 			clientOutputStream.writeObject(o);
+			return true;
 		} catch (IOException e) {
 			System.out.println("Unexpected exception: writing object to output stream");
 			Trace.getInstance().exception(this, e);
-			return false;
 		}
-		return true;
+		return false;
 	}
 	
 	/*
@@ -96,6 +106,8 @@ public class Client {
 		// TODO: determine type of object received
 		if (received instanceof Card) { // TODO: example for Card object
 			received = (Card)received;
+		} else {
+			received = null;            // unrecognized object received
 		}
 		
 		return received;
