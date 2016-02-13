@@ -28,20 +28,26 @@ public class Trace {
 		return _instance;
 	}
 	
-	// for error logging
+	/*
+	 *  for error logging
+	 */
 	public void exception (Object o, Exception e) {
 		String message = String.format("Exception thrown: %s \n", e.getMessage());
 		level = Level.ERROR;
 		log.error(format(o, message));
 	}
 	
-	// for test logging
+	/*
+	 *  for test logging
+	 */
 	public void test (Object o, String message) {
 		level = Level.DEBUG;
 		log.debug(format(o, message));
 	}
 	
-	// for normal behaviour logging
+	/*
+	 *  for normal behaviour logging
+	 */
 	public void write (Object o, String message) {
 		level = Level.INFO;
 		log.info(format(o, message));
