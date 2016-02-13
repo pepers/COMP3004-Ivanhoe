@@ -39,7 +39,7 @@ public class Deck {
 
 	public void addDummyCards(int n) {
 		for (int i = 0; i < n; i++){
-			deck.add(new Card());
+			deck.add(new DisplayCard(3, DisplayCard.Colour.purple));
 		}
 		
 	}
