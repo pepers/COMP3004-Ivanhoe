@@ -1,7 +1,11 @@
 package main.java;
 
-public class Card {
+import java.io.Serializable;
+
+public abstract class Card implements Serializable { 
+	
 	public Card(){
 		
 	}
+	
 }
