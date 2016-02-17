@@ -37,6 +37,7 @@ public class Server implements Runnable{
 	public void startup(){
 		try {
 			Trace.getInstance().write(this, "Binding to port " + port + ", please wait  ...");
+			System.out.println("Binding to port " + port + ", please wait  ...");
 			serverSocket = new ServerSocket(port);
 			serverSocket.setReuseAddress(true);
 			
@@ -46,19 +47,30 @@ public class Server implements Runnable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		Trace.getInstance().write(this, "Setup successful.");
+		System.out.println("Setup successful.");
 	}
 	
 	private void addThread(Socket socket) {
+		System.out.println("Client Requesting connection: " + socket.getPort());
 		Trace.getInstance().write(this, "Client Requesting connection: " + socket.getPort());
-		if (numClients < Config.MAX_PLAYERS) {
-			ServerThread serverThread = new ServerThread(this, socket);
-			serverThread.start();
-			clients.put(serverThread.getID(), serverThread);
-			this.numClients++;
-			Trace.getInstance().write(this, "Client Accepted: " + socket.getPort());
+		if (numClients < Config.MAX_PLAYERS) {		
+			try {
+				ServerThread serverThread = new ServerThread(this, socket);
+				serverThread.open();
+				serverThread.start();
+				clients.put(serverThread.getID(), serverThread);
+				this.numClients++;
+				System.out.println("Client Accepted: " + socket.getPort());
+				Trace.getInstance().write(this, "Client Accepted: " + socket.getPort());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			Trace.getInstance().write(this, "Client Tried to connect:" + socket.getLocalSocketAddress());
 			Trace.getInstance().write(this, "Client refused: maximum number of clients reached ("+ numClients +")");
+			System.out.println("Client Tried to connect:" + socket.getLocalSocketAddress());
+			System.out.println("Client refused: maximum number of clients reached ("+ numClients +")");
 		}
 	}
 	

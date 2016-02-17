@@ -27,8 +27,8 @@ public class ServerTestKick {
 		assertEquals(s.getConnected(), 1);
 		
 		
-		int id = c.getID();
-		s.kick(id);
+		//int id = c.getID();
+		//s.kick(id);
 		assertEquals(s.getConnected(), 0);
 		
 	}
