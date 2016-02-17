@@ -1,5 +1,6 @@
 package main.java;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +27,7 @@ public class ServerThread extends Thread{
 	
 	//opens a buffered input stream to accept client network objects
 	public void open() throws IOException {
-		input = new ObjectInputStream(socket.getInputStream());
+		input = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 		Trace.getInstance().write(this, "Opened socket stream at " + socket.getLocalSocketAddress());
 		System.out.println("Opened socket stream at " + socket.getLocalSocketAddress());
 	}
@@ -37,10 +38,29 @@ public class ServerThread extends Thread{
 
 	public void run(){
 		while(!stop){
-			
+			Object o = receive();
 		}
 	}
 
+	public Object receive(){
+		
+		try {
+			Object o = input.readObject();
+			if(o.getClass().equals(ClientAction.class)){
+				System.out.println("Recieved an action");
+			}else{
+				System.out.println("Recieved something else");
+			}
+			return o;
+		} catch (ClassNotFoundException e) {
+			System.out.println("Exception: Found foreign object.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("Exception: IO");
+			e.printStackTrace();
+		}
+		return null;
+	}
 	//shutdown command: closes the socket and flags the thread to stop
 	public void close() {
 		try {
