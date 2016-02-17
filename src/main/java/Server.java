@@ -83,6 +83,7 @@ public class Server implements Runnable{
 			//Added this so the .accept will stop blocking; avoid a socket close error
 			new Socket("localhost", port);
 			
+			//close each of the clients individually
 			for (int t : clients.keySet()){
 				clients.get(t).close();
 			}
