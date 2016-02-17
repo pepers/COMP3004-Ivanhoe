@@ -10,7 +10,7 @@ import main.resources.Trace;
 public class Client {
 	
 	private Socket socket = null;
-	static ObjectOutputStream clientOutputStream;  // send objects to Server
+	ObjectOutputStream clientOutputStream;  // send objects to Server
 	ObjectInputStream clientInputStream;    // receive objects from Server
 	
 	public static void main (String args[]) {
@@ -24,7 +24,7 @@ public class Client {
 		System.out.println("  | \\ \\ / / _` | '_ \\| '_ \\ / _ \\ / _ \\");
 		System.out.println(" _| |\\ V / (_| | | | | | | | (_) |  __/");
 		System.out.println("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
-		System.out.println("Client: Welcome brave knight!");
+		System.out.println("\nClient: Welcome brave knight!");
 				                                         
 				                                         
 		// get user's name
