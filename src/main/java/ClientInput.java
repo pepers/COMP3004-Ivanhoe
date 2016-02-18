@@ -10,10 +10,11 @@ public class ClientInput implements Runnable{
 	Boolean stop = false;					  // use to stop the Client
 	Scanner scanner = new Scanner(System.in); // scan console input
 	String input;                             // user input
-	Client client;                            // client class
+	Client c;                                 // client class
+	ClientAction action;                      // client's action to take
 	
 	public ClientInput (Client client) {
-		
+		this.c = client;
 	}
 	
 	public void run () {
@@ -26,7 +27,8 @@ public class ClientInput implements Runnable{
 				System.out.println("Client: invalid command");
 				Trace.getInstance().write(this, "invalid command: " + input);
 			} else {                             // process chat
-				
+				action = new Chat(input);
+				c.send(action);
 			}
 		}
 	}
