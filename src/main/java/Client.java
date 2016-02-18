@@ -7,14 +7,23 @@ import java.util.Scanner;
 import main.resources.Config;
 import main.resources.Trace;
 
-public class Client {
+public class Client implements Runnable {
 	
-	private Socket socket = null;
+	Thread receiveThread;                   // Client thread to receive from Server
+	Boolean stop = false;					// use to stop the Client
+	private Socket socket = null;           // socket to connect to Server
 	ObjectOutputStream clientOutputStream;  // send objects to Server
 	ObjectInputStream clientInputStream;    // receive objects from Server
 	
 	public static void main (String args[]) {
 		Client client = new Client();  // client object
+		client.startUp();
+	}
+	
+	/*
+	 * initial Client startup activities
+	 */
+	public void startUp() {
 		ClientAction action;           // client's action
 		
 		// welcome message
@@ -28,14 +37,24 @@ public class Client {
 				                                         
 				                                         
 		// get user's name
-		String username = client.userInput("What is thy name?: ");
+		String username = userInput("What is thy name?: ");
 		action = new SetName(username);
 		
 		// connect to Server
-		if (client.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {
-			client.send(action);  // send user's name to Server
+		if (connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {
+			send(action);  // send user's name to Server
+			System.out.println("SetName sent");
 		}		
-		while(true){}
+
+		// start new thread to receive from Server
+		receiveThread = new Thread(this);
+		receiveThread.start();
+	}
+	
+	public void run () {
+		while(!stop) { // while Client is running
+			
+		}
 	}
 	
 	/* 
@@ -60,6 +79,7 @@ public class Client {
 	    	Trace.getInstance().write(this, "connected to server: " + socket.getInetAddress() + 
 	    			" : " + socket.getLocalPort());
 	    	clientOutputStream = new ObjectOutputStream(socket.getOutputStream());
+	    	//clientOutputStream.flush();
 	    	//clientInputStream = new ObjectInputStream(socket.getInputStream());
 	    	return true;
 		} catch(UnknownHostException uhe) {  
