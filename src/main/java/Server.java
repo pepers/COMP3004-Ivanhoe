@@ -5,14 +5,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
-import com.sun.security.ntlm.Client;
-
 import main.resources.Config;
 import main.resources.Trace;
 
 public class Server implements Runnable{
 	
-	Thread searchThread;
+	Thread thread;
+	SearchThread searchThread;
 	ServerSocket serverSocket;
 	int port;
 	int numClients;
@@ -42,8 +41,10 @@ public class Server implements Runnable{
 			serverSocket.setReuseAddress(true);
 			
 			search = true;
-			searchThread = new Thread(this);
+			searchThread = new SearchThread(this);
+			thread = new Thread(this);
 			searchThread.start();
+			thread.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -51,7 +52,7 @@ public class Server implements Runnable{
 		System.out.println("Setup successful.");
 	}
 	
-	private void addThread(Socket socket) {
+	void addThread(Socket socket) {
 		System.out.println("Client Requesting connection: " + socket.getPort());
 		Trace.getInstance().write(this, "Client Requesting connection: " + socket.getPort());
 		if (numClients < Config.MAX_PLAYERS) {		
@@ -97,10 +98,19 @@ public class Server implements Runnable{
 	public void run() {
 		while (search){
 			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("HELLO");
+			/*
+			try {
 				addThread(serverSocket.accept());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}	
+			*/
 		}
 	}
 
