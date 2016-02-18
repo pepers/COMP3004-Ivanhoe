@@ -110,19 +110,25 @@ public class Server implements Runnable{
 			
 			Iterator<ServerThread> i = clients.keySet().iterator();
 			
+			int readyPlayers = 0;
 			while(i.hasNext()){
 				ServerThread t = i.next();
 				Object o = t.actions.poll();
-				
+				Player p = clients.get(t);
+				readyPlayers = readyPlayers + (p.ready ? 1 : 0);
 				if(o != null){
-					System.out.println("Got an action from " + clients.get(t).username);
+					System.out.println("Got an action from " + p.username);
 					actions.add(new Action(o, t));
 				}
 			}
 			
+			
+			System.out.println("(" + readyPlayers + "/" + numClients + ") players ready");
+			
 			if(!actions.isEmpty()){
 				evaluate(actions.poll());
 			}
+			
 		}
 	}
 
@@ -135,6 +141,11 @@ public class Server implements Runnable{
 		}
 		if(action.object instanceof Chat){
 			System.out.println(clients.get(action.origin).username + ": " + ((Chat)action.object).getMessage());
+			return true;
+		}
+		
+		if(action.object instanceof Ready){
+			clients.get(action.origin).toggleReady();
 			return true;
 		}
 		

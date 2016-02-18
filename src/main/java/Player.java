@@ -7,6 +7,7 @@ public class Player {
 	String username;
 	int handSize, displayScore;
 	ArrayList<Card> display;
+	boolean ready = false; 
 	
 	public Player(String u){
 		username = u;
@@ -15,5 +16,9 @@ public class Player {
 
 	public void setName(String u){
 		username = u;
+	}
+
+	public void toggleReady() {
+		ready = !ready;
 	}
 }

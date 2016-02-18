@@ -61,7 +61,7 @@ public class Client implements Runnable {
 			}
 			
 			
-			action = new Chat(s);
+			action = new Ready();
 			send(action);
 			try {
 				Thread.sleep(3000);
