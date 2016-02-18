@@ -32,5 +32,29 @@ class SetName implements ClientAction {
 	public String getName() {
 		return name;
 	}
+}
+	
+/*
+ * draws a card from the deck
+ */
+class DrawCard implements ClientAction {
+
+	private static final long serialVersionUID = 1L;
+	
+	public DrawCard () {
+		Trace.getInstance().test(this, "drawing card");
+	}
+}
+
+/*
+ * tells when player is ready to start a game
+ */
+class Ready implements ClientAction {
+
+	private static final long serialVersionUID = 1L;
+	
+	public Ready () {
+		Trace.getInstance().test(this, "Client is ready");
+	}
 	
 }

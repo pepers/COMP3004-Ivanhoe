@@ -11,6 +11,7 @@ public class Client implements Runnable {
 	
 	Thread receiveThread;                   // Client thread to receive from Server
 	Boolean stop = false;					// use to stop the Client
+	ClientAction action;                    // client's action
 	private Socket socket = null;           // socket to connect to Server
 	ObjectOutputStream clientOutputStream;  // send objects to Server
 	ObjectInputStream clientInputStream;    // receive objects from Server
@@ -24,7 +25,6 @@ public class Client implements Runnable {
 	 * initial Client startup activities
 	 */
 	public void startUp() {
-		ClientAction action;           // client's action
 		
 		// welcome message
 		System.out.println(" _____                _                ");
@@ -43,7 +43,6 @@ public class Client implements Runnable {
 		// connect to Server
 		if (connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {
 			send(action);  // send user's name to Server
-			System.out.println("SetName sent");
 		}		
 
 		// start new thread to receive from Server
@@ -53,7 +52,16 @@ public class Client implements Runnable {
 	
 	public void run () {
 		while(!stop) { // while Client is running
-			
+			action = new Ready();
+			send(action);
+			action = new DrawCard();
+			send(action);
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
