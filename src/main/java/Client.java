@@ -104,10 +104,15 @@ public class Client {
 		}
 		
 		// TODO: determine type of object received
-		if (received instanceof Card) { // TODO: example for Card object
-			received = (Card)received;
+		if (received instanceof ActionCard) {          // Action Card received
+			received = (ActionCard)received;
+			Trace.getInstance().test(this, "ActionCard object received");
+		} else if (received instanceof DisplayCard) {  // Display Card received
+			received = (DisplayCard)received;
+			Trace.getInstance().test(this, "DisplayCard object received");
 		} else {
-			received = null;            // unrecognized object received
+			received = null;                           // unrecognized object received
+			Trace.getInstance().test(this, "unrecognized object received");
 		}
 		
 		return received;
