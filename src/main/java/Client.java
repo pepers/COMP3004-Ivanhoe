@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.*;
 import java.net.*;
+import java.util.Random;
 import java.util.Scanner;
 
 import main.resources.Config;
@@ -51,10 +52,16 @@ public class Client implements Runnable {
 	}
 	
 	public void run () {
+		Random r = new Random();
 		while(!stop) { // while Client is running
-			action = new Ready();
-			send(action);
-			action = new DrawCard();
+			
+			String s = "";
+			for (int i = 0; i<5; i++){
+				s += String.valueOf((char)(r.nextInt(27) + 64));
+			}
+			
+			
+			action = new Chat(s);
 			send(action);
 			try {
 				Thread.sleep(3000);

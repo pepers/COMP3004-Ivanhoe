@@ -126,14 +126,20 @@ public class Server implements Runnable{
 		}
 	}
 
-	private void evaluate(Action action){
+	private boolean evaluate(Action action){
 	
 		if(action.object instanceof SetName){
-			System.out.println("Changing name...");
+			System.out.println(clients.get(action.origin).username + " changed name to " + ((SetName)action.object).getName());
 			clients.get(action.origin).setName(((SetName)action.object).getName());
-		}else{
-			System.out.println("Polled something else");
+			return true;
 		}
+		if(action.object instanceof Chat){
+			System.out.println(clients.get(action.origin).username + ": " + ((Chat)action.object).getMessage());
+			return true;
+		}
+		
+		System.out.println("Polled something else");
+		return false;
 	}
 	
 	public void kick(int id) {

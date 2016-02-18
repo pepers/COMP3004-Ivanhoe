@@ -38,7 +38,7 @@ public class ServerThread extends Thread{
 		while(!stop){
 		
 			actions.add(receive());
-			System.out.println("Thread: Action Queue(" +actions.size()+ ")");
+			//System.out.println("Thread: Action Queue(" +actions.size()+ ")");
 		}
 	}
 
