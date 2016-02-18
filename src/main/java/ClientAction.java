@@ -58,3 +58,20 @@ class Ready implements ClientAction {
 	}
 	
 }
+
+/*
+ * chat messages from Client
+ */
+class Chat implements ClientAction {
+
+	private static final long serialVersionUID = 1L;
+	private String message;
+	
+	public Chat (String message) {
+		this.message = message;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+}
