@@ -15,7 +15,7 @@ public class ServerThread extends Thread{
 	private ObjectInputStream input;
 	private Player player;
 	
-	private Queue<Object> actions;
+	public Queue<Object> actions;
 	
 	public ServerThread(Server server, Socket socket) {
 		super();
@@ -43,7 +43,6 @@ public class ServerThread extends Thread{
 	}
 
 	public Object receive(){
-		
 		try {
 			return(input.readObject());
 			/*

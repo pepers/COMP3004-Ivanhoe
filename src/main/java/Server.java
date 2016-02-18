@@ -3,7 +3,10 @@ package main.java;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import main.resources.Config;
 import main.resources.Trace;
@@ -15,13 +18,15 @@ public class Server implements Runnable{
 	ServerSocket serverSocket;
 	int port;
 	int numClients;
-	private HashMap<Integer, ServerThread> clients;
+	HashMap<ServerThread, Player> clients;
 	
-	boolean search;
+	
+	boolean stop;
+	public Queue<Object> actions;
 	
 	public Server(int port) {
 		this.port = port;
-		clients = new HashMap<Integer, ServerThread>();
+		clients = new HashMap<ServerThread, Player>();
 	}
 	
 	public static void main(String[] args){
@@ -40,7 +45,8 @@ public class Server implements Runnable{
 			serverSocket = new ServerSocket(port);
 			serverSocket.setReuseAddress(true);
 			
-			search = true;
+			actions = new LinkedList<Object>();
+			stop = true;
 			searchThread = new SearchThread(this);
 			thread = new Thread(this);
 			searchThread.start();
@@ -60,7 +66,8 @@ public class Server implements Runnable{
 				ServerThread serverThread = new ServerThread(this, socket);
 				serverThread.open();
 				serverThread.start();
-				clients.put(serverThread.getID(), serverThread);
+				clients.put(serverThread, new Player("Knight "+serverThread.getId()));
+				System.out.println("Player created: Knight "+serverThread.getId());
 				this.numClients++;
 				System.out.println("Client Accepted: " + socket.getPort());
 				Trace.getInstance().write(this, "Client Accepted: " + socket.getPort());
@@ -78,15 +85,15 @@ public class Server implements Runnable{
 	public void shutdown(){
 		try {
 			Trace.getInstance().write(this, "Shutting down server @ " + port + ", please wait  ...");
-			search = false;
+			stop = false;
 			searchThread = null;
 			
 			//Added this so the .accept will stop blocking; avoid a socket close error
 			new Socket("localhost", port);
 			
 			//close each of the clients individually
-			for (int t : clients.keySet()){
-				clients.get(t).close();
+			for (ServerThread t : clients.keySet()){
+				t.close();
 			}
 			serverSocket.close();
 			
@@ -96,27 +103,16 @@ public class Server implements Runnable{
 	}
 
 	public void run() {
-		while (search){
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("HELLO");
-			/*
-			try {
-				addThread(serverSocket.accept());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
-			*/
+		while (!stop){
+			
+			for (ServerThread t : clients.keySet()){
+				actions.add(t.actions.poll());
+			}			
+			//System.out.println(actions.size());
 		}
 	}
 
 	public void kick(int id) {
-		Trace.getInstance().write(this, "Kicking player @" + port + "...");
-		clients.get(id).close();
-		
+		Trace.getInstance().write(this, "Kicking player @" + port + "...");		
 	}
 }

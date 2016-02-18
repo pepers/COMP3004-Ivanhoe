@@ -26,13 +26,16 @@ public class Client implements Runnable {
 	 */
 	public void startUp() {
 		
+		System.out.println(" ▄█   ▄█    █▄     ▄████████ ███▄▄▄▄      ▄█    █▄     ▄██████▄     ▄████████  ");
+		System.out.println(" ███  ███    ███   ███    ███ ███▀▀▀██▄   ███    ███   ███    ███   ███    ███ ");
+		System.out.println(" ███▌ ███    ███   ███    ███ ███   ███   ███    ███   ███    ███   ███    █▀  ");
+		System.out.println(" ███▌ ███    ███   ███    ███ ███   ███  ▄███▄▄▄▄███▄▄ ███    ███  ▄███▄▄▄     ");
+		System.out.println(" ███▌ ███    ███ ▀███████████ ███   ███ ▀▀███▀▀▀▀███▀  ███    ███ ▀▀███▀▀▀     ");
+		System.out.println(" ███  ███    ███   ███    ███ ███   ███   ███    ███   ███    ███   ███    █▄  ");
+		System.out.println(" ███  ███    ███   ███    ███ ███   ███   ███    ███   ███    ███   ███    ███ ");
+		System.out.println(" █▀    ▀██████▀    ███    █▀   ▀█   █▀    ███    █▀     ▀██████▀    ██████████ ");
+		                                                                               
 		// welcome message
-		System.out.println(" _____                _                ");
-		System.out.println("|_   _|              | |               ");
-		System.out.println("  | |_   ____ _ _ __ | |__   ___   ___ ");
-		System.out.println("  | \\ \\ / / _` | '_ \\| '_ \\ / _ \\ / _ \\");
-		System.out.println(" _| |\\ V / (_| | | | | | | | (_) |  __/");
-		System.out.println("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
 		System.out.println("\nClient: Welcome brave knight!");
 				                                         
 				                                         
