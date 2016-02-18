@@ -3,8 +3,6 @@ package main.java;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.net.SocketException;
-
 import main.resources.Trace;
 
 public class ServerThread extends Thread{
@@ -45,7 +43,7 @@ public class ServerThread extends Thread{
 		try {
 			Object o = input.readObject();
 			if(o instanceof ClientAction){
-				System.out.println("Recieved an action");
+				System.out.println("Recieved an action " + ((SetName) o).getName());
 			}else{
 				System.out.println("Recieved something else");
 			}
