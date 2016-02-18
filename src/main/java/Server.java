@@ -5,8 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import main.resources.Config;
 import main.resources.Trace;
@@ -18,15 +21,15 @@ public class Server implements Runnable{
 	ServerSocket serverSocket;
 	int port;
 	int numClients;
-	HashMap<ServerThread, Player> clients;
+	ConcurrentHashMap<ServerThread, Player> clients;
 	
 	
-	boolean stop;
-	public Queue<Object> actions;
+	boolean stop = false;
+	public Queue<Action> actions;
 	
 	public Server(int port) {
 		this.port = port;
-		clients = new HashMap<ServerThread, Player>();
+		clients = new ConcurrentHashMap<ServerThread, Player>();
 	}
 	
 	public static void main(String[] args){
@@ -45,8 +48,8 @@ public class Server implements Runnable{
 			serverSocket = new ServerSocket(port);
 			serverSocket.setReuseAddress(true);
 			
-			actions = new LinkedList<Object>();
-			stop = true;
+			actions = new LinkedList<Action>();
+			stop = false;
 			searchThread = new SearchThread(this);
 			thread = new Thread(this);
 			searchThread.start();
@@ -85,7 +88,7 @@ public class Server implements Runnable{
 	public void shutdown(){
 		try {
 			Trace.getInstance().write(this, "Shutting down server @ " + port + ", please wait  ...");
-			stop = false;
+			stop = true;
 			searchThread = null;
 			
 			//Added this so the .accept will stop blocking; avoid a socket close error
@@ -105,13 +108,34 @@ public class Server implements Runnable{
 	public void run() {
 		while (!stop){
 			
-			for (ServerThread t : clients.keySet()){
-				actions.add(t.actions.poll());
-			}			
-			//System.out.println(actions.size());
+			Iterator<ServerThread> i = clients.keySet().iterator();
+			
+			while(i.hasNext()){
+				ServerThread t = i.next();
+				Object o = t.actions.poll();
+				
+				if(o != null){
+					System.out.println("Got an action from " + clients.get(t).username);
+					actions.add(new Action(o, t));
+				}
+			}
+			
+			if(!actions.isEmpty()){
+				evaluate(actions.poll());
+			}
 		}
 	}
 
+	private void evaluate(Action action){
+	
+		if(action.object instanceof SetName){
+			System.out.println("Changing name...");
+			clients.get(action.origin).setName(((SetName)action.object).getName());
+		}else{
+			System.out.println("Polled something else");
+		}
+	}
+	
 	public void kick(int id) {
 		Trace.getInstance().write(this, "Kicking player @" + port + "...");		
 	}

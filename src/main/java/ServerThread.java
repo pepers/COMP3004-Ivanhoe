@@ -13,14 +13,12 @@ public class ServerThread extends Thread{
 	private int ID;
 	private boolean stop = false;
 	private ObjectInputStream input;
-	private Player player;
 	
 	public Queue<Object> actions;
 	
 	public ServerThread(Server server, Socket socket) {
 		super();
 		this.socket = socket;
-		this.player = new Player(String.valueOf(Thread.currentThread().getId()));
 		this.ID = socket.getPort();
 		actions = new LinkedList<Object>();
 	}
@@ -38,23 +36,16 @@ public class ServerThread extends Thread{
 
 	public void run(){
 		while(!stop){
+		
 			actions.add(receive());
+			System.out.println("Thread: Action Queue(" +actions.size()+ ")");
 		}
 	}
 
 	public Object receive(){
 		try {
 			return(input.readObject());
-			/*
-			if(o instanceof ClientAction){
-				if(o instanceof SetName){
-					System.out.println("SetName recieved");
-					player.setName(((SetName) o).getName());
-				}
-			}else{
-				System.out.println("Recieved something else");
-			}
-			*/
+			
 		} catch (ClassNotFoundException e) {
 			System.out.println("Exception: Found foreign object.");
 			e.printStackTrace();
