@@ -35,6 +35,7 @@ public class Client {
 		if (client.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {
 			client.send(action);  // send user's name to Server
 		}		
+		while(true){}
 	}
 	
 	/* 
@@ -59,7 +60,7 @@ public class Client {
 	    	Trace.getInstance().write(this, "connected to server: " + socket.getInetAddress() + 
 	    			" : " + socket.getLocalPort());
 	    	clientOutputStream = new ObjectOutputStream(socket.getOutputStream());
-	    	clientInputStream = new ObjectInputStream(socket.getInputStream());
+	    	//clientInputStream = new ObjectInputStream(socket.getInputStream());
 	    	return true;
 		} catch(UnknownHostException uhe) {  
 			System.out.println("Unknown Host");
