@@ -22,14 +22,22 @@ public class ServerThread extends Thread{
 		super();
 		this.socket = socket;
 		actions = new LinkedList<Object>();
+		
+		//Open socket streams
+		setup();
 	}
 	
 	//opens a buffered input stream to accept client network objects
-	public void open() throws IOException {
-		input = new ObjectInputStream(socket.getInputStream());
-		output = new ObjectOutputStream(socket.getOutputStream());
+	public boolean setup(){
+		try {
+			input = new ObjectInputStream(socket.getInputStream());
+			output = new ObjectOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 		Trace.getInstance().write(this, "Opened socket stream at " + socket.getLocalSocketAddress());
-		System.out.println("Opened socket stream at " + socket.getLocalSocketAddress());
+		return true;
 	}
 	
 	public Boolean send(Object o) {
