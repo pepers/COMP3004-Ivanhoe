@@ -123,7 +123,7 @@ public class Server implements Runnable{
 			}
 			
 			
-			System.out.println("(" + readyPlayers + "/" + numClients + ") players ready");
+			//System.out.println("(" + readyPlayers + "/" + numClients + ") players ready");
 			
 			if(!actions.isEmpty()){
 				evaluate(actions.poll());

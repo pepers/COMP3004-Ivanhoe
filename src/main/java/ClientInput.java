@@ -1,25 +1,34 @@
 package main.java;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 import main.resources.Config;
 import main.resources.Trace;
 
-public class ClientInput implements Runnable{
+public class ClientInput extends Thread{
 
 	Boolean stop = false;					  // use to stop the Client
-	Scanner scanner = new Scanner(System.in); // scan console input
+	BufferedReader reader; 						  // scan console input
 	String input;                             // user input
 	Client c;                                 // client class
 	ClientAction action;                      // client's action to take
 	
-	public ClientInput (Client client) {
+	public ClientInput (Client client, InputStream s) {
 		this.c = client;
+		reader = new BufferedReader(new InputStreamReader(s));
 	}
 	
 	public void run () {
 		while(!stop) {
-			input = scanner.nextLine();  // get next line of input
+			try {
+				input = reader.readLine();       // get next line of input
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 			
 			if (validCmd(input)) {               // process valid commands
 				

@@ -11,6 +11,7 @@ import main.resources.Trace;
 public class Client implements Runnable {
 	
 	Thread receiveThread;                   // Client thread to receive from Server
+	ClientInput inputThread;
 	Boolean stop = false;					// use to stop the Client
 	ClientAction action;                    // client's action
 	private Socket socket = null;           // socket to connect to Server
@@ -41,12 +42,16 @@ public class Client implements Runnable {
 		String username = userInput("What is thy name?: ");
 		action = new SetName(username);
 		
+		
 		// connect to Server
 		if (connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {
 			send(action);  // send user's name to Server
 		}		
 
 		// start new thread to receive from Server
+		
+		inputThread = new ClientInput(this, System.in);
+		inputThread.start();
 		receiveThread = new Thread(this);
 		receiveThread.start();
 	}
@@ -80,7 +85,6 @@ public class Client implements Runnable {
 		System.out.println(message);
 		String input = user_input.nextLine();
 		Trace.getInstance().write(this, message + input);
-		user_input.close();
 		return input;
 	}
 	
