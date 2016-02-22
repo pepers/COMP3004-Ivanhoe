@@ -63,18 +63,18 @@ public class ClientInput extends Thread{
 	public boolean sendCmd (String s){
 		//sends the server an appropriate command based on the input
 		
-		if(s == "/ready"){
+		if(s.equals("/ready")){
 			action = new Ready();
 			c.send(action);
 			return true;
 		}
-		if(s == "/setname"){
+		if(s.equals("/setname")){
 			String name = s.substring(9);
 			action = new SetName(name);
 			c.send(action);
 			return true;
 		}
-		System.out.println("Command sending error");
+		System.out.println("Command sending error - " + s);
 		return false;
 	}
 	
