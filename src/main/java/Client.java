@@ -58,8 +58,8 @@ public class Client implements Runnable {
 	
 	public void run () {
 		Random r = new Random();
-		while(!stop) { // while Client is running
-			
+		while(!stop){ // while Client is running
+			/*
 			String s = "";
 			for (int i = 0; i<5; i++){
 				s += String.valueOf((char)(r.nextInt(27) + 64));
@@ -74,6 +74,7 @@ public class Client implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			*/
 		}
 	}
 	
