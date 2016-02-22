@@ -146,7 +146,6 @@ public class Server implements Runnable{
 		
 		if(action.object instanceof Ready){
 			clients.get(action.origin).toggleReady();
-			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
 			return true;
 		}
 		
@@ -166,5 +165,17 @@ public class Server implements Runnable{
 			t.send(new Chat(input));
 		}
 		
+	}
+
+	public boolean startGame() {
+		
+		if(numReady == numClients){
+			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
+			System.out.println("Preparing to start a game...");
+			return true;
+		}else{
+			System.out.println("Not all players (" + numReady + "/" + numClients + ") are ready.");
+			return false;
+		}
 	}
 }
