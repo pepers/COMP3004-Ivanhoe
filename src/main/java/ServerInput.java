@@ -29,7 +29,7 @@ public class ServerInput extends Thread{
 			
 			if (validCmd(input)) {               // process valid commands
 				System.out.println("Server: valid command recieved");
-
+				processCmd(input);
 			} else if (input.charAt(0) == '/') { // process invalid commands
 				System.out.println("Server: invalid command");
 
@@ -58,7 +58,6 @@ public class ServerInput extends Thread{
 	}
 	
 	public boolean processCmd(String s){
-
 		if(s.equals("/start")){
 			server.startGame();
 			return true;

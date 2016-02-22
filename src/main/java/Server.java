@@ -17,6 +17,7 @@ import main.resources.Trace;
 public class Server implements Runnable{
 	
 	Thread thread;
+	ServerInput inputThread;
 	SearchThread searchThread;
 	ServerSocket serverSocket;
 	int port;
@@ -51,8 +52,12 @@ public class Server implements Runnable{
 		
 			actions = new LinkedList<Action>();
 			stop = false;
+			
+			inputThread = new ServerInput(this, System.in);
 			searchThread = new SearchThread(this);
 			thread = new Thread(this);
+			
+			inputThread.start();
 			searchThread.start();
 			thread.start();
 			
@@ -72,7 +77,7 @@ public class Server implements Runnable{
 				serverThread.open();
 				serverThread.start();
 				clients.put(serverThread, new Player("Knight "+serverThread.getId()));
-				System.out.println("Player created: Knight "+serverThread.getId());
+				Trace.getInstance().write(this, "Player created: Knight "+serverThread.getId());
 				this.numClients++;
 				System.out.println("Client Accepted: " + socket.getPort());
 				Trace.getInstance().write(this, "Client Accepted: " + socket.getPort());
@@ -119,7 +124,7 @@ public class Server implements Runnable{
 				Player p = clients.get(t);				
 				readyPlayers = readyPlayers + (p.ready ? 1 : 0);
 				if(o != null){
-					System.out.println("Got an action from " + p.username);
+					Trace.getInstance().write(this, "Got an action from " + p.username);
 					actions.add(new Action(o, t));		//create a new local action to process
 				}
 			}
@@ -146,6 +151,7 @@ public class Server implements Runnable{
 		
 		if(action.object instanceof Ready){
 			clients.get(action.origin).toggleReady();
+			System.out.println(clients.get(action.origin).username + " is ready!");
 			return true;
 		}
 		

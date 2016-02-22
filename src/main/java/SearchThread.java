@@ -14,7 +14,6 @@ public class SearchThread extends Thread{
 		while (!stop){
 			try {
 				server.addThread(server.serverSocket.accept());
-				System.out.println(server.numClients);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}	
