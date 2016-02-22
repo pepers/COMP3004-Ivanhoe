@@ -2,6 +2,8 @@ package main.java;
 
 public class DisplayCard extends Card{
 
+	
+	private static final long serialVersionUID = 1L;
 	private int value;      // point value of the card
 	private Colour colour;  // colour of the card
 	
