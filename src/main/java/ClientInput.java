@@ -31,7 +31,8 @@ public class ClientInput extends Thread{
 			} 
 			
 			if (validCmd(input)) {               // process valid commands
-				
+				System.out.println("Client: valid command recieved");
+				sendCmd(input);
 			} else if (input.charAt(0) == '/') { // process invalid commands
 				System.out.println("Client: invalid command");
 				Trace.getInstance().write(this, "invalid command: " + input);
@@ -56,6 +57,24 @@ public class ClientInput extends Thread{
 			if (in.startsWith(cmd.toString(), 1)) { return true; }
 		}
 		
+		return false;
+	}
+	
+	public boolean sendCmd (String s){
+		//sends the server an appropriate command based on the input
+		
+		if(s == "/ready"){
+			action = new Ready();
+			c.send(action);
+			return true;
+		}
+		if(s == "/setname"){
+			String name = s.substring(9);
+			action = new SetName(name);
+			c.send(action);
+			return true;
+		}
+		System.out.println("Command sending error");
 		return false;
 	}
 	

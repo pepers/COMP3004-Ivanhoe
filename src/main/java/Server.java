@@ -21,6 +21,7 @@ public class Server implements Runnable{
 	ServerSocket serverSocket;
 	int port;
 	int numClients;
+	int numReady;
 	ConcurrentHashMap<ServerThread, Player> clients;
 	
 	
@@ -47,13 +48,14 @@ public class Server implements Runnable{
 			System.out.println("Binding to port " + port + ", please wait  ...");
 			serverSocket = new ServerSocket(port);
 			serverSocket.setReuseAddress(true);
-			
+		
 			actions = new LinkedList<Action>();
 			stop = false;
 			searchThread = new SearchThread(this);
 			thread = new Thread(this);
 			searchThread.start();
 			thread.start();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -107,23 +109,21 @@ public class Server implements Runnable{
 
 	public void run() {
 		while (!stop){
-			
+		
 			Iterator<ServerThread> i = clients.keySet().iterator();
 			
 			int readyPlayers = 0;
-			while(i.hasNext()){
-				ServerThread t = i.next();
-				Object o = t.actions.poll();
-				Player p = clients.get(t);
+			while(i.hasNext()){							//iterate over the players
+				ServerThread t = i.next();				
+				Object o = t.actions.poll();			//get an action from the thread
+				Player p = clients.get(t);				
 				readyPlayers = readyPlayers + (p.ready ? 1 : 0);
 				if(o != null){
 					System.out.println("Got an action from " + p.username);
-					actions.add(new Action(o, t));
+					actions.add(new Action(o, t));		//create a new local action to process
 				}
 			}
-			
-			
-			//System.out.println("(" + readyPlayers + "/" + numClients + ") players ready");
+			numReady = readyPlayers;
 			
 			if(!actions.isEmpty()){
 				evaluate(actions.poll());
@@ -146,6 +146,7 @@ public class Server implements Runnable{
 		
 		if(action.object instanceof Ready){
 			clients.get(action.origin).toggleReady();
+			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
 			return true;
 		}
 		
