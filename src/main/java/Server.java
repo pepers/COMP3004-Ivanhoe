@@ -160,6 +160,7 @@ public class Server implements Runnable{
 	}
 	
 	public void kick(int id) {
+		System.out.println("Kicking player @" + port + "...");
 		Trace.getInstance().write(this, "Kicking player @" + port + "...");		
 	}
 
