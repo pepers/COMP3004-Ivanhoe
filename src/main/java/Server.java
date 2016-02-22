@@ -195,13 +195,13 @@ public class Server implements Runnable{
 
 	public boolean startGame() {
 		
-		if(numReady == numClients){
+		if(numReady >= Config.MIN_PLAYERS){
 			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
 			System.out.println("Preparing to start a game...");
 			//we start a game here
 			return true;
 		}else{
-			System.out.println("Not all players (" + numReady + "/" + numClients + ") are ready.");
+			System.out.println(Config.MIN_PLAYERS + " players are needed to start a game.");
 			return false;
 		}
 	}
