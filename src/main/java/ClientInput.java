@@ -29,7 +29,7 @@ public class ClientInput extends Thread{
 			} 
 			
 			if (validCmd(input)) {               // process valid commands
-				System.out.println("Client: valid command recieved");
+				Trace.getInstance().write(this, "Client: valid command recieved");
 				processCmd(input);
 			} else if (input.charAt(0) == '/') { // process invalid commands
 				System.out.println("Client: invalid command");
@@ -66,13 +66,13 @@ public class ClientInput extends Thread{
 			client.send(action);
 			return true;
 		}
-		if(s.equals("/setname")){
+		if(s.substring(0, 8).equals("/setname")){
 			String name = s.substring(9);
 			action = new SetName(name);
 			client.send(action);
 			return true;
 		}
-		System.out.println("Command sending error - " + s);
+		Trace.getInstance().write(this, "Command sending error - " + s);
 		return false;
 	}
 	
