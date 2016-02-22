@@ -157,4 +157,14 @@ public class Server implements Runnable{
 	public void kick(int id) {
 		Trace.getInstance().write(this, "Kicking player @" + port + "...");		
 	}
+
+	//send a message to all players(threads)
+	public void broadcast(String input) {
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while(i.hasNext()){							
+			ServerThread t = i.next();				
+			t.send(new Chat(input));
+		}
+		
+	}
 }

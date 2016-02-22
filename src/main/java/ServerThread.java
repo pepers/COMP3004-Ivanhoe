@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -13,6 +14,7 @@ public class ServerThread extends Thread{
 	private int ID;
 	private boolean stop = false;
 	private ObjectInputStream input;
+	private ObjectOutputStream output;
 	
 	public Queue<Object> actions;
 	
@@ -26,8 +28,20 @@ public class ServerThread extends Thread{
 	//opens a buffered input stream to accept client network objects
 	public void open() throws IOException {
 		input = new ObjectInputStream(socket.getInputStream());
+		output = new ObjectOutputStream(socket.getOutputStream());
 		Trace.getInstance().write(this, "Opened socket stream at " + socket.getLocalSocketAddress());
 		System.out.println("Opened socket stream at " + socket.getLocalSocketAddress());
+	}
+	
+	public Boolean send(Object o) {
+		try {
+			output.writeObject(o);
+			return true;
+		} catch (IOException e) {
+			System.out.println("Unexpected exception: writing object to output stream");
+			Trace.getInstance().exception(this, e);
+		}
+		return false;
 	}
 	
 	public int getID(){

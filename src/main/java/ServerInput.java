@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import main.resources.Config;
-import main.resources.Trace;
 
 public class ServerInput extends Thread{
 
@@ -35,7 +34,8 @@ public class ServerInput extends Thread{
 				System.out.println("Server: invalid command");
 
 			} else {                             
-				//do something else
+				//chat to all players
+				s.broadcast(input);
 			}
 		}
 	}
