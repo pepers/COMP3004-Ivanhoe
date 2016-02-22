@@ -7,16 +7,16 @@ import java.io.InputStreamReader;
 import main.resources.Config;
 import main.resources.Trace;
 
-public class ClientInput extends Thread{
+public class ServerInput extends Thread{
 
-	Boolean stop = false;					  // use to stop the Client
+	Boolean stop = false;					  // use to stop the Server
 	BufferedReader reader; 					  // reader from the user
 	String input;                             // user input
-	Client c;                                 // client class
+	Server s;                                 // server class
 	ClientAction action;                      // client's action to take
 	
-	public ClientInput (Client client, InputStream s) {
-		this.c = client;
+	public ServerInput (Server server, InputStream s) {
+		this.s = server;
 		reader = new BufferedReader(new InputStreamReader(s));
 	}
 	
@@ -29,14 +29,13 @@ public class ClientInput extends Thread{
 			} 
 			
 			if (validCmd(input)) {               // process valid commands
-				System.out.println("Client: valid command recieved");
-				sendCmd(input);
+				System.out.println("Server: valid command recieved");
+
 			} else if (input.charAt(0) == '/') { // process invalid commands
-				System.out.println("Client: invalid command");
-				Trace.getInstance().write(this, "invalid command: " + input);
-			} else {                             // process chat
-				action = new Chat(input);
-				c.send(action);
+				System.out.println("Server: invalid command");
+
+			} else {                             
+				//do something else
 			}
 		}
 	}
@@ -55,24 +54,6 @@ public class ClientInput extends Thread{
 			if (in.startsWith(cmd.toString(), 1)) { return true; }
 		}
 		
-		return false;
-	}
-	
-	public boolean sendCmd (String s){
-		//sends the server an appropriate command based on the input
-		
-		if(s.equals("/ready")){
-			action = new Ready();
-			c.send(action);
-			return true;
-		}
-		if(s.equals("/setname")){
-			String name = s.substring(9);
-			action = new SetName(name);
-			c.send(action);
-			return true;
-		}
-		System.out.println("Command sending error - " + s);
 		return false;
 	}
 	
