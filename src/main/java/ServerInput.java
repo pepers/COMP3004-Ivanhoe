@@ -50,7 +50,7 @@ public class ServerInput extends Thread{
 		} 
 		
 		// check existing commands
-		for (Config.Command cmd: Config.Command.values()) {
+		for (Config.ServerCommand cmd: Config.ServerCommand.values()) {
 			if (in.startsWith(cmd.toString(), 1)) { return true; }
 		}
 		

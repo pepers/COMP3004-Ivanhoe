@@ -6,5 +6,6 @@ public class Config {
 	public static int MAX_PLAYERS = 5;
 	
 	// possible commands:
-	public enum Command { setname, ready, draw }
+	public enum ClientCommand { setname, ready, draw }
+	public enum ServerCommand { kick, start }
 }

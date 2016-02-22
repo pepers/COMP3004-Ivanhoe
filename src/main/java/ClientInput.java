@@ -51,7 +51,7 @@ public class ClientInput extends Thread{
 		} 
 		
 		// check existing commands
-		for (Config.Command cmd: Config.Command.values()) {
+		for (Config.ClientCommand cmd: Config.ClientCommand.values()) {
 			if (in.startsWith(cmd.toString(), 1)) { return true; }
 		}
 		
