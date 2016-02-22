@@ -71,16 +71,21 @@ public class Server implements Runnable{
 	void addThread(Socket socket) {
 		System.out.println("Client Requesting connection: " + socket.getPort());
 		Trace.getInstance().write(this, "Client Requesting connection: " + socket.getPort());
+		
 		if (numClients < Config.MAX_PLAYERS) {		
 			try {
 				ServerThread serverThread = new ServerThread(this, socket);
 				serverThread.open();
 				serverThread.start();
-				clients.put(serverThread, new Player("Knight "+serverThread.getId()));
-				Trace.getInstance().write(this, "Player created: Knight "+serverThread.getId());
-				this.numClients++;
+				
+				int n = clients.size();
+				clients.put(serverThread, new Player("Knight "+n));
+				Trace.getInstance().write(this, "Player " + (n-1) +" created: Knight "+(n-1));
+				numClients++;
 				System.out.println("Client Accepted: " + socket.getPort());
 				Trace.getInstance().write(this, "Client Accepted: " + socket.getPort());
+				
+				System.out.println("Client Accepted: " + socket.getPort());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -90,6 +95,25 @@ public class Server implements Runnable{
 			System.out.println("Client Tried to connect:" + socket.getLocalSocketAddress());
 			System.out.println("Client refused: maximum number of clients reached ("+ numClients +")");
 		}
+	}
+	
+	public boolean removeThread(int ID) {
+		
+		int k = 0;
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while(i.hasNext()){		
+			ServerThread t = i.next();				
+			if(k == ID){
+				System.out.println("Removing player \"" + clients.get(t).username + "\"...");
+				Trace.getInstance().write(this, "Removing player \"" + clients.get(t).username + "\"...");
+				numClients--;
+				t.shutdown();
+				return true;
+			}
+			k++;
+		}
+		System.out.println("Couldnt find player (" + ID + ")");
+		return false;
 	}
 	
 	public void shutdown(){
@@ -103,7 +127,7 @@ public class Server implements Runnable{
 			
 			//close each of the clients individually
 			for (ServerThread t : clients.keySet()){
-				t.close();
+				t.shutdown();
 			}
 			serverSocket.close();
 			
@@ -158,11 +182,6 @@ public class Server implements Runnable{
 		System.out.println("Polled something else");
 		return false;
 	}
-	
-	public void kick(int id) {
-		System.out.println("Kicking player @" + port + "...");
-		Trace.getInstance().write(this, "Kicking player @" + port + "...");		
-	}
 
 	//send a message to all players(threads)
 	public void broadcast(String input) {
@@ -179,6 +198,7 @@ public class Server implements Runnable{
 		if(numReady == numClients){
 			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
 			System.out.println("Preparing to start a game...");
+			//we start a game here
 			return true;
 		}else{
 			System.out.println("Not all players (" + numReady + "/" + numClients + ") are ready.");

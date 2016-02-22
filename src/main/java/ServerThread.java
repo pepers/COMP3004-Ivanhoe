@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -11,7 +12,6 @@ import main.resources.Trace;
 
 public class ServerThread extends Thread{
 	private Socket socket;
-	private int ID;
 	private boolean stop = false;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
@@ -21,7 +21,6 @@ public class ServerThread extends Thread{
 	public ServerThread(Server server, Socket socket) {
 		super();
 		this.socket = socket;
-		this.ID = socket.getPort();
 		actions = new LinkedList<Object>();
 	}
 	
@@ -44,10 +43,6 @@ public class ServerThread extends Thread{
 		return false;
 	}
 	
-	public int getID(){
-		return ID;
-	}
-
 	public void run(){
 		while(!stop){
 		
@@ -63,15 +58,19 @@ public class ServerThread extends Thread{
 		} catch (ClassNotFoundException e) {
 			System.out.println("Exception: Found foreign object.");
 			e.printStackTrace();
+		} catch (SocketException e){
+			stop = true;
+			System.out.println("Connection closed.");
 		} catch (IOException e) {
 			stop = true;
-			System.out.println("Exception: IO");
 			e.printStackTrace();
 		}
 		return null;
 	}
 	//shutdown command: closes the socket and flags the thread to stop
-	public void close() {
+	public void shutdown() {
+		stop = true;
+		
 		try {
 			socket.close();
 		} catch (IOException e) {

@@ -62,6 +62,11 @@ public class ServerInput extends Thread{
 			server.startGame();
 			return true;
 		}
+		if(s.substring(0, 6).equals("/kick ")){
+			int toRemove = Integer.parseInt(s.substring(6));
+			server.removeThread(toRemove);
+			return true;
+		}
 		return false;
 	}
 }
