@@ -57,4 +57,12 @@ public class ServerInput extends Thread{
 		return false;
 	}
 	
+	public boolean processCmd(String s){
+
+		if(s.equals("/start")){
+			s.startGame();
+			return true;
+		}
+		return false;
+	}
 }

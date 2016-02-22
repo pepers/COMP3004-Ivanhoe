@@ -30,7 +30,7 @@ public class ClientInput extends Thread{
 			
 			if (validCmd(input)) {               // process valid commands
 				System.out.println("Client: valid command recieved");
-				sendCmd(input);
+				processCmd(input);
 			} else if (input.charAt(0) == '/') { // process invalid commands
 				System.out.println("Client: invalid command");
 				Trace.getInstance().write(this, "invalid command: " + input);
@@ -58,7 +58,7 @@ public class ClientInput extends Thread{
 		return false;
 	}
 	
-	public boolean sendCmd (String s){
+	public boolean processCmd (String s){
 		//sends the server an appropriate command based on the input
 		
 		if(s.equals("/ready")){
