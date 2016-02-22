@@ -28,11 +28,9 @@ public class ServerInput extends Thread{
 			} 
 			
 			if (validCmd(input)) {               // process valid commands
-				System.out.println("Server: valid command recieved");
 				processCmd(input);
 			} else if (input.charAt(0) == '/') { // process invalid commands
 				System.out.println("Server: invalid command");
-
 			} else {                             
 				//chat to all players
 				server.broadcast(input);
@@ -65,6 +63,10 @@ public class ServerInput extends Thread{
 		if(s.substring(0, 6).equals("/kick ")){
 			int toRemove = Integer.parseInt(s.substring(6));
 			server.removeThread(toRemove);
+			return true;
+		}
+		if(s.equals("/shutdown")){
+			server.shutdown();
 			return true;
 		}
 		return false;

@@ -1,6 +1,7 @@
 package main.java;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -35,15 +36,18 @@ public class Server implements Runnable{
 	}
 	
 	public static void main(String[] args){
+		System.out.println("Beginning server setup...");
 		Server s = new Server(Config.DEFAULT_PORT);
-		s.startup();
+		if(s.startup()){
+			System.out.println("Setup successful.");
+		}
 	}
 	
 	public int getConnected(){
 		return numClients;
 	}
 	
-	public void startup(){
+	public boolean startup(){
 		try {
 			Trace.getInstance().write(this, "Binding to port " + port + ", please wait  ...");
 			System.out.println("Binding to port " + port + ", please wait  ...");
@@ -60,12 +64,14 @@ public class Server implements Runnable{
 			inputThread.start();
 			searchThread.start();
 			thread.start();
-			
+			Trace.getInstance().write(this, "Setup successful.");
+			return true;
+		} catch (BindException e){
+			System.out.println("Error: There is already a running server on this port.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Trace.getInstance().write(this, "Setup successful.");
-		System.out.println("Setup successful.");
+		return false;
 	}
 	
 	void addThread(Socket socket) {
@@ -114,26 +120,6 @@ public class Server implements Runnable{
 		}
 		System.out.println("Couldnt find player (" + ID + ")");
 		return false;
-	}
-	
-	public void shutdown(){
-		try {
-			Trace.getInstance().write(this, "Shutting down server @ " + port + ", please wait  ...");
-			stop = true;
-			searchThread = null;
-			
-			//Added this so the .accept will stop blocking; avoid a socket close error
-			new Socket("localhost", port);
-			
-			//close each of the clients individually
-			for (ServerThread t : clients.keySet()){
-				t.shutdown();
-			}
-			serverSocket.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void run() {
@@ -204,5 +190,31 @@ public class Server implements Runnable{
 			System.out.println(Config.MIN_PLAYERS + " players are needed to start a game.");
 			return false;
 		}
+	}
+	
+	public boolean shutdown(){
+		Trace.getInstance().write(this, "Shutting down server, please wait  ...");
+		System.out.println("Shutting down server, please wait  ...");
+		try {
+			
+			stop = true;
+			
+			//close each of the clients individually
+			for (ServerThread t : clients.keySet()){
+				t.shutdown();
+			}
+			
+			searchThread.stop = true;
+			searchThread = null;
+			inputThread.stop = true;
+			inputThread = null;
+			serverSocket.close();
+			
+			System.out.println("Shutdown complete. Goodbye!");
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

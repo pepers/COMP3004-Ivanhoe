@@ -1,6 +1,7 @@
 package main.java;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 public class SearchThread extends Thread{
 	Server server;
@@ -14,6 +15,8 @@ public class SearchThread extends Thread{
 		while (!stop){
 			try {
 				server.addThread(server.serverSocket.accept());
+			} catch (SocketException e){
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}	
