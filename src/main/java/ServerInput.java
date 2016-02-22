@@ -11,11 +11,11 @@ public class ServerInput extends Thread{
 	Boolean stop = false;					  // use to stop the Server
 	BufferedReader reader; 					  // reader from the user
 	String input;                             // user input
-	Server s;                                 // server class
+	Server server;                                 // server class
 	ClientAction action;                      // client's action to take
 	
 	public ServerInput (Server server, InputStream s) {
-		this.s = server;
+		this.server = server;
 		reader = new BufferedReader(new InputStreamReader(s));
 	}
 	
@@ -35,7 +35,7 @@ public class ServerInput extends Thread{
 
 			} else {                             
 				//chat to all players
-				s.broadcast(input);
+				server.broadcast(input);
 			}
 		}
 	}
@@ -60,7 +60,7 @@ public class ServerInput extends Thread{
 	public boolean processCmd(String s){
 
 		if(s.equals("/start")){
-			s.startGame();
+			server.startGame();
 			return true;
 		}
 		return false;

@@ -12,11 +12,11 @@ public class ClientInput extends Thread{
 	Boolean stop = false;					  // use to stop the Client
 	BufferedReader reader; 					  // reader from the user
 	String input;                             // user input
-	Client c;                                 // client class
+	Client client;                                 // client class
 	ClientAction action;                      // client's action to take
 	
 	public ClientInput (Client client, InputStream s) {
-		this.c = client;
+		this.client = client;
 		reader = new BufferedReader(new InputStreamReader(s));
 	}
 	
@@ -36,7 +36,7 @@ public class ClientInput extends Thread{
 				Trace.getInstance().write(this, "invalid command: " + input);
 			} else {                             // process chat
 				action = new Chat(input);
-				c.send(action);
+				client.send(action);
 			}
 		}
 	}
@@ -63,13 +63,13 @@ public class ClientInput extends Thread{
 		
 		if(s.equals("/ready")){
 			action = new Ready();
-			c.send(action);
+			client.send(action);
 			return true;
 		}
 		if(s.equals("/setname")){
 			String name = s.substring(9);
 			action = new SetName(name);
-			c.send(action);
+			client.send(action);
 			return true;
 		}
 		System.out.println("Command sending error - " + s);
