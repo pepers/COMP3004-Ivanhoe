@@ -107,7 +107,6 @@ public class Server implements Runnable {
 
 	//Removing a connection via index
 	public boolean removeThread(int index) {
-
 		int k = 0;
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
@@ -124,7 +123,19 @@ public class Server implements Runnable {
 		System.out.println("Couldnt find player (" + index + ")");
 		return false;
 	}
-
+	public boolean removeThread(String name) {
+		for (ServerThread t : clients.keySet()){
+			if(clients.get(t).username.equals(name)){
+				System.out.println("Removing player \"" + name + "\"...");
+				Trace.getInstance().write(this, "Removing player \"" + name + "\"...");
+				numClients--;
+				t.shutdown();
+				return true;
+			}
+		}
+		System.out.println("Couldnt find player (" + name + ")");
+		return false;
+	}
 	//Main thread
 	public void run() {
 		while (!stop) {

@@ -61,9 +61,17 @@ public class ServerInput extends Thread{
 			return true;
 		}
 		if(s.substring(0, 6).equals("/kick ")){
-			int toRemove = Integer.parseInt(s.substring(6));
-			server.removeThread(toRemove);
-			return true;
+			
+			String sub = s.substring(6);
+			if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
+				int toRemove = Integer.parseInt(sub);
+				server.removeThread(toRemove);
+				return true;
+			}else{
+				server.removeThread(sub);
+				return true;
+			}
+			
 		}
 		if(s.equals("/shutdown")){
 			server.shutdown();
