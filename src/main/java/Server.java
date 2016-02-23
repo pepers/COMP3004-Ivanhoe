@@ -81,10 +81,11 @@ public class Server implements Runnable {
 	// Adding a new connection
 	public boolean addThread(Socket socket) {
 		Trace.getInstance().write(this, "Client Requesting connection: " + socket.getPort());
-
+		ServerThread serverThread;
+		
 		if (numClients < Config.MAX_PLAYERS) {
 			//Create a new thread
-			ServerThread serverThread = new ServerThread(this, socket);
+			serverThread = new ServerThread(this, socket);
 			serverThread.start();
 			
 			//Create a player object
@@ -99,7 +100,7 @@ public class Server implements Runnable {
 			return false;
 		}
 		
-		System.out.println("Client Accepted: " + socket.getPort());
+		System.out.println(clients.get(serverThread).username + " joined.");
 		Trace.getInstance().write(this, "Client Accepted: " + socket.getPort());
 		return true;
 	}
