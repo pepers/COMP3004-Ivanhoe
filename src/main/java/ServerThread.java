@@ -57,12 +57,16 @@ public class ServerThread extends Thread{
 	public void run(){
 		while(!stop){
 		
-			actions.add(receive());
-			//System.out.println("Thread: Action Queue(" +actions.size()+ ")");
+			Object o = receive();
+			if(o != null){
+				actions.add(receive());
+			}else if(o instanceof SocketException){
+				
+			}
 		}
 	}
 
-	public Object receive(){
+	private Object receive(){
 		try {
 			return(input.readObject());
 			
@@ -71,7 +75,7 @@ public class ServerThread extends Thread{
 			e.printStackTrace();
 		} catch (SocketException e){
 			stop = true;
-			System.out.println("Connection closed.");
+			return e;
 		} catch (IOException e) {
 			stop = true;
 			e.printStackTrace();
@@ -96,5 +100,9 @@ public class ServerThread extends Thread{
 
 	public int getID() {
 		return id;
+	}
+	
+	public boolean getDead(){
+		return stop;
 	}
 }

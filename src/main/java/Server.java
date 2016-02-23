@@ -160,6 +160,15 @@ public class Server implements Runnable {
 			Iterator<ServerThread> i = clients.keySet().iterator();
 			while (i.hasNext()) { 
 				ServerThread t = i.next();
+				
+				//check if the serverthread lost its client
+				if(t.getDead()){
+					System.out.println(clients.get(t).username + " disconnected.");
+					numClients--;
+					t.shutdown();
+					clients.remove(t);
+					continue;
+				}
 				Object o = t.actions.poll(); // get an action from the thread
 				Player p = clients.get(t);
 				if(p == null){
@@ -216,7 +225,7 @@ public class Server implements Runnable {
 	public boolean startGame() {
 
 		if (numClients < Config.MIN_PLAYERS){
-			System.out.println(Config.MIN_PLAYERS + " players are needed to start a game.");
+			System.out.println("(" + numClients + "/" + Config.MIN_PLAYERS + ") players are needed to start a game.");
 			return false;
 		}
 		if (numReady < Config.MIN_PLAYERS) {
