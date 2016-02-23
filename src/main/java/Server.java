@@ -89,9 +89,7 @@ public class Server implements Runnable {
 			serverThread.start();
 			
 			//Create a player object
-			int n = clients.size();
-			clients.put(serverThread, new Player("Knight " + n));
-			Trace.getInstance().write(this, "Player " + (n - 1) + " created: Knight " + (n - 1));
+			clients.put(serverThread, new Player("Knight " + serverThread.getID()));
 			numClients++;
 		} else {
 			Trace.getInstance().write(this, "Client Tried to connect:" + socket.getLocalSocketAddress());
@@ -105,23 +103,21 @@ public class Server implements Runnable {
 		return true;
 	}
 
-	//Removing a connection via index
-	public boolean removeThread(int index) {
-		int k = 0;
+	//Removing a connection via id
+	public boolean removeThread(int id) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if (k == index) {
-				System.out.println("Removing player \"" + clients.get(t).username + "\"...");
-				Trace.getInstance().write(this, "Removing player \"" + clients.get(t).username + "\"...");
+			if (t.getID() == id) {
+				System.out.println("Removing player \"" + clients.get(t).username + "\" (" + t.getID() + ")...");
+				Trace.getInstance().write(this, "Removing player \"" + clients.get(t).username + "\" (" + t.getID() + ")...");
 				numClients--;
 				t.shutdown();
 				clients.remove(t);
 				return true;
 			}
-			k++;
 		}
-		System.out.println("Couldnt find player (" + index + ")");
+		System.out.println("Couldnt find player (" + id + ")");
 		return false;
 	}
 	
@@ -131,8 +127,8 @@ public class Server implements Runnable {
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			if(clients.get(t).username.equals(name)){
-				System.out.println("Removing player \"" + name + "\"...");
-				Trace.getInstance().write(this, "Removing player \"" + name + "\"...");
+				System.out.println("Removing player \"" + name + "\" (" + t.getID() + ")...");
+				Trace.getInstance().write(this, "Removing player \"" + name + "\" (" + t.getID() + ")...");
 				numClients--;
 				t.shutdown();
 				clients.remove(t);
@@ -145,7 +141,6 @@ public class Server implements Runnable {
 	
 	public void listClients() {
 		
-		int k = 0;
 		System.out.println("Connected Players:");
 		System.out.printf(" %-3s %-20s %-8s %s\n", "#", "Name", "State", "Port");
 		System.out.println(" ============================================");
@@ -153,8 +148,7 @@ public class Server implements Runnable {
 		while (i.hasNext()) { 
 			ServerThread t = i.next();
 			Player p = clients.get(t);
-			System.out.printf(" %-3s %-20s %-8s %s\n", k, p.username, (p.ready ? "ready" : "waiting"), t.getNetwork());
-			k++;
+			System.out.printf(" %-3s %-20s %-8s %s\n", t.getID(), p.username, (p.ready ? "ready" : "waiting"), t.getNetwork());
 		}
 	}
 	
@@ -190,7 +184,7 @@ public class Server implements Runnable {
 
 		if (action.object instanceof SetName) {
 			System.out.println(
-					clients.get(action.origin).username + " changed name to " + ((SetName) action.object).getName());
+					clients.get(action.origin).username + " changed name to \"" + ((SetName) action.object).getName()+"\"");
 			clients.get(action.origin).setName(((SetName) action.object).getName());
 			return true;
 		}
@@ -221,15 +215,18 @@ public class Server implements Runnable {
 	//Start a game
 	public boolean startGame() {
 
-		if (numReady >= Config.MIN_PLAYERS) {
-			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
-			System.out.println("Preparing to start a game...");
-			// we start a game here
-			return true;
-		} else {
+		if (numClients < Config.MIN_PLAYERS){
 			System.out.println(Config.MIN_PLAYERS + " players are needed to start a game.");
 			return false;
 		}
+		if (numReady < Config.MIN_PLAYERS) {
+			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
+			return false;
+		}
+		System.out.println("(" + numReady + "/" + numClients + ") players ready.");
+		System.out.println("Preparing to start a game...");
+		// we start a game here
+		return true;
 	}
 
 	//Shutdown the server

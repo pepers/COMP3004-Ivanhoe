@@ -11,6 +11,9 @@ import java.util.Queue;
 import main.resources.Trace;
 
 public class ServerThread extends Thread{
+	private static int incID = 0;
+	
+	private int id;
 	private Socket socket;
 	private boolean stop = false;
 	private ObjectInputStream input;
@@ -20,6 +23,7 @@ public class ServerThread extends Thread{
 	
 	public ServerThread(Server server, Socket socket) {
 		super();
+		this.id = ++incID;
 		this.socket = socket;
 		actions = new LinkedList<Object>();
 		//Open socket streams
@@ -88,5 +92,9 @@ public class ServerThread extends Thread{
 
 	public String getNetwork() {
 		return socket.getInetAddress().toString() + ":" + socket.getPort();
+	}
+
+	public int getID() {
+		return id;
 	}
 }
