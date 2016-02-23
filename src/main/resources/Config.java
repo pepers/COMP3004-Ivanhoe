@@ -8,5 +8,5 @@ public class Config {
 	
 	// possible commands:
 	public enum ClientCommand { setname, ready, draw }
-	public enum ServerCommand { kick, start, shutdown }
+	public enum ServerCommand { kick, start, shutdown, list}
 }

@@ -136,6 +136,17 @@ public class Server implements Runnable {
 		System.out.println("Couldnt find player (" + name + ")");
 		return false;
 	}
+	
+	public void listClients() {
+		System.out.println("Connected Players:");
+		System.out.printf("   %-20s %s\n", "Name", "Port");
+		System.out.printf("   %-20s %s\n", "----", "----");
+		for (ServerThread t : clients.keySet()) {
+			Player p = clients.get(t);
+			System.out.printf("   %-20s %s\n", p.username, t.getNetwork());
+		}
+	}
+	
 	//Main thread
 	public void run() {
 		while (!stop) {

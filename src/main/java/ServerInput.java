@@ -60,7 +60,7 @@ public class ServerInput extends Thread{
 			server.startGame();
 			return true;
 		}
-		if(s.substring(0, 6).equals("/kick ")){
+		if(s.length()> 5 && s.substring(0, 6).equals("/kick ")){
 			
 			String sub = s.substring(6);
 			if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
@@ -75,6 +75,11 @@ public class ServerInput extends Thread{
 		}
 		if(s.equals("/shutdown")){
 			server.shutdown();
+			return true;
+		}
+		
+		if(s.equals("/list")){
+			server.listClients();
 			return true;
 		}
 		return false;

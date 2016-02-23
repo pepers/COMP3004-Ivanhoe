@@ -22,7 +22,6 @@ public class ServerThread extends Thread{
 		super();
 		this.socket = socket;
 		actions = new LinkedList<Object>();
-		
 		//Open socket streams
 		setup();
 	}
@@ -85,5 +84,9 @@ public class ServerThread extends Thread{
 			e.printStackTrace();
 		}
 		stop = true;
+	}
+
+	public String getNetwork() {
+		return socket.getInetAddress().toString() + ":" + socket.getPort();
 	}
 }
