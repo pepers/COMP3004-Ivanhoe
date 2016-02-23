@@ -116,6 +116,7 @@ public class Server implements Runnable {
 				Trace.getInstance().write(this, "Removing player \"" + clients.get(t).username + "\"...");
 				numClients--;
 				t.shutdown();
+				clients.remove(t);
 				return true;
 			}
 			k++;
@@ -123,13 +124,18 @@ public class Server implements Runnable {
 		System.out.println("Couldnt find player (" + index + ")");
 		return false;
 	}
+	
+	//Remove via name
 	public boolean removeThread(String name) {
-		for (ServerThread t : clients.keySet()){
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
 			if(clients.get(t).username.equals(name)){
 				System.out.println("Removing player \"" + name + "\"...");
 				Trace.getInstance().write(this, "Removing player \"" + name + "\"...");
 				numClients--;
 				t.shutdown();
+				clients.remove(t);
 				return true;
 			}
 		}
@@ -138,12 +144,15 @@ public class Server implements Runnable {
 	}
 	
 	public void listClients() {
+		
+		int i = 0;
 		System.out.println("Connected Players:");
-		System.out.printf("   %-20s %s\n", "Name", "Port");
-		System.out.printf("   %-20s %s\n", "----", "----");
+		System.out.printf(" %-3s %-20s %s\n", "#", "Name", "Port");
+		System.out.printf(" %-3s %-20s %s\n", "=", "====", "====");
 		for (ServerThread t : clients.keySet()) {
 			Player p = clients.get(t);
-			System.out.printf("   %-20s %s\n", p.username, t.getNetwork());
+			System.out.printf(" %-3s %-20s %s\n", i, p.username, t.getNetwork());
+			i++;
 		}
 	}
 	
@@ -157,6 +166,9 @@ public class Server implements Runnable {
 				ServerThread t = i.next();
 				Object o = t.actions.poll(); // get an action from the thread
 				Player p = clients.get(t);
+				if(p == null){
+					continue;
+				}
 				readyPlayers = readyPlayers + (p.ready ? 1 : 0);
 				if (o != null) {
 					Trace.getInstance().write(this, "Got an action from " + p.username);
