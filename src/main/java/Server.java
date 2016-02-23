@@ -145,14 +145,16 @@ public class Server implements Runnable {
 	
 	public void listClients() {
 		
-		int i = 0;
+		int k = 0;
 		System.out.println("Connected Players:");
 		System.out.printf(" %-3s %-20s %-8s %s\n", "#", "Name", "State", "Port");
 		System.out.println(" ============================================");
-		for (ServerThread t : clients.keySet()) {
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) { 
+			ServerThread t = i.next();
 			Player p = clients.get(t);
-			System.out.printf(" %-3s %-20s %-8s %s\n", i, p.username, (p.ready ? "ready" : "waiting"), t.getNetwork());
-			i++;
+			System.out.printf(" %-3s %-20s %-8s %s\n", k, p.username, (p.ready ? "ready" : "waiting"), t.getNetwork());
+			k++;
 		}
 	}
 	
