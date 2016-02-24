@@ -18,7 +18,7 @@ public class Server implements Runnable {
 	Thread thread; // main thread for the server
 	ServerInput inputThread; // thread that handles console input (commands)
 	SearchThread searchThread; // thread that searches for new players
-	GameEngine gameEngine;
+	GameState gameState;
 		
 	ServerSocket serverSocket; // primary network socket
 	int port; // server port
@@ -180,13 +180,16 @@ public class Server implements Runnable {
 				readyPlayers = readyPlayers + (p.ready ? 1 : 0);
 				if (o != null) {
 					Trace.getInstance().write(this, "Got an action from " + p.username);
-					actions.add(new ActionWrapper(o, t)); // create a new local action
+					actions.add(new ActionWrapper(o, p)); // create a new local action
 				}
 			}
 			numReady = readyPlayers;
 
 			if (!actions.isEmpty()) {
-				evaluate(actions.poll());
+				ActionWrapper a = actions.poll();
+				if(!evaluate(a)){
+					gameState.evaluate(a);
+				}
 			}
 
 		}
@@ -197,21 +200,21 @@ public class Server implements Runnable {
 		if (action.object instanceof SetName) {
 			
 			if(!((SetName) action.object).isInit()){
-				System.out.println(clients.get(action.origin).username + " changed name to \"" + ((SetName) action.object).getName()+"\"");
+				System.out.println(action.origin.username + " changed name to \"" + ((SetName) action.object).getName()+"\"");
 			}else{
 				
 			}
-			clients.get(action.origin).setName(((SetName) action.object).getName());
+			action.origin.setName(((SetName) action.object).getName());
 			return true;
 		}
 		if (action.object instanceof Chat) {
-			System.out.println(clients.get(action.origin).username + ": " + ((Chat) action.object).getMessage());
+			System.out.println(action.origin.username + ": " + ((Chat) action.object).getMessage());
 			return true;
 		}
 
 		if (action.object instanceof Ready) {
-			clients.get(action.origin).toggleReady();
-			System.out.println(clients.get(action.origin).username + " is ready!");
+			action.origin.toggleReady();
+			System.out.println(action.origin.username + " is ready!");
 			return true;
 		}
 
@@ -224,7 +227,7 @@ public class Server implements Runnable {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			System.out.println(t.send(new Chat(input)));
+			t.send(new Chat(input));
 		}
 	}
 
@@ -242,8 +245,8 @@ public class Server implements Runnable {
 		System.out.println("(" + numReady + "/" + numClients + ") players ready.");
 		System.out.println("Preparing to start a game...");
 		// we start a game here
-		gameEngine = new GameEngine(this);
-		gameEngine.start();
+		gameState = new GameState(this);
+
 		return true;
 	}
 

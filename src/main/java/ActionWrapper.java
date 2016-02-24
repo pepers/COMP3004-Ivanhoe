@@ -2,9 +2,9 @@ package main.java;
 
 public class ActionWrapper {
 	public Object object;
-	public ServerThread origin;
-	public ActionWrapper(Object o, ServerThread t){
+	public Player origin;
+	public ActionWrapper(Object o, Player p){
 		object = o;
-		origin = t;
+		origin = p;
 	}
 }
