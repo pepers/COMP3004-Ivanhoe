@@ -36,28 +36,63 @@ public class Client implements Runnable {
 		System.out.println(" _| |\\ V / (_| | | | | | | | (_) |  __/");
 		System.out.println("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
 		System.out.println("\nClient: Welcome brave knight!");
-
+		
 		// get user's name
 		String username = userInput("What is thy name?: ");
 		action = new SetName(username, true);
-
+		
 		// connect to Server
 		while(true){
-			if (connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {
+			// get the Server's inet address
+			String address = userInput("Where are the tournaments to be held? (enter nothing for default InetAddress): ");
+			if (address == "") {
+				address = Config.DEFAULT_HOST;
+			}
+			
+			// get the Server's port
+			int port;
+			while (true) {
+				String portStr = userInput("At which arena? (enter nothing for default Port): ");
+				if (portStr == "") {
+					port = Config.DEFAULT_PORT;
+				} else {
+					try {
+						port = Integer.parseInt(portStr);
+					} catch (NumberFormatException nfe) {
+						System.out.println("Please enter a port number...");
+						continue;
+					}
+					break;
+				}
+			}
+			
+			// attempt to connect to Server
+			if (connect(address, port)) {
 				send(action); // send user's name to Server
 				
+				// start new thread to get Client commands
 				inputThread = new ClientInput(this, System.in);
 				inputThread.start();
+				
 				// start new thread to receive from Server
 				receiveThread = new Thread(this);
 				receiveThread.start();
 				break;
-			}else{
-				System.out.println("Prompt for new address");
-				break;
+			} else {
+				System.out.println("There are no tournaments at that location! \n");
+				
+				while (true) {
+					String ui = userInput("Do you want to search for a new tournament (y/n): ");
+					if (ui.equalsIgnoreCase("y")) {
+						break;
+					} else if (ui.equalsIgnoreCase("n")) {
+						System.exit(0); // TODO: make shutdown method
+					} else {
+						System.out.println("That is not an option, my good knight!");
+					}
+				}
 			}
-		}
-		
+		}		
 		
 	}
 
