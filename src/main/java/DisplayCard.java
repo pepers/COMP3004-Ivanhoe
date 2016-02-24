@@ -14,4 +14,8 @@ public class DisplayCard extends Card{
 		this.value = value;
 		this.colour = colour;
 	}
+	
+	public String toString(){
+		return (colour.name() + ":" + value);
+	}
 }

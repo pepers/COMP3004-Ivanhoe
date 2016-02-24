@@ -1,6 +1,7 @@
 package main.java;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class GameState{
 	Server server = null;
@@ -12,9 +13,19 @@ public class GameState{
 	Tournament t = null;
 	
 	public GameState(Server s){
-		players = (ArrayList<Player>) s.clients.values();
+		//set up player array
+		players = new ArrayList<Player>();
+		Iterator<ServerThread> i = s.clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			if(s.clients.get(t).ready){
+				players.add(s.clients.get(t));
+			}
+		}
+		
 		numPlayers = players.size();
 		deck = new Deck();
+		deck.initialize();
 	}
 	
 	public boolean evaluate(ActionWrapper action){

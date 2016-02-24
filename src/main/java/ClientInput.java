@@ -67,7 +67,12 @@ public class ClientInput extends Thread{
 			client.send(action);
 			return true;
 		}
-		if(s.substring(0, 9).equals("/setname ")){
+		if(s.equals("/draw")){
+			action = new DrawCard();
+			client.send(action);
+			return true;
+		}
+		if(s.length() > 8 && s.substring(0, 9).equals("/setname ")){
 			String name = s.substring(9);
 			action = new SetName(name);
 			client.send(action);

@@ -9,5 +9,7 @@ public abstract class Card implements Serializable {
 	public Card(){
 		
 	}
+
+	public abstract String toString();
 	
 }

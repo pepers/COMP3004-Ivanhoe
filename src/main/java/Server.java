@@ -19,7 +19,7 @@ public class Server implements Runnable {
 	ServerInput inputThread; // thread that handles console input (commands)
 	SearchThread searchThread; // thread that searches for new players
 	GameState gameState;
-		
+
 	ServerSocket serverSocket; // primary network socket
 	int port; // server port
 	int numClients; // number of clients
@@ -83,15 +83,14 @@ public class Server implements Runnable {
 	public boolean addThread(Socket socket) {
 		Trace.getInstance().write(this, "Client Requesting connection: " + socket.getPort());
 		ServerThread serverThread;
-		
+
 		if (numClients < Config.MAX_PLAYERS) {
-			//Create a new thread
+			// Create a new thread
 			serverThread = new ServerThread(this, socket);
 			SetName name = ((SetName) serverThread.receive());
 			serverThread.start();
-			//Create a player object
-			
-			
+			// Create a player object
+
 			clients.put(serverThread, new Player(name.getName()));
 			numClients++;
 		} else {
@@ -100,20 +99,21 @@ public class Server implements Runnable {
 			System.out.println("Client refused: maximum number of clients reached (" + numClients + ")");
 			return false;
 		}
-		
+
 		System.out.println(clients.get(serverThread).username + " joined.");
 		Trace.getInstance().write(this, "Client Accepted: " + socket.getPort());
 		return true;
 	}
 
-	//Removing a connection via id
+	// Removing a connection via id
 	public boolean removeThread(int id) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			if (t.getID() == id) {
 				System.out.println("Removing player \"" + clients.get(t).username + "\" (" + t.getID() + ")...");
-				Trace.getInstance().write(this, "Removing player \"" + clients.get(t).username + "\" (" + t.getID() + ")...");
+				Trace.getInstance().write(this,
+						"Removing player \"" + clients.get(t).username + "\" (" + t.getID() + ")...");
 				numClients--;
 				t.shutdown();
 				clients.remove(t);
@@ -123,13 +123,13 @@ public class Server implements Runnable {
 		System.out.println("Couldnt find player (" + id + ")");
 		return false;
 	}
-	
-	//Remove via name
+
+	// Remove via name
 	public boolean removeThread(String name) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if(clients.get(t).username.equals(name)){
+			if (clients.get(t).username.equals(name)) {
 				System.out.println("Removing player \"" + name + "\" (" + t.getID() + ")...");
 				Trace.getInstance().write(this, "Removing player \"" + name + "\" (" + t.getID() + ")...");
 				numClients--;
@@ -141,31 +141,32 @@ public class Server implements Runnable {
 		System.out.println("Couldnt find player (" + name + ")");
 		return false;
 	}
-	
+
 	public void listClients() {
-		
+
 		System.out.println("Connected Players:");
 		System.out.printf(" %-3s %-20s %-8s %s\n", "#", "Name", "State", "Port");
 		System.out.println(" ============================================");
 		Iterator<ServerThread> i = clients.keySet().iterator();
-		while (i.hasNext()) { 
+		while (i.hasNext()) {
 			ServerThread t = i.next();
 			Player p = clients.get(t);
-			System.out.printf(" %-3s %-20s %-8s %s\n", t.getID(), p.username, (p.ready ? "ready" : "waiting"), t.getNetwork());
+			System.out.printf(" %-3s %-20s %-8s %s\n", t.getID(), p.username, (p.ready ? "ready" : "waiting"),
+					t.getNetwork());
 		}
 	}
-	
-	//Main thread
+
+	// Main thread
 	public void run() {
 		while (!stop) {
 
 			int readyPlayers = 0;
 			Iterator<ServerThread> i = clients.keySet().iterator();
-			while (i.hasNext()) { 
+			while (i.hasNext()) {
 				ServerThread t = i.next();
-				
-				//check if the serverthread lost its client
-				if(t.getDead()){
+
+				// check if the serverthread lost its client
+				if (t.getDead()) {
 					numClients--;
 					String name = clients.get(t).username;
 					t.shutdown();
@@ -175,21 +176,26 @@ public class Server implements Runnable {
 				}
 				Object o = t.actions.poll(); // get an action from the thread
 				Player p = clients.get(t);
-				if(p == null){
+				if (p == null) {
 					continue;
 				}
 				readyPlayers = readyPlayers + (p.ready ? 1 : 0);
 				if (o != null) {
 					Trace.getInstance().write(this, "Got an action from " + p.username);
-					actions.add(new ActionWrapper(o, p)); // create a new local action
+					actions.add(new ActionWrapper(o, p)); // create a new local
+															// action
 				}
 			}
 			numReady = readyPlayers;
 
 			if (!actions.isEmpty()) {
 				ActionWrapper a = actions.poll();
-				if(!evaluate(a)){
-					gameState.evaluate(a);
+				if (!evaluate(a)) {
+					if(gameState != null){
+						gameState.evaluate(a);
+					}else{
+						//a game command was received at a wrong time
+					}
 				}
 			}
 
@@ -199,9 +205,10 @@ public class Server implements Runnable {
 	private boolean evaluate(ActionWrapper action) {
 
 		if (action.object instanceof SetName) {
-			
-			if(!((SetName) action.object).isInit()){
-				String s = (action.origin.username + " changed name to \"" + ((SetName) action.object).getName()+"\"");
+
+			if (!((SetName) action.object).isInit()) {
+				String s = (action.origin.username + " changed name to \"" + ((SetName) action.object).getName()
+						+ "\"");
 				broadcast(s);
 			}
 			action.origin.setName(((SetName) action.object).getName());
@@ -219,8 +226,6 @@ public class Server implements Runnable {
 			action.origin.toggleReady();
 			return true;
 		}
-
-		System.out.println("Polled something else");
 		return false;
 	}
 
@@ -234,10 +239,10 @@ public class Server implements Runnable {
 		System.out.println(input);
 	}
 
-	//Start a game
+	// Start a game
 	public boolean startGame() {
 
-		if (numClients < Config.MIN_PLAYERS){
+		if (numClients < Config.MIN_PLAYERS) {
 			System.out.println("(" + numClients + "/" + Config.MIN_PLAYERS + ") players are needed to start a game.");
 			return false;
 		}
@@ -253,12 +258,12 @@ public class Server implements Runnable {
 		return true;
 	}
 
-	//Shutdown the server
+	// Shutdown the server
 	public boolean shutdown() {
 		Trace.getInstance().write(this, "Shutting down server, please wait  ...");
 		System.out.println("Shutting down server, please wait  ...");
-		
-		//Shutdown the network infrastructure
+
+		// Shutdown the network infrastructure
 		try {
 			// close each of the clients individually
 			for (ServerThread t : clients.keySet()) {
@@ -269,8 +274,8 @@ public class Server implements Runnable {
 			e.printStackTrace();
 			return false;
 		}
-		
-		//Stop all the threads
+
+		// Stop all the threads
 		stop = true;
 		thread = null;
 		searchThread.stop = true;
@@ -282,17 +287,27 @@ public class Server implements Runnable {
 	}
 
 	public boolean printHand(String name) {
+		Player p = fromString(name);
+		if (p == null) {
+			return false;
+		}
+		System.out.println("Hand:");
+		for (Card c : p.hand) {
+			System.out.println("  " + c.toString());
+		}
+
+		return true;
+	}
+
+	public Player fromString(String name) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if(clients.get(t).username.equals(name)){
-				
-	
-				return true;
+			if (clients.get(t).username.equals(name)) {
+				return clients.get(t);
 			}
 		}
 		System.out.println("Couldnt find player (" + name + ")");
-		return false;
-		
+		return null;
 	}
 }

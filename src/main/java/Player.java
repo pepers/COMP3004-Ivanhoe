@@ -13,6 +13,7 @@ public class Player {
 	public Player(String u){
 		username = u;
 		display = new ArrayList<Card>();
+		hand = new ArrayList<Card>();
 	}
 
 	public void setName(String u){
