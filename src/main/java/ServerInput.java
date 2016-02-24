@@ -26,14 +26,15 @@ public class ServerInput extends Thread{
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
-			
-			if (validCmd(input)) {               // process valid commands
-				processCmd(input);
-			} else if (input.charAt(0) == '/') { // process invalid commands
-				System.out.println("Server: invalid command");
-			} else {                             
-				//chat to all players
-				server.broadcast(input);
+			if(input.length() > 0){
+				if (validCmd(input)) {               // process valid commands
+					processCmd(input);
+				} else if (input.charAt(0) == '/') { // process invalid commands
+					System.out.println("Server: invalid command");
+				} else {                             
+					//chat to all players
+					server.broadcast(input);
+				}
 			}
 		}
 	}

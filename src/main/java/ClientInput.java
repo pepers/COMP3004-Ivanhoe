@@ -27,16 +27,17 @@ public class ClientInput extends Thread{
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
-			
-			if (validCmd(input)) {               // process valid commands
-				Trace.getInstance().write(this, "Client: valid command recieved");
-				processCmd(input);
-			} else if (input.charAt(0) == '/') { // process invalid commands
-				System.out.println("Client: invalid command");
-				Trace.getInstance().write(this, "invalid command: " + input);
-			} else {                             // process chat
-				action = new Chat(input);
-				client.send(action);
+			if(input.length() > 0){
+				if (validCmd(input)) {               // process valid commands
+					Trace.getInstance().write(this, "Client: valid command recieved");
+					processCmd(input);
+				} else if (input.charAt(0) == '/') { // process invalid commands
+					System.out.println("Client: invalid command");
+					Trace.getInstance().write(this, "invalid command: " + input);
+				} else {                             // process chat
+					action = new Chat(input);
+					client.send(action);
+				}
 			}
 		}
 	}
