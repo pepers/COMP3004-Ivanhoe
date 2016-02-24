@@ -42,34 +42,32 @@ public class Client implements Runnable {
 		action = new SetName(username, true);
 
 		// connect to Server
-		if (connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {
-			send(action); // send user's name to Server
+		while(true){
+			if (connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {
+				send(action); // send user's name to Server
+				
+				inputThread = new ClientInput(this, System.in);
+				inputThread.start();
+				// start new thread to receive from Server
+				receiveThread = new Thread(this);
+				receiveThread.start();
+				break;
+			}else{
+				System.out.println("Prompt for new address");
+				break;
+			}
 		}
-
-		// start new thread to receive from Server
-
-		inputThread = new ClientInput(this, System.in);
-		inputThread.start();
-		receiveThread = new Thread(this);
-		receiveThread.start();
+		
+		
 	}
 
 	public void run() {
 
-		while (!stop) { // while Client is running
-			/*
-			 * Random r = new Random(); String s = ""; for (int i = 0; i<5;
-			 * i++){ s += String.valueOf((char)(r.nextInt(27) + 64)); }
-			 * 
-			 * 
-			 * action = new Ready(); send(action); try { Thread.sleep(3000); }
-			 * catch (InterruptedException e) { // TODO Auto-generated catch
-			 * block e.printStackTrace(); }
-			 */
+		while (!stop) {
 
 			Object o = receive();
 			if(o != null){
-				System.out.println("recieved something");
+				evaluate(o);
 			}
 
 		}
@@ -149,6 +147,7 @@ public class Client implements Runnable {
 			Trace.getInstance().exception(this, cnf);
 		} catch (IOException ioe) {
 			System.out.println("Unexpected Exception: reading object from input stream");
+			stop = true;
 			Trace.getInstance().exception(this, ioe);
 		}
 
@@ -159,6 +158,9 @@ public class Client implements Runnable {
 		} else if (received instanceof DisplayCard) { // Display Card received
 			received = (DisplayCard) received;
 			Trace.getInstance().test(this, "DisplayCard object received");
+		} else if (received instanceof Chat){
+			received = (Chat) received;
+			Trace.getInstance().test(this, "Chat object received");
 		} else {
 			received = null; // unrecognized object received
 			Trace.getInstance().test(this, "unrecognized object received");
@@ -167,4 +169,14 @@ public class Client implements Runnable {
 		return received;
 	}
 
+	private boolean evaluate(Object action) {
+
+		if (action instanceof Chat) {
+			System.out.println(((Chat) action).getMessage());
+			return true;
+		}
+		
+		System.out.println("Polled something else");
+		return false;
+	}
 }

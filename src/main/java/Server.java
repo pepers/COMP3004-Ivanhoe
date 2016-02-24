@@ -166,10 +166,11 @@ public class Server implements Runnable {
 				
 				//check if the serverthread lost its client
 				if(t.getDead()){
-					System.out.println(clients.get(t).username + " disconnected.");
 					numClients--;
+					String name = clients.get(t).username;
 					t.shutdown();
 					clients.remove(t);
+					broadcast(name + " disconnected.");
 					continue;
 				}
 				Object o = t.actions.poll(); // get an action from the thread
@@ -200,21 +201,22 @@ public class Server implements Runnable {
 		if (action.object instanceof SetName) {
 			
 			if(!((SetName) action.object).isInit()){
-				System.out.println(action.origin.username + " changed name to \"" + ((SetName) action.object).getName()+"\"");
-			}else{
-				
+				String s = (action.origin.username + " changed name to \"" + ((SetName) action.object).getName()+"\"");
+				broadcast(s);
 			}
 			action.origin.setName(((SetName) action.object).getName());
 			return true;
 		}
 		if (action.object instanceof Chat) {
-			System.out.println(action.origin.username + ": " + ((Chat) action.object).getMessage());
+			String s = (action.origin.username + ": " + ((Chat) action.object).getMessage());
+			broadcast(s);
 			return true;
 		}
 
 		if (action.object instanceof Ready) {
+			String s = (action.origin.username + " is ready!");
+			broadcast(s);
 			action.origin.toggleReady();
-			System.out.println(action.origin.username + " is ready!");
 			return true;
 		}
 
@@ -229,6 +231,7 @@ public class Server implements Runnable {
 			ServerThread t = i.next();
 			t.send(new Chat(input));
 		}
+		System.out.println(input);
 	}
 
 	//Start a game
@@ -242,8 +245,8 @@ public class Server implements Runnable {
 			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
 			return false;
 		}
-		System.out.println("(" + numReady + "/" + numClients + ") players ready.");
-		System.out.println("Preparing to start a game...");
+		broadcast("(" + numReady + "/" + numClients + ") players ready.");
+		broadcast("Preparing to start a game...");
 		// we start a game here
 		gameState = new GameState(this);
 
@@ -276,5 +279,20 @@ public class Server implements Runnable {
 		inputThread = null;
 		System.out.println("Shutdown complete. Goodbye!");
 		return true;
+	}
+
+	public boolean printHand(String name) {
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			if(clients.get(t).username.equals(name)){
+				
+	
+				return true;
+			}
+		}
+		System.out.println("Couldnt find player (" + name + ")");
+		return false;
+		
 	}
 }

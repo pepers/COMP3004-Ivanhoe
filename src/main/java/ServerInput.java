@@ -33,7 +33,7 @@ public class ServerInput extends Thread{
 					System.out.println("Server: invalid command");
 				} else {                             
 					//chat to all players
-					server.broadcast(input);
+					server.broadcast("Server: " + input);
 				}
 			}
 		}
@@ -62,7 +62,6 @@ public class ServerInput extends Thread{
 			return true;
 		}
 		if(s.length()> 5 && s.substring(0, 6).equals("/kick ")){
-			
 			String sub = s.substring(6);
 			if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
 				int toRemove = Integer.parseInt(sub);
@@ -72,15 +71,18 @@ public class ServerInput extends Thread{
 				server.removeThread(sub);
 				return true;
 			}
-			
 		}
 		if(s.equals("/shutdown")){
 			server.shutdown();
 			return true;
 		}
-		
 		if(s.equals("/list")){
 			server.listClients();
+			return true;
+		}
+		if(s.length()> 5 && s.substring(0, 6).equals("/hand ")){
+			String sub = s.substring(6);
+			server.printHand(sub);
 			return true;
 		}
 		return false;
