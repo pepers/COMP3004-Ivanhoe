@@ -7,6 +7,8 @@ public class Config {
 	public static int MIN_PLAYERS = 3;
 	
 	// possible commands:
-	public enum ClientCommand { setname, ready, draw }
-	public enum ServerCommand { kick, start, shutdown, list}
+	public enum ClientCommand { setname, ready, draw, help, shutdown, play, withdraw, list, hand, display }
+	public enum ServerCommand { kick, start, shutdown, list, help, end, max, min, port, 
+								give, ban, pardon, hand, display }
+	
 }

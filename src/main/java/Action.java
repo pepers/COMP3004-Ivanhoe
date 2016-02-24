@@ -23,10 +23,21 @@ class SetName implements Action {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;  // user's name
+	private boolean init = false;
 	
 	public SetName(String name) {
 		this.name = name;
 		Trace.getInstance().test(this, "new name: " + this.name);
+	}
+	
+	public SetName(String name, boolean init) {
+		this.name = name;
+		this.init = init;
+		Trace.getInstance().test(this, "new name: " + this.name);
+	}
+	
+	public boolean isInit(){
+		return init;
 	}
 	
 	public String getName() {

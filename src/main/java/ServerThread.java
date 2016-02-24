@@ -64,7 +64,7 @@ public class ServerThread extends Thread{
 		}
 	}
 
-	private Object receive(){
+	public Object receive(){
 		try {
 			return(input.readObject());
 			

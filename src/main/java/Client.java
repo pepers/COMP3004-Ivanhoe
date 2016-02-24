@@ -39,7 +39,7 @@ public class Client implements Runnable {
 
 		// get user's name
 		String username = userInput("What is thy name?: ");
-		action = new SetName(username);
+		action = new SetName(username, true);
 
 		// connect to Server
 		if (connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT)) {

@@ -18,7 +18,8 @@ public class Server implements Runnable {
 	Thread thread; // main thread for the server
 	ServerInput inputThread; // thread that handles console input (commands)
 	SearchThread searchThread; // thread that searches for new players
-
+	GameEngine gameEngine;
+		
 	ServerSocket serverSocket; // primary network socket
 	int port; // server port
 	int numClients; // number of clients
@@ -86,10 +87,12 @@ public class Server implements Runnable {
 		if (numClients < Config.MAX_PLAYERS) {
 			//Create a new thread
 			serverThread = new ServerThread(this, socket);
+			SetName name = ((SetName) serverThread.receive());
 			serverThread.start();
-			
 			//Create a player object
-			clients.put(serverThread, new Player("Knight " + serverThread.getID()));
+			
+			
+			clients.put(serverThread, new Player(name.getName()));
 			numClients++;
 		} else {
 			Trace.getInstance().write(this, "Client Tried to connect:" + socket.getLocalSocketAddress());
@@ -192,8 +195,12 @@ public class Server implements Runnable {
 	private boolean evaluate(ActionWrapper action) {
 
 		if (action.object instanceof SetName) {
-			System.out.println(
-					clients.get(action.origin).username + " changed name to \"" + ((SetName) action.object).getName()+"\"");
+			
+			if(!((SetName) action.object).isInit()){
+				System.out.println(clients.get(action.origin).username + " changed name to \"" + ((SetName) action.object).getName()+"\"");
+			}else{
+				
+			}
 			clients.get(action.origin).setName(((SetName) action.object).getName());
 			return true;
 		}
@@ -235,6 +242,8 @@ public class Server implements Runnable {
 		System.out.println("(" + numReady + "/" + numClients + ") players ready.");
 		System.out.println("Preparing to start a game...");
 		// we start a game here
+		gameEngine = new GameEngine(this);
+		gameEngine.start();
 		return true;
 	}
 
