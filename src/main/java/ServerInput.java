@@ -12,7 +12,7 @@ public class ServerInput extends Thread{
 	BufferedReader reader; 					  // reader from the user
 	String input;                             // user input
 	Server server;                                 // server class
-	ClientAction action;                      // client's action to take
+	Action action;                      // client's action to take
 	
 	public ServerInput (Server server, InputStream s) {
 		this.server = server;

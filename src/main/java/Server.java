@@ -27,13 +27,13 @@ public class Server implements Runnable {
 														// to player objects
 
 	boolean stop = false; // stops the main thread
-	public Queue<Action> actions; // server actions to operate upon
+	public Queue<ActionWrapper> actions; // server actions to operate upon
 
 	// Constructor
 	public Server(int port) {
 		this.port = port;
 		clients = new ConcurrentHashMap<ServerThread, Player>();
-		actions = new LinkedList<Action>();
+		actions = new LinkedList<ActionWrapper>();
 	}
 
 	public static void main(String[] args) {
@@ -177,7 +177,7 @@ public class Server implements Runnable {
 				readyPlayers = readyPlayers + (p.ready ? 1 : 0);
 				if (o != null) {
 					Trace.getInstance().write(this, "Got an action from " + p.username);
-					actions.add(new Action(o, t)); // create a new local action
+					actions.add(new ActionWrapper(o, t)); // create a new local action
 				}
 			}
 			numReady = readyPlayers;
@@ -189,7 +189,7 @@ public class Server implements Runnable {
 		}
 	}
 
-	private boolean evaluate(Action action) {
+	private boolean evaluate(ActionWrapper action) {
 
 		if (action.object instanceof SetName) {
 			System.out.println(

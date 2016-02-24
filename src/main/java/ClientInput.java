@@ -13,7 +13,7 @@ public class ClientInput extends Thread{
 	BufferedReader reader; 					  // reader from the user
 	String input;                             // user input
 	Client client;                                 // client class
-	ClientAction action;                      // client's action to take
+	Action action;                      // client's action to take
 	
 	public ClientInput (Client client, InputStream s) {
 		this.client = client;

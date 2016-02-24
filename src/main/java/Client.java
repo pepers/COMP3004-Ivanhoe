@@ -13,7 +13,7 @@ public class Client implements Runnable {
 	Thread receiveThread; // Client thread to receive from Server
 	ClientInput inputThread;
 	Boolean stop = false; // use to stop the Client
-	ClientAction action; // client's action
+	Action action; // client's action
 	private Socket socket = null; // socket to connect to Server
 	ObjectOutputStream clientOutputStream; // send objects to Server
 	ObjectInputStream clientInputStream; // receive objects from Server
