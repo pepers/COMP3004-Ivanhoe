@@ -8,7 +8,7 @@ public class Player {
 	int handSize, displayScore;
 	ArrayList<Card> display;
 	ArrayList<Card> hand;
-	boolean ready = false; 
+	int ready = 0; 
 	
 	public Player(String u){
 		username = u;
@@ -21,7 +21,8 @@ public class Player {
 	}
 
 	public void toggleReady() {
-		ready = !ready;
+		if(ready == 0){ready = 1;}else
+		if(ready == 1){ready = 0;}
 	}
 	public int addHand(Card c){
 		hand.add(c);

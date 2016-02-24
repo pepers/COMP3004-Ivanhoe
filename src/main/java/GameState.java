@@ -18,11 +18,12 @@ public class GameState{
 		Iterator<ServerThread> i = s.clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if(s.clients.get(t).ready){
+			if(s.clients.get(t).ready == 2){
 				players.add(s.clients.get(t));
 			}
 		}
 		
+		server = s;
 		numPlayers = players.size();
 		deck = new Deck();
 		deck.initialize();
@@ -30,10 +31,10 @@ public class GameState{
 	
 	public boolean evaluate(ActionWrapper action){
 		if (action.object instanceof DrawCard) {
-			action.origin.addHand(deck.draw());
+			int n = action.origin.addHand(deck.draw());
+			server.broadcast(action.origin.username + " draws a card. (" + n + ")");
 			return true;
 		}
-		System.out.println("Game got something else");
 		return false;
 	}
 }

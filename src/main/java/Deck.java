@@ -45,6 +45,8 @@ public class Deck {
 		
 		//Maidens
 		add(new DisplayCard(6, DisplayCard.Colour.none), 4);
+		
+		shuffle();
 		return deck.size();
 	}
 	

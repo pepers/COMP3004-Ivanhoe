@@ -151,8 +151,11 @@ public class Server implements Runnable {
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			Player p = clients.get(t);
-			System.out.printf(" %-3s %-20s %-8s %s\n", t.getID(), p.username, (p.ready ? "ready" : "waiting"),
-					t.getNetwork());
+			String state = "wierdState";
+			if(p.ready == 0){state = "waiting";}
+			if(p.ready == 1){state = "ready";}
+			if(p.ready == 2){state = "in game";}
+			System.out.printf(" %-3s %-20s %-8s %s\n", t.getID(), p.username, state, t.getNetwork());
 		}
 	}
 
@@ -179,7 +182,7 @@ public class Server implements Runnable {
 				if (p == null) {
 					continue;
 				}
-				readyPlayers = readyPlayers + (p.ready ? 1 : 0);
+				readyPlayers = readyPlayers + (p.ready == 1 ? 1 : 0);
 				if (o != null) {
 					Trace.getInstance().write(this, "Got an action from " + p.username);
 					actions.add(new ActionWrapper(o, p)); // create a new local
@@ -252,6 +255,15 @@ public class Server implements Runnable {
 		}
 		broadcast("(" + numReady + "/" + numClients + ") players ready.");
 		broadcast("Preparing to start a game...");
+		
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			if(clients.get(t).ready == 1){
+				clients.get(t).ready = 2;
+			}
+		}
+		
 		// we start a game here
 		gameState = new GameState(this);
 
