@@ -59,9 +59,7 @@ public class ServerThread extends Thread{
 		
 			Object o = receive();
 			if(o != null){
-				actions.add(receive());
-			}else if(o instanceof SocketException){
-				
+				actions.add(o);
 			}
 		}
 	}
@@ -75,7 +73,6 @@ public class ServerThread extends Thread{
 			e.printStackTrace();
 		} catch (SocketException e){
 			stop = true;
-			return e;
 		} catch (IOException e) {
 			stop = true;
 			e.printStackTrace();
