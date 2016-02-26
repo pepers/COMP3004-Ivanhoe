@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import main.resources.Config;
+import main.resources.Language;
 import main.resources.Trace;
 
 public class Server implements Runnable {
@@ -29,6 +30,7 @@ public class Server implements Runnable {
 
 	boolean stop = false; // stops the main thread
 	public Queue<ActionWrapper> actions; // server actions to operate upon
+	Language language = new Language(Language.Dialect.none);  // to translate chat
 
 	// Constructor
 	public Server(int port) {
@@ -218,7 +220,8 @@ public class Server implements Runnable {
 			return true;
 		}
 		if (action.object instanceof Chat) {
-			String s = (action.origin.username + ": " + ((Chat) action.object).getMessage());
+			String translated = language.translate(((Chat) action.object).getMessage());
+			String s = (action.origin.username + ": " + translated);
 			broadcast(s);
 			return true;
 		}

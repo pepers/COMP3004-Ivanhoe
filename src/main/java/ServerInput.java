@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+
 import main.resources.Config;
+import main.resources.Language;
 
 public class ServerInput extends Thread{
 
@@ -57,33 +60,44 @@ public class ServerInput extends Thread{
 	}
 	
 	public boolean processCmd(String s){
-		if(s.equals("/start")){
-			server.startGame();
-			return true;
-		}
-		if(s.length()> 5 && s.substring(0, 6).equals("/kick ")){
-			String sub = s.substring(6);
-			if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
-				int toRemove = Integer.parseInt(sub);
-				server.removeThread(toRemove);
+		// get argument line
+		String[] cmd = s.split("\\s+");                         // array of command + arguments
+		String[] args = Arrays.copyOfRange(cmd, 1, cmd.length); // just arguments
+		String sub = String.join(" ", args);                    // join arguments into one string
+		
+		// switch over command 
+		switch (cmd[0]) {
+			case "/start":
+				server.startGame();
 				return true;
-			}else{
-				server.removeThread(sub);
+			case "/kick":
+				if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
+					int toRemove = Integer.parseInt(sub);
+					server.removeThread(toRemove);
+					return true;
+				} else {
+					server.removeThread(sub);
+					return true;
+				}
+			case "/shutdown":
+				server.shutdown();
 				return true;
-			}
-		}
-		if(s.equals("/shutdown")){
-			server.shutdown();
-			return true;
-		}
-		if(s.equals("/list")){
-			server.listClients();
-			return true;
-		}
-		if(s.length()> 5 && s.substring(0, 6).equals("/hand ")){
-			String sub = s.substring(6);
-			server.printHand(sub);
-			return true;
+			case "/list":
+				server.listClients();
+				return true;
+			case "/hand":
+				server.printHand(sub);
+				return true;
+			case "/translate":
+				if (args.length != 1) { return false; }
+				for (Language.Dialect dialect: Language.Dialect.values()) {
+					if (dialect.toString() == args[0]) {
+						server.language = new Language(dialect);
+					}
+				}
+				break;
+			default:
+				break;
 		}
 		return false;
 	}

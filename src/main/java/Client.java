@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.Scanner;
 
 import main.resources.Config;
+import main.resources.Language;
 import main.resources.Trace;
 
 public class Client implements Runnable {
@@ -17,6 +18,7 @@ public class Client implements Runnable {
 	ObjectOutputStream clientOutputStream; // send objects to Server
 	ObjectInputStream clientInputStream;   // receive objects from Server
 	Scanner userInput = null;              // scanner to get user input
+	Language language;                     // to translate chat
 
 	public static void main(String args[]) {
 		Client client = new Client(); // client object
@@ -36,6 +38,9 @@ public class Client implements Runnable {
 		System.out.println(" _| |\\ V / (_| | | | | | | | (_) |  __/");
 		System.out.println("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
 		System.out.println("\nClient: Welcome brave knight!");
+		
+		// set up language to translate chat
+		language = new Language(Language.Dialect.none);
 		
 		// get user's name
 		String username = userInput("What is thy name?: ");
@@ -249,6 +254,7 @@ public class Client implements Runnable {
 		} else if (received instanceof Chat){
 			received = (Chat) received;
 			Trace.getInstance().test(this, "Chat object received");
+			System.out.println(language.translate(((Chat) received).getMessage()));
 		// unrecognized object
 		} else {
 			received = null; 

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import main.resources.Config;
+import main.resources.Language;
 import main.resources.Trace;
 
 public class ClientInput extends Thread{
@@ -14,10 +15,14 @@ public class ClientInput extends Thread{
 	String input;          // user input
 	Client client;         // client class
 	Action action;         // client's action to take
+	Language language;     // to translate chat
 	
 	public ClientInput (Client client, InputStream s) {
 		this.client = client;
 		reader = new BufferedReader(new InputStreamReader(s));
+		
+		// set up language to translate chat
+		language = new Language(Language.Dialect.none);
 	}
 	
 	public void run () {
@@ -35,7 +40,7 @@ public class ClientInput extends Thread{
 					System.out.println("Client: invalid command");
 					Trace.getInstance().write(this, "invalid command: " + input);
 				} else {                             // process chat
-					action = new Chat(input);
+					action = new Chat(language.translate(input)); 
 					client.send(action);
 				}
 			}
