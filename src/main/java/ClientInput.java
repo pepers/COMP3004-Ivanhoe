@@ -9,11 +9,11 @@ import main.resources.Trace;
 
 public class ClientInput extends Thread{
 
-	Boolean stop = false;					  // use to stop the Client
-	BufferedReader reader; 					  // reader from the user
-	String input;                             // user input
-	Client client;                                 // client class
-	Action action;                      // client's action to take
+	Boolean stop = false;  // use to stop the Client
+	BufferedReader reader; // reader from the user
+	String input;          // user input
+	Client client;         // client class
+	Action action;         // client's action to take
 	
 	public ClientInput (Client client, InputStream s) {
 		this.client = client;
@@ -23,7 +23,7 @@ public class ClientInput extends Thread{
 	public void run () {
 		while(!stop) {
 			try {
-				input = reader.readLine();       // get next line of input
+				input = reader.readLine(); // get next line of input
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
@@ -40,6 +40,15 @@ public class ClientInput extends Thread{
 				}
 			}
 		}
+	}
+	
+	/*
+	 * shut down Client
+	 */
+	private boolean shutdown() {
+		stop = true;
+		client.shutdown();
+		return true;
 	}
 	
 	/*
@@ -62,20 +71,24 @@ public class ClientInput extends Thread{
 	public boolean processCmd (String s){
 		//sends the server an appropriate command based on the input
 		
-		if(s.equals("/ready")){
+		if (s.equals("/ready")) {
 			action = new Ready();
 			client.send(action);
 			return true;
 		}
-		if(s.equals("/draw")){
+		if (s.equals("/draw")) {
 			action = new DrawCard();
 			client.send(action);
 			return true;
 		}
-		if(s.length() > 8 && s.substring(0, 9).equals("/setname ")){
+		if (s.length() > 8 && s.substring(0, 9).equals("/setname ")) {
 			String name = s.substring(9);
 			action = new SetName(name);
 			client.send(action);
+			return true;
+		}
+		if (s.equals("/shutdown")) {
+			shutdown();
 			return true;
 		}
 		Trace.getInstance().write(this, "Command sending error - " + s);

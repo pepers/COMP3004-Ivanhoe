@@ -2,7 +2,6 @@ package main.java;
 
 import java.io.*;
 import java.net.*;
-import java.util.Random;
 import java.util.Scanner;
 
 import main.resources.Config;
@@ -10,13 +9,14 @@ import main.resources.Trace;
 
 public class Client implements Runnable {
 
-	Thread receiveThread; // Client thread to receive from Server
-	ClientInput inputThread;
-	Boolean stop = false; // use to stop the Client
-	Action action; // client's action
-	private Socket socket = null; // socket to connect to Server
+	Thread receiveThread;                  // Client thread to receive from Server
+	ClientInput inputThread = null;        // thread to input Client commands
+	Boolean stop = false;                  // use to stop the Client
+	Action action;                         // client's action
+	private Socket socket = null;          // socket to connect to Server
 	ObjectOutputStream clientOutputStream; // send objects to Server
-	ObjectInputStream clientInputStream; // receive objects from Server
+	ObjectInputStream clientInputStream;   // receive objects from Server
+	Scanner userInput = null;              // scanner to get user input
 
 	public static void main(String args[]) {
 		Client client = new Client(); // client object
@@ -45,7 +45,7 @@ public class Client implements Runnable {
 		while(true){
 			// get the Server's inet address
 			String address = userInput("Where are the tournaments to be held? (enter nothing for default InetAddress): ");
-			if (address == "") {
+			if (address.isEmpty()) {
 				address = Config.DEFAULT_HOST;
 			}
 			
@@ -53,8 +53,9 @@ public class Client implements Runnable {
 			int port;
 			while (true) {
 				String portStr = userInput("At which arena? (enter nothing for default Port): ");
-				if (portStr == "") {
+				if (portStr.isEmpty()) {
 					port = Config.DEFAULT_PORT;
+					break;
 				} else {
 					try {
 						port = Integer.parseInt(portStr);
@@ -86,7 +87,7 @@ public class Client implements Runnable {
 					if (ui.equalsIgnoreCase("y")) {
 						break;
 					} else if (ui.equalsIgnoreCase("n")) {
-						System.exit(0); // TODO: make shutdown method
+						shutdown(); // shut down client
 					} else {
 						System.out.println("That is not an option, my good knight!");
 					}
@@ -95,16 +96,67 @@ public class Client implements Runnable {
 		}		
 		
 	}
-
-	public void run() {
-
-		while (!stop) {
-
-			Object o = receive();
-			if(o != null){
-				evaluate(o);
+	
+	/*
+	 * shut down Client
+	 */
+	public boolean shutdown() {
+		Trace.getInstance().write(this, "Client shutting down...");
+		System.out.println("\nClient: Shutting down...");
+		
+		// close threads
+		stop = true;
+		receiveThread = null;
+		if (inputThread != null) {
+			inputThread.stop = true;
+			inputThread = null;
+		}
+		
+		// close scanner
+		if (userInput != null) {
+			userInput.close();
+		}
+		
+		// close socket
+		if (socket != null) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				Trace.getInstance().exception(this, e);
+				return false;
 			}
+		}
+		
+		// close socket streams
+		if (clientInputStream != null) {
+			try {
+				clientInputStream.close();
+			} catch (IOException e) {
+				Trace.getInstance().exception(this, e);
+				return false;
+			}
+		}
+		if (clientOutputStream != null) {
+			try {
+				clientOutputStream.close();
+			} catch (IOException e) {
+				Trace.getInstance().exception(this, e);
+				return false;
+			}
+		}
+		
+		
+		Trace.getInstance().write(this, "Client shut down, successfully.");
+		return true;
+	}
 
+	/*
+	 * continue receiving from Server
+	 */
+	public void run() {
+		// while Client is running, keep connection with Server
+		while (!stop) {
+			Object o = receive();
 		}
 	}
 
@@ -112,9 +164,9 @@ public class Client implements Runnable {
 	 * get user input from console
 	 */
 	public String userInput(String message) {
-		Scanner user_input = new Scanner(System.in);
+		userInput = new Scanner(System.in);
 		System.out.println(message);
-		String input = user_input.nextLine();
+		String input = userInput.nextLine();
 		Trace.getInstance().write(this, message + input);
 		return input;
 	}
@@ -172,46 +224,38 @@ public class Client implements Runnable {
 			received = clientInputStream.readObject();
 		} catch (SocketException se) {
 				System.out.println("Server was closed.");
-				stop = true;
-				receiveThread = null;
-				inputThread.stop = true;
-				inputThread = null;		
 				Trace.getInstance().exception(this, se);
+				shutdown();		
 		} catch (ClassNotFoundException cnf) {
 			System.out.println("Class Not Found Exception: reading object from input stream");
 			Trace.getInstance().exception(this, cnf);
+			shutdown();
 		} catch (IOException ioe) {
 			System.out.println("Unexpected Exception: reading object from input stream");
-			stop = true;
 			Trace.getInstance().exception(this, ioe);
+			shutdown();
 		}
 
 		// TODO: determine type of object received
-		if (received instanceof ActionCard) { // Action Card received
+		// ActionCard
+		if (received instanceof ActionCard) { 
 			received = (ActionCard) received;
 			Trace.getInstance().test(this, "ActionCard object received");
-		} else if (received instanceof DisplayCard) { // Display Card received
+		// DisplayCard
+		} else if (received instanceof DisplayCard) { 
 			received = (DisplayCard) received;
 			Trace.getInstance().test(this, "DisplayCard object received");
+		// Chat 
 		} else if (received instanceof Chat){
 			received = (Chat) received;
 			Trace.getInstance().test(this, "Chat object received");
+		// unrecognized object
 		} else {
-			received = null; // unrecognized object received
+			received = null; 
 			Trace.getInstance().test(this, "unrecognized object received");
 		}
 
 		return received;
 	}
 
-	private boolean evaluate(Object action) {
-
-		if (action instanceof Chat) {
-			System.out.println(((Chat) action).getMessage());
-			return true;
-		}
-		
-		System.out.println("Polled something else");
-		return false;
-	}
 }
