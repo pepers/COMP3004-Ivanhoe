@@ -254,7 +254,8 @@ public class Client implements Runnable {
 		} else if (received instanceof Chat){
 			received = (Chat) received;
 			Trace.getInstance().test(this, "Chat object received");
-			System.out.println(language.translate(((Chat) received).getMessage()));
+			String message = ((Chat) received).getMessage();
+			System.out.println(language.translate(message));
 		// unrecognized object
 		} else {
 			received = null; 

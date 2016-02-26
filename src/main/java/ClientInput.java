@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+
 import main.resources.Config;
 import main.resources.Language;
 import main.resources.Trace;
@@ -40,7 +42,8 @@ public class ClientInput extends Thread{
 					System.out.println("Client: invalid command");
 					Trace.getInstance().write(this, "invalid command: " + input);
 				} else {                             // process chat
-					action = new Chat(language.translate(input)); 
+					String translated = language.translate(input);
+					action = new Chat(translated); 
 					client.send(action);
 				}
 			}
@@ -74,29 +77,41 @@ public class ClientInput extends Thread{
 	}
 	
 	public boolean processCmd (String s){
-		//sends the server an appropriate command based on the input
+		// get argument line
+		String[] cmd = s.split("\\s+");                         // array of command + arguments
+		String[] args = Arrays.copyOfRange(cmd, 1, cmd.length); // just arguments
+		String sub = String.join(" ", args);                    // join arguments into one string
 		
-		if (s.equals("/ready")) {
-			action = new Ready();
-			client.send(action);
-			return true;
+		// switch over command 
+		switch (cmd[0]) {
+			case "/draw":
+				action = new DrawCard();
+				client.send(action);
+				return true;
+			case "/ready":
+				action = new Ready();
+				client.send(action);
+				return true;
+			case "/setname":
+				action = new SetName(sub);
+				client.send(action);
+				return true;
+			case "/shutdown":
+				shutdown();
+				return true;
+			case "/translate":
+				if (args.length != 1) { return false; }
+				for (Language.Dialect dialect: Language.Dialect.values()) {
+					if (dialect.toString().equals(args[0])) {
+						client.language = new Language(dialect);
+						language = new Language(dialect);
+						Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString());
+					}
+				}
+				break;
+			default:
+				break;
 		}
-		if (s.equals("/draw")) {
-			action = new DrawCard();
-			client.send(action);
-			return true;
-		}
-		if (s.length() > 8 && s.substring(0, 9).equals("/setname ")) {
-			String name = s.substring(9);
-			action = new SetName(name);
-			client.send(action);
-			return true;
-		}
-		if (s.equals("/shutdown")) {
-			shutdown();
-			return true;
-		}
-		Trace.getInstance().write(this, "Command sending error - " + s);
 		return false;
 	}
 	

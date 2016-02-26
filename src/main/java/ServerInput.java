@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import main.resources.Config;
 import main.resources.Language;
+import main.resources.Trace;
 
 public class ServerInput extends Thread{
 
@@ -16,6 +17,7 @@ public class ServerInput extends Thread{
 	String input;                             // user input
 	Server server;                                 // server class
 	Action action;                      // client's action to take
+	Language language = new Language(Language.Dialect.none);
 	
 	public ServerInput (Server server, InputStream s) {
 		this.server = server;
@@ -36,7 +38,7 @@ public class ServerInput extends Thread{
 					System.out.println("Server: invalid command");
 				} else {                             
 					//chat to all players
-					server.broadcast("Server: " + input);
+					server.broadcast("Server: " + language.translate(input));
 				}
 			}
 		}
@@ -91,8 +93,10 @@ public class ServerInput extends Thread{
 			case "/translate":
 				if (args.length != 1) { return false; }
 				for (Language.Dialect dialect: Language.Dialect.values()) {
-					if (dialect.toString() == args[0]) {
+					if (dialect.toString().equals(args[0])) {
 						server.language = new Language(dialect);
+						language = new Language(dialect);
+						Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString());
 					}
 				}
 				break;

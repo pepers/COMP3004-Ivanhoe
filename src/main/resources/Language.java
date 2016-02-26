@@ -24,7 +24,7 @@ public class Language {
 		switch (dialect) {
 			case oldEnglish: oldEnglish();
 				break;
-			case none: default: dictionary.put("default", "default");
+			case none: default:
 				break;	
 		}
 	}
@@ -42,11 +42,16 @@ public class Language {
 	public String translate (String input) {
 		String result = input; // translated string to return
 		
+		if (dialect.equals(Language.Dialect.none)) {
+			return input;
+		}
+		
 		// translate each word 
 		for (Map.Entry<String, String> entry : dictionary.entrySet()) {
 			String key = entry.getKey();
 			// "\\b" is a word boundary, so we don't replace only parts of words
-			result = result.replaceAll("\\b" + key + "\\b", entry.getValue());
+			String newResult = result.replaceAll("\\b" + key + "\\b", entry.getValue());
+			result = newResult;
 		}
 		return result;
 	}
