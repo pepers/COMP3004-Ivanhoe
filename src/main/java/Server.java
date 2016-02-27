@@ -22,6 +22,8 @@ public class Server implements Runnable {
 	GameState gameState;
 
 	ServerSocket serverSocket; // primary network socket
+	int minPlayers = Config.MIN_PLAYERS;
+	int maxPlayers = Config.MAX_PLAYERS;
 	int port; // server port
 	int numClients; // number of clients
 	int numReady; // number of ready player
@@ -86,7 +88,7 @@ public class Server implements Runnable {
 		Trace.getInstance().write(this, "Client Requesting connection: " + socket.getPort());
 		ServerThread serverThread;
 
-		if (numClients < Config.MAX_PLAYERS) {
+		if (numClients < maxPlayers) {
 			// Create a new thread
 			serverThread = new ServerThread(this, socket);
 			SetName name = ((SetName) serverThread.receive());
@@ -232,6 +234,12 @@ public class Server implements Runnable {
 			action.origin.toggleReady();
 			return true;
 		}
+		
+		if (action.object instanceof Play) {
+			String s = (action.origin.username + " plays a " + action.object.toString());
+			broadcast(s);
+			return true;
+		}
 		return false;
 	}
 
@@ -244,15 +252,15 @@ public class Server implements Runnable {
 		}
 		System.out.println(input);
 	}
-
+	
 	// Start a game
 	public boolean startGame() {
 
-		if (numClients < Config.MIN_PLAYERS) {
-			System.out.println("(" + numClients + "/" + Config.MIN_PLAYERS + ") players are needed to start a game.");
+		if (numClients < minPlayers) {
+			System.out.println("(" + numClients + "/" + minPlayers + ") players are needed to start a game.");
 			return false;
 		}
-		if (numReady < Config.MIN_PLAYERS) {
+		if (numReady < minPlayers) {
 			System.out.println("(" + numReady + "/" + numClients + ") players ready.");
 			return false;
 		}
@@ -273,6 +281,14 @@ public class Server implements Runnable {
 		return true;
 	}
 
+	// Update each client with a new gameState
+	public void updateGameStates(){
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			t.update(gameState, clients.get(t));
+		}
+	}
 	// Shutdown the server
 	public boolean shutdown() {
 		Trace.getInstance().write(this, "Shutting down server, please wait  ...");
@@ -324,5 +340,14 @@ public class Server implements Runnable {
 		}
 		System.out.println("Couldnt find player (" + name + ")");
 		return null;
+	}
+	
+	public void setMinPlayers(int n){
+		minPlayers = n;
+		System.out.println("New MINIMUM players is " + n);
+	}
+	public void setMaxPlayers(int n){
+		maxPlayers = n;
+		System.out.println("New MAXIMUM players is " + n);
 	}
 }

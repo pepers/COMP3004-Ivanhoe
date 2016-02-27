@@ -19,7 +19,10 @@ public class Client implements Runnable {
 	ObjectInputStream clientInputStream;   // receive objects from Server
 	Scanner userInput = null;              // scanner to get user input
 	Language language;                     // to translate chat
-
+	
+	GameState game;		   				   // the local copy of the gamestate
+	Player player;		   				   // the local copy of this client's player
+	
 	public static void main(String args[]) {
 		Client client = new Client(); // client object
 		client.startUp();
@@ -242,8 +245,16 @@ public class Client implements Runnable {
 		}
 
 		// TODO: determine type of object received
+		// Player
+		if (received instanceof Player) { 
+			Trace.getInstance().test(this, "Player object received");
+			player = (Player) received;
+		// GameState
+		}else if (received instanceof GameState) { 
+			Trace.getInstance().test(this, "GameState object received");
+			game = (GameState) received;
 		// ActionCard
-		if (received instanceof ActionCard) { 
+		} else if (received instanceof ActionCard) { 
 			received = (ActionCard) received;
 			Trace.getInstance().test(this, "ActionCard object received");
 		// DisplayCard

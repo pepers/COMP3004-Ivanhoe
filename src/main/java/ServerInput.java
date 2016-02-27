@@ -72,6 +72,12 @@ public class ServerInput extends Thread{
 			case "/start":
 				server.startGame();
 				return true;
+			case "/min":
+				server.setMinPlayers(Integer.parseInt(sub));
+				return true;
+			case "/max":
+				server.setMaxPlayers(Integer.parseInt(sub));
+				return true;
 			case "/kick":
 				if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
 					int toRemove = Integer.parseInt(sub);

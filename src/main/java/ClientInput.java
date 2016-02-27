@@ -84,6 +84,16 @@ public class ClientInput extends Thread{
 		
 		// switch over command 
 		switch (cmd[0]) {
+			case "/play":
+				System.out.println(sub);
+				Card c = client.player.getCard(sub);
+				if(c == null){
+					System.out.println("You don't have that card.");
+					return false;
+				}
+				action = new Play(c);
+				client.send(action);
+				return true;
 			case "/draw":
 				action = new DrawCard();
 				client.send(action);

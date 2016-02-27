@@ -29,5 +29,14 @@ public class Player {
 		hand.add(c);
 		return hand.size();
 	}
+
+	public Card getCard(String sub) {
+		for (Card c : hand){
+			if(c.toString().equals(sub)){
+				return c;
+			}
+		}
+		return null;
+	}
 	
 }

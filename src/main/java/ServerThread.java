@@ -102,4 +102,15 @@ public class ServerThread extends Thread{
 	public boolean getDead(){
 		return stop;
 	}
+
+	public boolean update(GameState gameState, Player player) {
+		try {
+			output.writeObject(gameState);
+			output.writeObject(player);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 }
