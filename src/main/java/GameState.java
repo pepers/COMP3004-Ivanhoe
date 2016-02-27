@@ -1,9 +1,13 @@
 package main.java;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class GameState{
+public class GameState implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+
 	Server server = null;
 	
 	//Game stuff

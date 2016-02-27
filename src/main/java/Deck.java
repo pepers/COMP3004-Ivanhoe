@@ -1,9 +1,12 @@
 package main.java;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Deck {
+public class Deck implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 	private ArrayList<Card> deck;
 	private ArrayList<Card> discard;
 	

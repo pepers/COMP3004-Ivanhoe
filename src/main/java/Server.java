@@ -1,6 +1,7 @@
 package main.java;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,8 +14,9 @@ import main.resources.Config;
 import main.resources.Language;
 import main.resources.Trace;
 
-public class Server implements Runnable {
+public class Server implements Runnable, Serializable{
 
+	private static final long serialVersionUID = 1L;
 	// Threads
 	Thread thread; // main thread for the server
 	ServerInput inputThread; // thread that handles console input (commands)
@@ -204,6 +206,7 @@ public class Server implements Runnable {
 						//a game command was received at a wrong time
 					}
 				}
+				updateGameStates();
 			}
 
 		}
