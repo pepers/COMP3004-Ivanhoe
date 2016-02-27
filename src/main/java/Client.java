@@ -271,20 +271,6 @@ public class Client implements Runnable {
 			game = (GameState) o;
 			Trace.getInstance().write(this, player.username + ": game state has been updated");
 			return true;
-		
-		// Deck
-		} else if (o instanceof Deck) { 
-			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
-			game.deck = (Deck) o;
-			Trace.getInstance().write(this, player.username + ": deck has been updated");
-			return true;
-		
-		// Tournament
-		} else if (o instanceof Tournament) { 
-			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
-			game.tnmt = (Tournament) o;
-			Trace.getInstance().write(this, player.username + ": tournament has been updated");
-			return true;
 			
 		// ActionCard
 		} else if (o instanceof ActionCard) { 
