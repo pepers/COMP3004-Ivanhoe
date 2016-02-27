@@ -33,12 +33,19 @@ public class ServerInput extends Thread{
 			} 
 			if(input.length() > 0){
 				if (validCmd(input)) {               // process valid commands
-					processCmd(input);
+					if (processCmd(input)) {
+						Trace.getInstance().write(this, "Server: command processed: " + input);
+					} else {
+						Trace.getInstance().write(this, "Server: invalid command: " + input);
+						System.out.println("Server: invalid command, try typing '/help' for more info.");
+					}
 				} else if (input.charAt(0) == '/') { // process invalid commands
-					System.out.println("Server: invalid command");
+					System.out.println("Server: invalid command, try typing '/help' for more info.");
+					Trace.getInstance().write(this, "Server: invalid command: " + input);
 				} else {                             
 					//chat to all players
 					server.broadcast("Server: " + language.translate(input));
+					Trace.getInstance().write(this, "Server: chat sent: " + input);
 				}
 			}
 		}
@@ -96,13 +103,25 @@ public class ServerInput extends Thread{
 			case "/hand":
 				server.printHand(sub);
 				return true;
+			case "/help":
+				System.out.println("Server: list of possible commands: ");
+				for (Config.ServerCommand helpCmd: Config.ServerCommand.values()) {
+					System.out.println("\t/" + helpCmd);
+				}
+                return true;
 			case "/translate":
 				if (args.length != 1) { return false; }
 				for (Language.Dialect dialect: Language.Dialect.values()) {
 					if (dialect.toString().equals(args[0])) {
 						server.language = new Language(dialect);
 						language = new Language(dialect);
-						Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString());
+						Trace.getInstance().write(this, "Translating chat to " + dialect.toString());
+						if (dialect == Language.Dialect.none) {
+							System.out.println("no longer translating chat messages");
+						} else {
+							System.out.println("now translating to " + dialect.toString());
+						}
+						return true;
 					}
 				}
 				break;

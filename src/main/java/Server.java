@@ -222,9 +222,12 @@ public class Server implements Runnable, Serializable{
 			return true;
 		}
 		if (action.object instanceof Chat) {
+			String message = ((Chat) action.object).getMessage();
+			String from = action.origin.username;
 			String translated = language.translate(((Chat) action.object).getMessage());
-			String s = (action.origin.username + ": " + translated);
-			broadcast(s);
+			broadcast(from + ": " + translated);
+			Trace.getInstance().write(this, "Server: " + action.object.getClass().getSimpleName() + 
+									" received from " + from + ": " + message);
 			return true;
 		}
 
