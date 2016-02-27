@@ -16,6 +16,60 @@ public interface Action extends Serializable {
 	}
 }
 
+
+/*
+ * chat messages from Client
+ */
+class Chat implements Action {
+
+	private static final long serialVersionUID = 1L;
+	private String message;
+	
+	public Chat (String message) {
+		this.message = message;
+		Trace.getInstance().test(this, this.getClass().getSimpleName() + ": " + this.message);
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+}
+
+/*
+ * draws a card from the deck
+ */
+class DrawCard implements Action {
+
+	private static final long serialVersionUID = 1L;
+	
+	public DrawCard () {
+		Trace.getInstance().test(this, this.getClass().getSimpleName());
+	}
+}
+
+/*
+ * lists the other players in the game
+ */
+class List implements Action {
+	private static final long serialVersionUID = 1L;
+	
+	public List () {
+		Trace.getInstance().test(this, this.getClass().getSimpleName());
+	}
+}
+
+/*
+ * tells when player is ready to start a game
+ */
+class Ready implements Action {
+	private static final long serialVersionUID = 1L;
+	
+	public Ready () {
+		Trace.getInstance().test(this, this.getClass().getSimpleName());
+	}
+	
+}
+
 /*
  *  sets the Client's user name
  */
@@ -27,7 +81,7 @@ class SetName implements Action {
 	
 	public SetName(String name) {
 		this.name = name;
-		Trace.getInstance().test(this, "new name: " + this.name);
+		Trace.getInstance().test(this, this.getClass().getSimpleName() + ": " + this.name);
 	}
 	
 	public SetName(String name, boolean init) {
@@ -44,45 +98,15 @@ class SetName implements Action {
 		return name;
 	}
 }
-	
-/*
- * draws a card from the deck
- */
-class DrawCard implements Action {
-
-	private static final long serialVersionUID = 1L;
-	
-	public DrawCard () {
-		Trace.getInstance().test(this, "drawing card");
-	}
-}
 
 /*
- * tells when player is ready to start a game
+ * tells when player wants to withdraw from tournament
  */
-class Ready implements Action {
-
+class Withdraw implements Action {
 	private static final long serialVersionUID = 1L;
 	
-	public Ready () {
-		Trace.getInstance().test(this, "Client is ready");
+	public Withdraw() {
+		Trace.getInstance().test(this, this.getClass().getSimpleName());
 	}
 	
-}
-
-/*
- * chat messages from Client
- */
-class Chat implements Action {
-
-	private static final long serialVersionUID = 1L;
-	private String message;
-	
-	public Chat (String message) {
-		this.message = message;
-	}
-	
-	public String getMessage() {
-		return message;
-	}
 }
