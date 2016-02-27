@@ -110,7 +110,7 @@ public class ClientInput extends Thread{
 			case "/help":
 				System.out.println("Client: list of possible commands: ");
 				for (Config.ClientCommand helpCmd: Config.ClientCommand.values()) {
-					System.out.println("\t/" + helpCmd);
+					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
 				return true;
 			case "/ready":

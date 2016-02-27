@@ -106,7 +106,7 @@ public class ServerInput extends Thread{
 			case "/help":
 				System.out.println("Server: list of possible commands: ");
 				for (Config.ServerCommand helpCmd: Config.ServerCommand.values()) {
-					System.out.println("\t/" + helpCmd);
+					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
                 return true;
 			case "/translate":
