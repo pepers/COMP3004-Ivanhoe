@@ -8,6 +8,6 @@ public class ActionCard extends Card {
 		this.action = action;
 	}
 	public String toString(){
-		return ("action card");
+		return action;
 	}
 }

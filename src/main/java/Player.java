@@ -9,6 +9,7 @@ public class Player {
 	ArrayList<Card> display;
 	ArrayList<Card> hand;
 	int ready = 0; 
+	boolean inTournament = false;
 	
 	public Player(String u){
 		username = u;

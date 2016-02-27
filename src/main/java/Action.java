@@ -110,3 +110,21 @@ class Withdraw implements Action {
 	}
 	
 }
+
+/*
+ * when a player plays card 
+ */
+class Play implements Action {
+	private static final long serialVersionUID = 1L;
+	private Card c;
+	
+	public Play(Card c) {
+		this.c = c;
+		Trace.getInstance().test(this, this.getClass().getSimpleName());
+	}
+	
+	public Card getCard(){
+		return c;
+	}
+	
+}

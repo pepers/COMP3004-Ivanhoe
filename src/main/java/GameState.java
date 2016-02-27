@@ -10,7 +10,7 @@ public class GameState{
 	ArrayList<Player> players;
 	Deck deck;
 	int numPlayers;
-	Tournament t = null;
+	Tournament tnmt = null;
 	
 	public GameState(Server s){
 		//set up player array
@@ -33,6 +33,15 @@ public class GameState{
 		if (action.object instanceof DrawCard) {
 			int n = action.origin.addHand(deck.draw());
 			server.broadcast(action.origin.username + " draws a card. (" + n + ")");
+			return true;
+		}
+		if (action.object instanceof Withdraw){
+			action.origin.inTournament = false;
+			server.broadcast(action.origin.username + " withdraws from " + tnmt.name);
+			return true;
+		}
+		if (action.object instanceof Play){
+			server.broadcast(action.origin.username + " plays " + ((Play) action.object).getCard());
 			return true;
 		}
 		return false;
