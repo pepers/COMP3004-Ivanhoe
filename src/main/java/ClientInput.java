@@ -93,27 +93,41 @@ public class ClientInput extends Thread{
 		
 		// switch over command 
 		switch (cmd[0]) {
-			case "/play":
-				System.out.println(sub);
-				Card c = client.player.getCard(sub);
-				if(c == null){
-					System.out.println("You don't have that card.");
-					return false;
-				}
-				action = new Play(c);
-				client.send(action);
-				return true;
 			case "/draw":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new DrawCard();
 				client.send(action);
 				return true;
+			case "/hand":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				if (client.player.getHand().isEmpty()) {
+					System.out.println("Client: You have no cards in your hand.");
+					return true;
+				}
+				System.out.println("Client: You have the following cards in your hand: ");
+				for (Card card: client.player.getHand()) {
+					System.out.println("/t- " + card.toString());
+				}
+				return true;
 			case "/help":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				System.out.println("Client: list of possible commands: ");
 				for (Config.ClientCommand helpCmd: Config.ClientCommand.values()) {
 					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
 				return true;
+			case "/play":
+				Card c = client.player.getCard(sub);
+				if(c == null){
+					System.out.println("Client: you don't have the card: " + sub + 
+							"\n\t Type '/hand' to view the cards in your hand.");
+					return false;
+				}
+				action = new Play(c);
+				client.send(action);
+				return true;
 			case "/ready":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new Ready();
 				client.send(action);
 				return true;
@@ -122,10 +136,11 @@ public class ClientInput extends Thread{
 				client.send(action);
 				return true;
 			case "/shutdown":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				shutdown();
 				return true;
 			case "/translate":
-				if (args.length != 1) { return false; }
+				if (args.length != 1) { return false; } // only one argument allowed
 				for (Language.Dialect dialect: Language.Dialect.values()) {
 					if (dialect.toString().equals(args[0])) {
 						client.language = new Language(dialect);

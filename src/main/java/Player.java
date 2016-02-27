@@ -1,5 +1,9 @@
 package main.java;
 
+/*
+ * info about one player
+ */
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -19,19 +23,33 @@ public class Player implements Serializable{
 		hand = new ArrayList<Card>();
 	}
 
+	/*
+	 * Set the player's name
+	 */
 	public void setName(String u){
 		username = u;
 	}
 
+	/*
+	 * toggle whether the player is ready to start a game or not
+	 */
 	public void toggleReady() {
 		if(ready == 0){ready = 1;}else
 		if(ready == 1){ready = 0;}
 	}
+	
+	/*
+	 * add a card to the player's hand
+	 */
 	public int addHand(Card c){
 		hand.add(c);
 		return hand.size();
 	}
 
+	/*
+	 * get a card from the player's hand
+	 * return null if card not found
+	 */
 	public Card getCard(String sub) {
 		for (Card c : hand){
 			if(c.toString().equals(sub)){
@@ -39,6 +57,13 @@ public class Player implements Serializable{
 			}
 		}
 		return null;
+	}
+	
+	/*
+	 * returns cards in hand
+	 */
+	public ArrayList<Card> getHand () {
+		return hand;
 	}
 	
 }

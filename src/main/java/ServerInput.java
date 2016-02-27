@@ -77,12 +77,15 @@ public class ServerInput extends Thread{
 		// switch over command 
 		switch (cmd[0]) {
 			case "/start":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				server.startGame();
 				return true;
 			case "/min":
+				if (args.length != 1) { return false; } // only one argument allowed
 				server.setMinPlayers(Integer.parseInt(sub));
 				return true;
 			case "/max":
+				if (args.length != 1) { return false; } // only one argument allowed
 				server.setMaxPlayers(Integer.parseInt(sub));
 				return true;
 			case "/kick":
@@ -95,22 +98,25 @@ public class ServerInput extends Thread{
 					return true;
 				}
 			case "/shutdown":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				server.shutdown();
 				return true;
 			case "/list":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				server.listClients();
 				return true;
 			case "/hand":
 				server.printHand(sub);
 				return true;
 			case "/help":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				System.out.println("Server: list of possible commands: ");
 				for (Config.ServerCommand helpCmd: Config.ServerCommand.values()) {
 					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
                 return true;
 			case "/translate":
-				if (args.length != 1) { return false; }
+				if (args.length != 1) { return false; } // only one argument allowed
 				for (Language.Dialect dialect: Language.Dialect.values()) {
 					if (dialect.toString().equals(args[0])) {
 						server.language = new Language(dialect);
