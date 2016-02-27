@@ -10,15 +10,16 @@ public class GameState implements Serializable{
 	//Game stuff
 	Deck deck;
 	Tournament tnmt = null;
+	ArrayList<Player> players;
+	int numPlayers;
 	
 	public GameState(){
 		deck = new Deck();
+		deck.initialize();
 	}
 	
-	public GameState(Server s){
-		//set up player array
-		Iterator<ServerThread> i = s.clients.keySet().iterator();
-		deck = new Deck();
-		deck.initialize();
+	public void addPlayer(Player p){
+		players.add(p);
+		numPlayers++;
 	}
 }

@@ -278,16 +278,16 @@ public class Server implements Runnable, Serializable{
 		broadcast("(" + numReady + "/" + numClients + ") players ready.");
 		broadcast("Preparing to start a game...");
 		
+		gameState = new GameState();
+		
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			if(clients.get(t).ready == 1){
 				clients.get(t).ready = 2;
+				gameState.addPlayer(clients.get(t));
 			}
 		}
-		
-		// we start a game here
-		gameState = new GameState(this);
 
 		return true;
 	}
