@@ -2,7 +2,6 @@ package main.java;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import main.resources.Config;
@@ -21,8 +20,9 @@ public class Client implements Runnable {
 	Scanner userInput = null;              // scanner to get user input
 	Language language;                     // to translate chat
 	
-	GameState game;		   				   // the local copy of the gamestate
-	Player player;		   				   // the local copy of this client's player
+	GameState game;		   				         // the local copy of the game state
+    Player player = new Player("Default Name");  // the local copy of this client's player
+	
 	
 	public static void main(String args[]) {
 		Client client = new Client(); // client object
@@ -48,7 +48,6 @@ public class Client implements Runnable {
 		
 		// get user's name
 		String username = userInput("What is thy name?: ");
-		player = new Player(username);
 		action = new SetName(username, true);
 		
 		// connect to Server

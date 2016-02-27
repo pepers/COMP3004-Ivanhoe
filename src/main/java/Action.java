@@ -27,7 +27,7 @@ class Chat implements Action {
 	
 	public Chat (String message) {
 		this.message = message;
-		//Trace.getInstance().test(this, this.getClass().getSimpleName() + ": " + this.message);
+		//Trace.getInstance().test(this, this.getAction() + ": " + this.message);
 	}
 	
 	public String getMessage() {
@@ -43,7 +43,7 @@ class DrawCard implements Action {
 	private static final long serialVersionUID = 1L;
 	
 	public DrawCard () {
-		Trace.getInstance().test(this, this.getClass().getSimpleName());
+		Trace.getInstance().test(this, this.getAction());
 	}
 }
 
@@ -54,7 +54,7 @@ class List implements Action {
 	private static final long serialVersionUID = 1L;
 	
 	public List () {
-		Trace.getInstance().test(this, this.getClass().getSimpleName());
+		Trace.getInstance().test(this, this.getAction());
 	}
 }
 
@@ -67,7 +67,7 @@ class Play implements Action {
 	
 	public Play(Card c) {
 		this.c = c;
-		Trace.getInstance().test(this, this.getClass().getSimpleName());
+		Trace.getInstance().test(this, this.getAction());
 	}
 	
 	public Card getCard(){
@@ -83,7 +83,7 @@ class Ready implements Action {
 	private static final long serialVersionUID = 1L;
 	
 	public Ready () {
-		Trace.getInstance().test(this, this.getClass().getSimpleName());
+		Trace.getInstance().test(this, this.getAction());
 	}
 }
 
@@ -98,7 +98,7 @@ class SetName implements Action {
 	
 	public SetName(String name) {
 		this.name = name;
-		Trace.getInstance().test(this, this.getClass().getSimpleName() + ": " + this.name);
+		Trace.getInstance().test(this, this.getAction() + ": " + this.name);
 	}
 	
 	public SetName(String name, boolean init) {
@@ -123,7 +123,7 @@ class Withdraw implements Action {
 	private static final long serialVersionUID = 1L;
 	
 	public Withdraw() {
-		Trace.getInstance().test(this, this.getClass().getSimpleName());
+		Trace.getInstance().test(this, this.getAction());
 	}
 }
 
