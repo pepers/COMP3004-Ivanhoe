@@ -14,6 +14,7 @@ public class GameState implements Serializable{
 	int numPlayers;
 	
 	public GameState(){
+		players = new ArrayList<Player>();
 		deck = new Deck();
 		deck.initialize();
 	}

@@ -235,7 +235,9 @@ public class Server implements Runnable, Serializable{
 			return true;
 		}
 		
-		
+		if(gameState == null){
+			return false;
+		}
 		//Game state evaluation
 		if (action.object instanceof DrawCard) {
 			int n = action.origin.addHand(gameState.deck.draw());
@@ -288,7 +290,6 @@ public class Server implements Runnable, Serializable{
 				gameState.addPlayer(clients.get(t));
 			}
 		}
-
 		return true;
 	}
 
