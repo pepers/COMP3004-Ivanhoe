@@ -36,15 +36,24 @@ public class ClientInput extends Thread{
 			} 
 			if(input.length() > 0){
 				if (validCmd(input)) {               // process valid commands
-					Trace.getInstance().write(this, "Client: valid command recieved");
-					processCmd(input);
+					if (processCmd(input)) {
+						Trace.getInstance().write(this, client.player.username +
+									": command processed: " + input);
+					} else {
+						Trace.getInstance().write(this, client.player.username +
+									": invalid command: " + input);
+						System.out.println("Client: invalid command, try typing '/help' for more info.");
+					}
 				} else if (input.charAt(0) == '/') { // process invalid commands
-					System.out.println("Client: invalid command");
-					Trace.getInstance().write(this, "invalid command: " + input);
+					System.out.println("Client: invalid command, try typing '/help' for more info.");
+					Trace.getInstance().write(this, client.player.username +
+									": invalid command: " + input);
 				} else {                             // process chat
 					String translated = language.translate(input);
 					action = new Chat(translated); 
 					client.send(action);
+					Trace.getInstance().write(this, client.player.username + ": " + 
+									"chat sent: " + input);
 				}
 			}
 		}
@@ -98,6 +107,12 @@ public class ClientInput extends Thread{
 				action = new DrawCard();
 				client.send(action);
 				return true;
+			case "/help":
+				System.out.println("Client: list of possible commands: ");
+				for (Config.ClientCommand helpCmd: Config.ClientCommand.values()) {
+					System.out.println("\t/" + helpCmd);
+				}
+				return true;
 			case "/ready":
 				action = new Ready();
 				client.send(action);
@@ -116,6 +131,7 @@ public class ClientInput extends Thread{
 						client.language = new Language(dialect);
 						language = new Language(dialect);
 						Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString());
+						return true;
 					}
 				}
 				break;

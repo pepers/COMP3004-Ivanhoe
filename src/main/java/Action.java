@@ -27,7 +27,7 @@ class Chat implements Action {
 	
 	public Chat (String message) {
 		this.message = message;
-		Trace.getInstance().test(this, this.getClass().getSimpleName() + ": " + this.message);
+		//Trace.getInstance().test(this, this.getClass().getSimpleName() + ": " + this.message);
 	}
 	
 	public String getMessage() {
@@ -59,6 +59,24 @@ class List implements Action {
 }
 
 /*
+ * when a player plays card 
+ */
+class Play implements Action {
+	private static final long serialVersionUID = 1L;
+	private Card c;
+	
+	public Play(Card c) {
+		this.c = c;
+		Trace.getInstance().test(this, this.getClass().getSimpleName());
+	}
+	
+	public Card getCard(){
+		return c;
+	}
+	
+}
+
+/*
  * tells when player is ready to start a game
  */
 class Ready implements Action {
@@ -67,7 +85,6 @@ class Ready implements Action {
 	public Ready () {
 		Trace.getInstance().test(this, this.getClass().getSimpleName());
 	}
-	
 }
 
 /*
@@ -108,23 +125,5 @@ class Withdraw implements Action {
 	public Withdraw() {
 		Trace.getInstance().test(this, this.getClass().getSimpleName());
 	}
-	
 }
 
-/*
- * when a player plays card 
- */
-class Play implements Action {
-	private static final long serialVersionUID = 1L;
-	private Card c;
-	
-	public Play(Card c) {
-		this.c = c;
-		Trace.getInstance().test(this, this.getClass().getSimpleName());
-	}
-	
-	public Card getCard(){
-		return c;
-	}
-	
-}
