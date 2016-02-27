@@ -60,8 +60,30 @@ public class Language {
 	 * populate dictionary with fake Old English translations
 	 */
 	private void oldEnglish () {
+		dictionary.put("a lot", "overmany");
+		dictionary.put("are", "art");
+		dictionary.put("ask", "beseech");
+		dictionary.put("between", "betwixt");
+		dictionary.put("can", "canst");
+		dictionary.put("come", "comest");
+		dictionary.put("comes", "cometh");
+		dictionary.put("do", "dost");
+		dictionary.put("does", "dost");
+		dictionary.put("from where", "whence");
+		dictionary.put("give", "bequeath");
+		dictionary.put("has", "hath");
+		dictionary.put("here", "hither");
+		dictionary.put("know", "wit");
+		dictionary.put("none", "nary");
+		dictionary.put("nothing", "naught");
 		dictionary.put("old", "olde");
+		dictionary.put("rich", "fullsome");
+		dictionary.put("there", "thither");
+		dictionary.put("to where", "whither");
+		dictionary.put("will", "shalt");
+		dictionary.put("years ago", "yore");
 		dictionary.put("you", "thou");
 		dictionary.put("your", "thy");
+		dictionary.put("you're", "thou art");
 	}
 }
