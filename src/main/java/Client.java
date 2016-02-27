@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import main.resources.Config;
@@ -86,6 +87,9 @@ public class Client implements Runnable {
 				// start new thread to receive from Server
 				receiveThread = new Thread(this);
 				receiveThread.start();
+				
+				//init gamestate
+				game = new GameState();
 				break;
 			} else {
 				System.out.println("There are no tournaments at that location! \n");
@@ -250,9 +254,15 @@ public class Client implements Runnable {
 			Trace.getInstance().test(this, "Player object received");
 			player = (Player) received;
 		// GameState
-		}else if (received instanceof GameState) { 
-			Trace.getInstance().test(this, "GameState object received");
-			game = (GameState) received;
+		}else if (received instanceof ArrayList<?>) { 
+			Trace.getInstance().test(this, "Players received");
+			game.players = (ArrayList<Player>) received;
+		}else if (received instanceof Deck) { 
+			Trace.getInstance().test(this, "Deck received");
+			game.deck = (Deck) received;
+		}else if (received instanceof Tournament) { 
+			Trace.getInstance().test(this, "Deck received");
+			game.tnmt = (Tournament) received;
 		// ActionCard
 		} else if (received instanceof ActionCard) { 
 			received = (ActionCard) received;

@@ -16,6 +16,10 @@ public class GameState implements Serializable{
 	int numPlayers;
 	Tournament tnmt = null;
 	
+	public GameState(){
+		deck = new Deck();
+	}
+	
 	public GameState(Server s){
 		//set up player array
 		players = new ArrayList<Player>();
@@ -44,8 +48,8 @@ public class GameState implements Serializable{
 			server.broadcast(action.origin.username + " withdraws from " + tnmt.name);
 			return true;
 		}
-		if (action.object instanceof Play){
-			server.broadcast(action.origin.username + " plays " + ((Play) action.object).getCard());
+		if (action.object instanceof Play) {
+			server.broadcast(action.origin.username + " plays a " + ((Play) action.object).getCard().toString());
 			return true;
 		}
 		return false;

@@ -202,11 +202,12 @@ public class Server implements Runnable, Serializable{
 				if (!evaluate(a)) {
 					if(gameState != null){
 						gameState.evaluate(a);
+						updateGameStates();
 					}else{
 						//a game command was received at a wrong time
 					}
 				}
-				updateGameStates();
+				
 			}
 
 		}
@@ -235,12 +236,6 @@ public class Server implements Runnable, Serializable{
 			String s = (action.origin.username + " is ready!");
 			broadcast(s);
 			action.origin.toggleReady();
-			return true;
-		}
-		
-		if (action.object instanceof Play) {
-			String s = (action.origin.username + " plays a " + action.object.toString());
-			broadcast(s);
 			return true;
 		}
 		return false;
