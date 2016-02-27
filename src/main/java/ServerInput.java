@@ -127,11 +127,15 @@ public class ServerInput extends Thread{
 							language = new Language(dialect, true);
 							Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
 									", with censoring.");
+							System.out.println("Translating chat to " + language.getDialect().toString() + 
+									", with censoring...");
 						} else {
 							server.language = new Language(dialect, false);
 							language = new Language(dialect, false);
 							Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
 									", without censoring.");
+							System.out.println("Translating chat to " + language.getDialect().toString() + 
+									", without censoring...");
 						}
 						return true;
 					}

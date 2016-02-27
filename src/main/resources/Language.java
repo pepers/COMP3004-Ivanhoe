@@ -15,8 +15,10 @@ public class Language {
 	
 	Map<String, String> dictionary = new HashMap<String, String>(); // holds the translations
 	private final Language.Dialect dialect;                         // dialect chosen
-	private boolean censor = false;                                 // censor bad words if true
+	private boolean censor;                                         // censor bad words if true
 	
+	// bad words that can be censored
+	final String[] badWords = {"ass", "bitch", "fuck", "shit"};               
 	
 	public Language (Language.Dialect dialect, boolean censor) {
 		this.dialect = dialect;
@@ -44,9 +46,21 @@ public class Language {
 	public String translate (String input) {
 		String result = input; // translated string to return
 		
-		if (dialect.equals(Language.Dialect.none)) {
-			return input;
+		// censor words
+		if (censor) {
+			for (int i=0; i<badWords.length; i++) {
+				StringBuilder blank = new StringBuilder(); // will blank over bad word with *'s
+				for (int j=0; j<badWords[i].length(); j++) { blank.append('*');	}
+				String censored = result.replaceAll("\\b" + badWords[i] + "\\b", blank.toString());
+				result = censored;
+			}
 		}
+		
+		// exit early if dialect is set to 'none'
+		if (dialect.equals(Language.Dialect.none)) {
+			return result;
+		}
+		
 		
 		// translate each word 
 		for (Map.Entry<String, String> entry : dictionary.entrySet()) {
