@@ -17,7 +17,7 @@ public class Config {
 		ready(""), 
 		setname(" [new name]"), 
 		shutdown(""), 
-		translate(" [dialect (none, oldEnglish)]"), 
+		translate(" [dialect ('none', 'oldEnglish')] [-c (optional censor)]"), 
 		withdraw("");
 								
 		private String syntax;  // syntax for the command
@@ -46,7 +46,7 @@ public class Config {
 		port(""),
 		shutdown(""),
 		start(""),  
-		translate(" [dialect (none, oldEnglish)]");
+		translate(" [dialect ('none', 'oldEnglish')] [-c (optional censor)]");
 		
 		private String syntax;  // syntax for the command
 		

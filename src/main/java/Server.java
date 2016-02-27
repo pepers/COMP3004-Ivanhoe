@@ -34,7 +34,7 @@ public class Server implements Runnable, Serializable{
 
 	boolean stop = false; // stops the main thread
 	public Queue<ActionWrapper> actions; // server actions to operate upon
-	Language language = new Language(Language.Dialect.none);  // to translate chat
+	Language language = new Language(Language.Dialect.none, false);  // to translate chat
 
 	// Constructor
 	public Server(int port) {

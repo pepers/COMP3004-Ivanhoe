@@ -17,7 +17,7 @@ public class ServerInput extends Thread{
 	String input;                             // user input
 	Server server;                                 // server class
 	Action action;                      // client's action to take
-	Language language = new Language(Language.Dialect.none);
+	Language language = new Language(Language.Dialect.none, false);
 	
 	public ServerInput (Server server, InputStream s) {
 		this.server = server;
@@ -116,16 +116,22 @@ public class ServerInput extends Thread{
 				}
                 return true;
 			case "/translate":
-				if (args.length != 1) { return false; } // only one argument allowed
+				// only one or two arguments allowed
+				if ((args.length != 1) && (args.length != 2)) { return false; }
+				// if second argument, it must be "-c"
+				if ((args.length == 2) && (!(args[1].equalsIgnoreCase("-c")))) { return false; }
 				for (Language.Dialect dialect: Language.Dialect.values()) {
 					if (dialect.toString().equals(args[0])) {
-						server.language = new Language(dialect);
-						language = new Language(dialect);
-						Trace.getInstance().write(this, "Translating chat to " + dialect.toString());
-						if (dialect == Language.Dialect.none) {
-							System.out.println("no longer translating chat messages");
+						if (args.length == 2) {
+							server.language = new Language(dialect, true);
+							language = new Language(dialect, true);
+							Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
+									", with censoring.");
 						} else {
-							System.out.println("now translating to " + dialect.toString());
+							server.language = new Language(dialect, false);
+							language = new Language(dialect, false);
+							Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
+									", without censoring.");
 						}
 						return true;
 					}

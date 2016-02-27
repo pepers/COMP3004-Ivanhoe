@@ -14,11 +14,13 @@ public class Language {
 	public enum Dialect { none, oldEnglish } 
 	
 	Map<String, String> dictionary = new HashMap<String, String>(); // holds the translations
-	private Language.Dialect dialect;                               // dialect chosen
+	private final Language.Dialect dialect;                         // dialect chosen
+	private boolean censor = false;                                 // censor bad words if true
 	
 	
-	public Language (Language.Dialect dialect) {
+	public Language (Language.Dialect dialect, boolean censor) {
 		this.dialect = dialect;
+		this.censor = censor;
 		
 		// populate dictionary based on chosen dialect
 		switch (dialect) {

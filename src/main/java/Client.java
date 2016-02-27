@@ -44,7 +44,7 @@ public class Client implements Runnable {
 		System.out.println("\nClient: Welcome brave knight!");
 		
 		// set up language to translate chat
-		language = new Language(Language.Dialect.none);
+		language = new Language(Language.Dialect.none, false);
 		
 		// get user's name
 		String username = userInput("What is thy name?: ");
