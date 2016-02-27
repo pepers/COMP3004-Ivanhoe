@@ -249,20 +249,14 @@ public class Client implements Runnable {
 		}
 
 		// TODO: determine type of object received
-		// Player
-		if (received instanceof Player) { 
-			Trace.getInstance().test(this, "Player object received");
-			player = (Player) received;
 		// GameState
-		}else if (received instanceof ArrayList<?>) { 
-			Trace.getInstance().test(this, "Players received");
-			game.players = (ArrayList<Player>) received;
-		}else if (received instanceof Deck) { 
-			Trace.getInstance().test(this, "Deck received");
-			game.deck = (Deck) received;
-		}else if (received instanceof Tournament) { 
-			Trace.getInstance().test(this, "Deck received");
-			game.tnmt = (Tournament) received;
+		if (received instanceof GameState) { 
+			Trace.getInstance().test(this, "Gamestate object received");
+			game = (GameState) received;
+		// Player
+		}else if (received instanceof Player) { 
+			Trace.getInstance().test(this, "Player received");
+			player = (Player) received;
 		// ActionCard
 		} else if (received instanceof ActionCard) { 
 			received = (ActionCard) received;

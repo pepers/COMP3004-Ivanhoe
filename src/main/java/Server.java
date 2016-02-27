@@ -199,17 +199,13 @@ public class Server implements Runnable, Serializable{
 
 			if (!actions.isEmpty()) {
 				ActionWrapper a = actions.poll();
-				if (!evaluate(a)) {
-					if(gameState != null){
-						gameState.evaluate(a);
-						updateGameStates();
-					}else{
-						//a game command was received at a wrong time
-					}
-				}
-				
+				evaluate(a);
+				if(gameState != null){
+					updateGameStates();
+				}else{
+					//a game command was received at a wrong time
+				}		
 			}
-
 		}
 	}
 
@@ -238,9 +234,26 @@ public class Server implements Runnable, Serializable{
 			action.origin.toggleReady();
 			return true;
 		}
+		
+		
+		//Game state evaluation
+		if (action.object instanceof DrawCard) {
+			int n = action.origin.addHand(gameState.deck.draw());
+			broadcast(action.origin.username + " draws a card. (" + n + ")");
+			return true;
+		}
+		if (action.object instanceof Withdraw){
+			action.origin.inTournament = false;
+			broadcast(action.origin.username + " withdraws from " + gameState.tnmt.name);
+			return true;
+		}
+		if (action.object instanceof Play) {
+			broadcast(action.origin.username + " plays a " + ((Play) action.object).getCard().toString());
+			return true;
+		}
 		return false;
 	}
-
+	
 	// send a message to all players(threads)
 	public void broadcast(String input) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
