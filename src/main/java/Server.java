@@ -3,6 +3,7 @@ package main.java;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.BindException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ public class Server implements Runnable, Serializable{
 	int minPlayers = Config.MIN_PLAYERS;
 	int maxPlayers = Config.MAX_PLAYERS;
 	int port; // server port
+	String address = "unknown"; // server address
 	int numClients; // number of clients
 	int numReady; // number of ready player
 	ConcurrentHashMap<ServerThread, Player> clients; // holds the threads mapped
@@ -48,6 +50,7 @@ public class Server implements Runnable, Serializable{
 		Server s = new Server(Config.DEFAULT_PORT);
 		if (s.startup()) {
 			System.out.println("Setup successful.");
+			System.out.println("Listening at " + s.address + ":" + s.port + "...\n");
 		}
 	}
 
@@ -64,6 +67,7 @@ public class Server implements Runnable, Serializable{
 		try {
 			serverSocket = new ServerSocket(port);
 			serverSocket.setReuseAddress(true);
+			address = InetAddress.getLocalHost().toString();
 		} catch (BindException e) {
 			System.out.println("Error: There is already a running server on this port.");
 			return false;
