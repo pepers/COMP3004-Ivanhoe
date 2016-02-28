@@ -76,35 +76,18 @@ public class ServerInput extends Thread{
 		
 		// switch over command 
 		switch (cmd[0]) {
-			case "/start":
-				if (args.length != 0) { return false; } // no arguments allowed for this command
-				server.startGame();
-				return true;
-			case "/min":
-				if (args.length != 1) { return false; } // only one argument allowed
-				server.setMinPlayers(Integer.parseInt(sub));
-				return true;
-			case "/max":
-				if (args.length != 1) { return false; } // only one argument allowed
-				server.setMaxPlayers(Integer.parseInt(sub));
-				return true;
-			case "/kick":
-				if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
-					int toRemove = Integer.parseInt(sub);
-					server.removeThread(toRemove);
-					return true;
-				} else {
-					server.removeThread(sub);
-					return true;
-				}
-			case "/shutdown":
-				if (args.length != 0) { return false; } // no arguments allowed for this command
-				server.shutdown();
-				return true;
-			case "/list":
-				if (args.length != 0) { return false; } // no arguments allowed for this command
-				server.listClients();
-				return true;
+			case "/ban":
+				// TODO: return true
+				return false;
+			case "/display":
+				// TODO: return true
+				return false;
+			case "/end":
+				// TODO: return true
+				return false;
+			case "/give":
+				// TODO: return true
+				return false;
 			case "/hand":
 				server.printHand(sub);
 				return true;
@@ -115,6 +98,41 @@ public class ServerInput extends Thread{
 					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
                 return true;
+			case "/kick":
+				if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
+					int toRemove = Integer.parseInt(sub);
+					server.removeThread(toRemove);
+					return true;
+				} else {
+					server.removeThread(sub);
+					return true;
+				}
+			case "/list":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				server.listClients();
+				return true;
+			case "/max":
+				if (args.length != 1) { return false; } // only one argument allowed
+				server.setMaxPlayers(Integer.parseInt(sub));
+				return true;
+			case "/min":
+				if (args.length != 1) { return false; } // only one argument allowed
+				server.setMinPlayers(Integer.parseInt(sub));
+				return true;
+			case "/pardon":
+				// TODO: return true
+				return false;
+			case "/port":
+				// TODO: return true
+				return false;
+			case "/shutdown":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				server.shutdown();
+				return true;
+			case "/start":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				server.startGame();
+				return true;
 			case "/translate":
 				// only one or two arguments allowed
 				if ((args.length != 1) && (args.length != 2)) { return false; }

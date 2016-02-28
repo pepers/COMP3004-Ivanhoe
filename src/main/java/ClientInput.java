@@ -93,6 +93,9 @@ public class ClientInput extends Thread{
 		
 		// switch over command 
 		switch (cmd[0]) {
+			case "/display":
+				// TODO: return true
+				return false;
 			case "/draw":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new DrawCard();
@@ -116,6 +119,9 @@ public class ClientInput extends Thread{
 					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
 				return true;
+			case "/list":
+				// TODO: return true
+				return false;
 			case "/play":
 				Card c = client.player.getCard(sub);
 				if(c == null){
@@ -165,6 +171,9 @@ public class ClientInput extends Thread{
 					}
 				}
 				break;
+			case "/withdraw":
+				// TODO: return true
+				return false;
 			default:
 				break;
 		}
