@@ -83,6 +83,7 @@ public class ServerInput extends Thread{
 				// TODO: return true
 				return false;
 			case "/end":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
 				// TODO: return true
 				return false;
 			case "/give":

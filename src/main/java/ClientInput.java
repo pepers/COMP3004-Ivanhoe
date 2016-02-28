@@ -120,8 +120,10 @@ public class ClientInput extends Thread{
 				}
 				return true;
 			case "/list":
-				// TODO: return true
-				return false;
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				action = new List();
+				client.send(action);
+				return true;
 			case "/play":
 				Card c = client.player.getCard(sub);
 				if(c == null){
@@ -172,8 +174,10 @@ public class ClientInput extends Thread{
 				}
 				break;
 			case "/withdraw":
-				// TODO: return true
-				return false;
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				action = new Withdraw();
+				client.send(action);
+				return true;
 			default:
 				break;
 		}
