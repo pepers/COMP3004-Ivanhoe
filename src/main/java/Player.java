@@ -78,4 +78,16 @@ public class Player implements Serializable{
 		return hand;
 	}
 	
+	/*
+	 * prints the player's display
+	 */
+	public boolean printDisplay() {
+		if (display.isEmpty()) { return false; }
+		System.out.println(username + "'s Display: ");
+		for (Card c: display) {
+			System.out.print(c.toString() + ", ");
+		}
+		System.out.println("");
+		return true;
+	}
 }

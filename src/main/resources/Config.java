@@ -8,14 +8,14 @@ public class Config {
 	
 	// possible commands:
 	public enum ClientCommand { 
-		display(""), 
+		display(" [player name ('-a' for all, or leave empty for own display)]"), 
 		draw(""), 
 		hand(""), 
 		help(""), 
 		list(""), 
-		play(""), 
+		play(" [card name]"), 
 		ready(""), 
-		setname(" [new name]"), 
+		setname(" [new name (can't be empty, or start with '-')]"), 
 		shutdown(""), 
 		translate(" [dialect ('none', 'oldEnglish')] [-c (optional censor)]"), 
 		withdraw("");
@@ -33,7 +33,7 @@ public class Config {
 	
 	public enum ServerCommand { 
 		ban(""),
-		display(""),
+		display(" [player name (leave empty for all)]"),
 		end(""), 
 		give(""),
 		hand(""),

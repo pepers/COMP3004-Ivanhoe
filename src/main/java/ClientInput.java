@@ -94,8 +94,39 @@ public class ClientInput extends Thread{
 		// switch over command 
 		switch (cmd[0]) {
 			case "/display":
-				// TODO: return true
-				return false;
+				if (args.length == 0) { // show own display
+					if (!(client.player.printDisplay())) {
+						System.out.println("Client: no cards in your display");
+						Trace.getInstance().write(this, client.player.username + 
+								": No cards in your display to show.");
+					}
+					return true;
+				} else { // show someone else's display
+					if (sub.equalsIgnoreCase("-a")) { // show all displays
+						for (Player p: client.game.players) {
+							if (!(p.printDisplay())) {
+								System.out.println("Client: no cards in " +
+										p.username + "'s display\n");
+								Trace.getInstance().write(this, client.player.username +
+										": No cards in " + p.username + "'s display.");
+							}
+						}
+						return true;
+					} else {
+						Player p = client.game.getPlayer(sub);
+						if (p == null) { // player doesn't exist
+							return false;
+						} else {
+							if (!(p.printDisplay())) {
+								System.out.println("Client: no cards in " +
+										p.username + "'s display\n");
+								Trace.getInstance().write(this, client.player.username +
+										": No cards in " + p.username + "'s display.");
+							}
+							return true;
+						}
+					}
+				}
 			case "/draw":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new DrawCard();
@@ -132,6 +163,7 @@ public class ClientInput extends Thread{
 				}
 				return true;
 			case "/play":
+				if (args.length != 1) { return false; } // command must have exactly one argument
 				Card c = client.player.getCard(sub);
 				if(c == null){
 					System.out.println("Client: you don't have the card: " + sub + 
@@ -147,6 +179,7 @@ public class ClientInput extends Thread{
 				client.send(action);
 				return true;
 			case "/setname":
+				if ((sub == "") || (sub.startsWith("-"))) { return false; }
 				action = new SetName(sub);
 				client.send(action);
 				return true;
