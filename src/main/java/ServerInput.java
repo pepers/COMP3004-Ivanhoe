@@ -123,9 +123,14 @@ public class ServerInput extends Thread{
 			case "/pardon":
 				// TODO: return true
 				return false;
-			case "/port":
-				// TODO: return true
-				return false;
+			case "/port":  // change Server's port on which Clients connect
+				if (args.length != 1) { return false; } // only one argument allowed
+				int port;
+				try {
+					port = Integer.parseInt(args[0]);
+				} catch (NumberFormatException nfe) { return false; }
+				server.port = port;
+				return true;
 			case "/shutdown":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				server.shutdown();

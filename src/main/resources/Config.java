@@ -43,7 +43,7 @@ public class Config {
 		max(" [maximum # of players]"),
 		min(" [minimum # of players]"),
 		pardon(""),
-		port(""),
+		port(" [port #]"),
 		shutdown(""),
 		start(""),  
 		translate(" [dialect ('none', 'oldEnglish')] [-c (optional censor)]");
