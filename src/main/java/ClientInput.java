@@ -128,6 +128,12 @@ public class ClientInput extends Thread{
 					}
 				}
 			case "/draw":
+				if (!(client.player.inTournament)) { // not in tournament
+					System.out.println("Client: can't perform that action while not in a tournament");
+					Trace.getInstance().write(this, client.player.username + 
+							": can't use " + cmd[0] + " while not in tournament.");
+					return true;
+				}
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new DrawCard();
 				client.send(action);
@@ -163,6 +169,12 @@ public class ClientInput extends Thread{
 				}
 				return true;
 			case "/play":
+				if (!(client.player.inTournament)) { // not in tournament
+					System.out.println("Client: can't perform that action while not in a tournament");
+					Trace.getInstance().write(this, client.player.username + 
+							": can't use " + cmd[0] + " while not in tournament.");
+					return true;
+				}
 				if (args.length != 1) { return false; } // command must have exactly one argument
 				Card c = client.player.getCard(sub);
 				if(c == null){
@@ -214,6 +226,12 @@ public class ClientInput extends Thread{
 				}
 				break;
 			case "/withdraw":
+				if (!(client.player.inTournament)) { // not in tournament
+					System.out.println("Client: can't perform that action while not in a tournament");
+					Trace.getInstance().write(this, client.player.username + 
+							": can't use " + cmd[0] + " while not in tournament.");
+					return true;
+				}
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new Withdraw();
 				client.send(action);

@@ -7,6 +7,8 @@ package main.java;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import main.resources.Trace;
+
 public class Player implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -82,7 +84,11 @@ public class Player implements Serializable{
 	 * prints the player's display
 	 */
 	public boolean printDisplay() {
-		if (display.isEmpty()) { return false; }
+		if (!(inTournament)) { // not in tournament
+			System.out.println(username + "is not in this tournament.\n");
+			return true;
+		}
+		if (display.isEmpty()) { return false; } // empty display
 		System.out.println(username + "'s Display: ");
 		for (Card c: display) {
 			System.out.print(c.toString() + ", ");
