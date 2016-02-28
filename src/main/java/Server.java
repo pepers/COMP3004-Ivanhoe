@@ -157,10 +157,7 @@ public class Server implements Runnable, Serializable{
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			Player p = clients.get(t);
-			String state = "wierdState";
-			if(p.ready == 0){state = "waiting";}
-			if(p.ready == 1){state = "ready";}
-			if(p.ready == 2){state = "in game";}
+			String state = p.getReadyState();
 			System.out.printf(" %-3s %-20s %-8s %s\n", t.getID(), p.username, state, t.getNetwork());
 		}
 	}

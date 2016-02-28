@@ -2,7 +2,6 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class GameState implements Serializable{
 	

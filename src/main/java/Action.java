@@ -48,17 +48,6 @@ class DrawCard implements Action {
 }
 
 /*
- * lists the other players in the game
- */
-class List implements Action {
-	private static final long serialVersionUID = 1L;
-	
-	public List () {
-		Trace.getInstance().test(this, this.getAction());
-	}
-}
-
-/*
  * when a player plays card 
  */
 class Play implements Action {

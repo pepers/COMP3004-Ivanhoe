@@ -121,8 +121,15 @@ public class ClientInput extends Thread{
 				return true;
 			case "/list":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
-				action = new List();
-				client.send(action);
+				System.out.println("- State    : Player ");
+				for (int i=0; i<client.game.players.size(); i++) {
+					Player p = client.game.players.get(i);
+					String name = p.username;
+					if (name == client.player.username) { // found yourself
+						name += " (you)";
+					}
+					System.out.printf("%-10s : %s\n", p.getReadyState(), name);
+				}
 				return true;
 			case "/play":
 				Card c = client.player.getCard(sub);

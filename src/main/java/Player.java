@@ -39,6 +39,18 @@ public class Player implements Serializable{
 	}
 	
 	/*
+	 * return a string representation of the player's ready state
+	 */
+	public String getReadyState() {
+		switch (ready) {
+			case 0: return "waiting";
+			case 1: return "ready";
+			case 2: return "in game";
+			default: return "unknown";
+		}
+	}
+	
+	/*
 	 * add a card to the player's hand
 	 */
 	public int addHand(Card c){
