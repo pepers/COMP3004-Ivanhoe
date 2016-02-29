@@ -333,7 +333,7 @@ public class Server implements Runnable, Serializable{
 			}
 		}
 		
-		Player startPlayer = gameState.players.get(new Random().nextInt(gameState.numPlayers));
+		Player startPlayer = gameState.getNext();
 		gameState.setTurn(startPlayer);
 		messageExcept(startPlayer.username + " starts their turn.", startPlayer);
 		message("You are the starting player. Start a tournament if able.",  startPlayer);
