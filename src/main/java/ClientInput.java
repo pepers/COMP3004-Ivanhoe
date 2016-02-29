@@ -145,7 +145,7 @@ public class ClientInput extends Thread{
 				}
 				System.out.println("Client: You have the following cards in your hand: ");
 				for (Card card: client.player.getHand()) {
-					System.out.println("/t- " + card.toString());
+					System.out.println("\t- " + card.toString());
 				}
 				return true;
 			case "/help":
@@ -192,7 +192,7 @@ public class ClientInput extends Thread{
 				client.send(action);
 				return true;
 			case "/tournament":
-				if (client.game.tnmt == null){ // no tournament running
+				if (client.game.tnmt != null){ // no tournament running
 					System.out.println("Client: a tournament is already in progress");
 					Trace.getInstance().write(this, client.player.username + 
 							": can't use " + cmd[0] + " while not in tournament.");

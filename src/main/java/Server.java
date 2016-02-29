@@ -301,17 +301,16 @@ public class Server implements Runnable, Serializable{
 				clients.get(t).ready = 2;
 				
 				for (int j = 0; j < 7; j++){
-					clients.get(t).addHand(gameState.deck.draw());
+					System.out.println(clients.get(t).addHand(gameState.deck.draw()));
 				}
-				
 				gameState.addPlayer(clients.get(t));
-				
 			}
 		}
 		
 		Player startPlayer = gameState.players.get(new Random().nextInt(gameState.numPlayers));
 		gameState.setTurn(startPlayer);
 		broadcast(startPlayer.username + " starts their turn.");
+		updateGameStates();
 		return true;
 	}
 

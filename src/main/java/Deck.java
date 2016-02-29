@@ -67,7 +67,7 @@ public class Deck implements Serializable{
 			deck = discard;
 			shuffle();
 		}
-		return deck.get(0);
+		return deck.remove(0);
 	}
 	
 	public void discard(Card c) {

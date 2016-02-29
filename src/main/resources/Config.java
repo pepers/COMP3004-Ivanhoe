@@ -10,6 +10,7 @@ public class Config {
 	public enum ClientCommand { 
 		display(" [player name ('-a' for all, or leave empty for own display)]"), 
 		draw(""), 
+		end(""),
 		hand(""), 
 		help(""), 
 		list(""), 
@@ -18,6 +19,7 @@ public class Config {
 		setname(" [new name (can't be empty, or start with '-')]"), 
 		shutdown(""), 
 		translate(" [dialect ('none', 'oldEnglish')] [-c (optional censor)]"), 
+		tournament(""),
 		withdraw("");
 								
 		private String syntax;  // syntax for the command
