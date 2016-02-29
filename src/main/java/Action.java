@@ -36,13 +36,13 @@ class Chat implements Action {
 }
 
 /*
- * draws a card from the deck
+ * player ends their turn
  */
-class DrawCard implements Action {
+class EndTurn implements Action {
 
 	private static final long serialVersionUID = 1L;
 	
-	public DrawCard () {
+	public EndTurn () {
 		Trace.getInstance().test(this, this.getAction());
 	}
 }

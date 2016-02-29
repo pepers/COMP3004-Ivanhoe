@@ -126,15 +126,10 @@ public class ClientInput extends Thread{
 						}
 					}
 				}
-			case "/draw":
-				if (!(client.player.inTournament)) { // not in tournament
-					System.out.println("Client: can't perform that action while not in a tournament");
-					Trace.getInstance().write(this, client.player.username + 
-							": can't use " + cmd[0] + " while not in tournament.");
-					return true;
-				}
+			case "/end":  // end turn
 				if (args.length != 0) { return false; } // no arguments allowed for this command
-				action = new DrawCard();
+				client.player.isTurn = false;
+				action = new EndTurn();
 				client.send(action);
 				return true;
 			case "/hand":

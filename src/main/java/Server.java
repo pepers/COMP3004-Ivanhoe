@@ -251,9 +251,15 @@ public class Server implements Runnable, Serializable{
 			broadcast(t.name + " started by " + action.origin.username + " (" + t.colour + ")");
 			return true;
 		}
-		if (action.object instanceof DrawCard) {
-			int n = action.origin.addHand(gameState.deck.draw());
-			broadcast(action.origin.username + " draws a card. (" + n + ")");
+		if (action.object instanceof EndTurn) {
+			Player p = gameState.getPlayer(action.origin.username);
+			if (p != null) {
+				message("Thy turn hath finished.", p);
+				Player next = gameState.getNext();
+				message("Thy turn hath begun!", next);
+				messageExcept(next.username + " hath begun their turn!", next);
+				gameState.setTurn(next);
+			} 
 			return true;
 		}
 		if (action.object instanceof Withdraw){
