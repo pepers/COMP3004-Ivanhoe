@@ -63,7 +63,6 @@ public class ClientInput extends Thread{
 	 * shut down Client
 	 */
 	private boolean shutdown() {
-		stop = true;
 		client.shutdown();
 		return true;
 	}

@@ -10,20 +10,20 @@ import main.resources.Trace;
 
 public class Client implements Runnable {
 
-	Thread receiveThread;                  // Client thread to receive from Server
-	ClientInput inputThread = null;        // thread to input Client commands
-	Boolean stop = false;                  // use to stop the Client
-	Action action;                         // client's action
-	private Socket socket = null;          // socket to connect to Server
+	Thread receiveThread; // Client thread to receive from Server
+	ClientInput inputThread = null; // thread to input Client commands
+	Boolean stop = false; // use to stop the Client
+	Action action; // client's action
+	private Socket socket = null; // socket to connect to Server
 	ObjectOutputStream clientOutputStream; // send objects to Server
-	ObjectInputStream clientInputStream;   // receive objects from Server
-	Scanner userInput = null;              // scanner to get user input
-	Language language;                     // to translate chat
-	
-	GameState game;		   				         // the local copy of the game state
-    Player player = new Player("Default Name");  // the local copy of this client's player
-	
-	
+	ObjectInputStream clientInputStream; // receive objects from Server
+	Scanner userInput = null; // scanner to get user input
+	Language language; // to translate chat
+
+	GameState game; // the local copy of the game state
+	Player player = new Player("Default Name"); // the local copy of this
+												// client's player
+
 	public static void main(String args[]) {
 		Client client = new Client(); // client object
 		client.startUp();
@@ -42,22 +42,23 @@ public class Client implements Runnable {
 		System.out.println(" _| |\\ V / (_| | | | | | | | (_) |  __/");
 		System.out.println("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
 		System.out.println("\nClient: Welcome brave knight!");
-		
+
 		// set up language to translate chat
 		language = new Language(Language.Dialect.none, false);
-		
+
 		// get user's name
 		String username = userInput("What is thy name?: ");
 		action = new SetName(username, true);
-		
+
 		// connect to Server
-		while(true){
+		while (true) {
 			// get the Server's inet address
-			String address = userInput("Where are the tournaments to be held? (enter nothing for default InetAddress): ");
+			String address = userInput(
+					"Where are the tournaments to be held? (enter nothing for default InetAddress): ");
 			if (address.isEmpty()) {
 				address = Config.DEFAULT_HOST;
 			}
-			
+
 			// get the Server's port
 			int port;
 			while (true) {
@@ -75,25 +76,25 @@ public class Client implements Runnable {
 					break;
 				}
 			}
-			
+
 			// attempt to connect to Server
 			if (connect(address, port)) {
 				send(action); // send user's name to Server
-				
+
 				// start new thread to get Client commands
 				inputThread = new ClientInput(this, System.in);
 				inputThread.start();
-				
+
 				// start new thread to receive from Server
 				receiveThread = new Thread(this);
 				receiveThread.start();
-				
-				//init gamestate
+
+				// init gamestate
 				game = new GameState();
 				break;
 			} else {
 				System.out.println("There are no tournaments at that location! \n");
-				
+
 				while (true) {
 					String ui = userInput("Do you want to search for a new tournament (y/n): ");
 					if (ui.equalsIgnoreCase("y")) {
@@ -105,17 +106,17 @@ public class Client implements Runnable {
 					}
 				}
 			}
-		}		
-		
+		}
+
 	}
-	
+
 	/*
 	 * shut down Client
 	 */
 	public boolean shutdown() {
 		Trace.getInstance().write(this, "Client shutting down...");
 		System.out.println("\nClient: Shutting down...");
-		
+
 		// close threads
 		stop = true;
 		receiveThread = null;
@@ -123,12 +124,12 @@ public class Client implements Runnable {
 			inputThread.stop = true;
 			inputThread = null;
 		}
-		
+
 		// close scanner
 		if (userInput != null) {
 			userInput.close();
 		}
-		
+
 		// close socket
 		if (socket != null) {
 			try {
@@ -138,7 +139,7 @@ public class Client implements Runnable {
 				return false;
 			}
 		}
-		
+
 		// close socket streams
 		if (clientInputStream != null) {
 			try {
@@ -156,8 +157,7 @@ public class Client implements Runnable {
 				return false;
 			}
 		}
-		
-		
+
 		Trace.getInstance().write(this, "Client shut down, successfully.");
 		return true;
 	}
@@ -169,7 +169,7 @@ public class Client implements Runnable {
 		// while Client is running, keep connection with Server
 		while (!stop) {
 			Object o = receive(); // received object
-			if (o != null) {      // process object if it can be used
+			if (o != null) { // process object if it can be used
 				process(o);
 			}
 		}
@@ -195,8 +195,8 @@ public class Client implements Runnable {
 			this.socket = new Socket(IPAddress, port);
 			Trace.getInstance().write(this,
 					"connected to server: " + socket.getInetAddress() + " : " + socket.getLocalPort());
-			
-			clientOutputStream = new ObjectOutputStream(socket.getOutputStream());	
+
+			clientOutputStream = new ObjectOutputStream(socket.getOutputStream());
 			clientInputStream = new ObjectInputStream(socket.getInputStream());
 			return true;
 		} catch (SocketException se) {
@@ -236,9 +236,11 @@ public class Client implements Runnable {
 		try {
 			received = clientInputStream.readObject();
 		} catch (SocketException se) {
-			System.out.println("Server was closed.");
-			Trace.getInstance().exception(this, se);
-			shutdown();		
+			if (!(stop)) {
+				System.out.println("Server was closed.");
+				Trace.getInstance().exception(this, se);
+				shutdown();
+			}
 		} catch (ClassNotFoundException cnf) {
 			System.out.println("Class Not Found Exception: reading object from input stream");
 			Trace.getInstance().exception(this, cnf);
@@ -248,56 +250,56 @@ public class Client implements Runnable {
 			Trace.getInstance().exception(this, ioe);
 			shutdown();
 		}
+		
 		return received;
 	}
-	
+
 	/*
-	 * determine type of object received and process accordingly
-	 * return: true if recognized object, false if unrecognized object
+	 * determine type of object received and process accordingly return: true if
+	 * recognized object, false if unrecognized object
 	 */
-	public boolean process (Object o) {
+	public boolean process(Object o) {
 		/* STATES: */
-		// Player 
-		if (o instanceof Player) { 
+		// Player
+		if (o instanceof Player) {
 			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
 			player = (Player) o;
 			Trace.getInstance().write(this, player.username + ": player has been updated");
 			return true;
-			
-		// GameState
-		} else if (o instanceof GameState) { 
+
+			// GameState
+		} else if (o instanceof GameState) {
 			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
 			game = (GameState) o;
 			Trace.getInstance().write(this, player.username + ": game state has been updated");
 			return true;
-			
-		// ActionCard
-		} else if (o instanceof ActionCard) { 
+
+			// ActionCard
+		} else if (o instanceof ActionCard) {
 			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
-			player.addHand((ActionCard)o);
+			player.addHand((ActionCard) o);
 			System.out.println("Client: " + o.toString() + " added to hand");
 			Trace.getInstance().write(this, player.username + ": " + o.toString() + " added to hand");
 			return true;
-			
-		// DisplayCard
-		} else if (o instanceof DisplayCard) { 
+
+			// DisplayCard
+		} else if (o instanceof DisplayCard) {
 			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
-			player.addHand((DisplayCard)o);
+			player.addHand((DisplayCard) o);
 			System.out.println("Client: " + o.toString() + " added to hand");
 			Trace.getInstance().write(this, player.username + ": " + o.toString() + " added to hand");
 			return true;
-		
-		/* ACTIONS: */
-		// Chat 
-		} else if (o instanceof Chat){
-			Trace.getInstance().write(this, player.username + ": " + 
-									o.getClass().getSimpleName() + 
-									" received: " + ((Chat) o).getMessage());
+
+			/* ACTIONS: */
+			// Chat
+		} else if (o instanceof Chat) {
+			Trace.getInstance().write(this,
+					player.username + ": " + o.getClass().getSimpleName() + " received: " + ((Chat) o).getMessage());
 			String message = ((Chat) o).getMessage();
 			System.out.println(language.translate(message));
 			return true;
-		
-		// unrecognized object
+
+			// unrecognized object
 		} else {
 			Exception e = new Exception(player.username + ": unrecognized object received");
 			Trace.getInstance().exception(this, e);
