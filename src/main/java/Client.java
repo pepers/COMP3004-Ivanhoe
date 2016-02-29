@@ -48,6 +48,7 @@ public class Client implements Runnable {
 		// get user's name
 		String username = userInput("What is thy name?: ");
 		action = new SetName(username, true);
+		player.username  = username;
 
 		// connect to Server
 		boolean search = true;
