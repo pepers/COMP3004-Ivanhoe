@@ -288,8 +288,7 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
 			game = (GameState) o;	
 			System.out.println("Got a gamestate where " + game.getPlayer(player.username).username + " turn=" + game.getPlayer(player.username).isTurn);
-			player = game.getPlayer(player.username);
-			
+			player = game.getPlayer(player.username);			
 			Trace.getInstance().write(this, player.username + ": game state has been updated");
 			return true;
 
@@ -325,6 +324,10 @@ public class Client implements Runnable {
 			return false;
 		}
 	}
+	
+	/*
+	 * deals with commands received from inputThread
+	 */
 	public boolean processCmd (String s){
 		// get argument line
 		String[] cmd = s.split("\\s+");                         // array of command + arguments
@@ -427,37 +430,7 @@ public class Client implements Runnable {
 				action = new Play(c);
 				send(action);
 				return true;
-			case "/tournament":
-				if (game.tnmt != null){
-					System.out.println("Client: a tournament is already in progress");
-					Trace.getInstance().write(this, player.username + 
-							": can't use " + cmd[0] + " while not in tournament.");
-					return true;
-				}
-				Card card = player.getCard(args[0]);
-				if(card instanceof ActionCard){
-					System.out.println("Client: " + card.toString() +" is not a display card.");
-					return true;
-				}
-				DisplayCard displayCard = (DisplayCard) card;
-				if(displayCard == null){
-					System.out.println("Client: you don't have the card: " + args[0] + 
-							"\n\t Type '/hand' to view the cards in your hand.");
-					return true;
-				}
-				if (!(player.isTurn)) { // not your turn
-					// card to be player is not the Ivanhoe action card
-					System.out.println("Client: you may not play that card when it is not your turn");
-					return true; 
-				}
-				
-				if (args.length == 1){
-					action = new StartTournament(displayCard, displayCard.getColour());
-				}else if(args.length == 2){
-					action = new StartTournament(displayCard, args[1]);
-				}
-				send(action);
-				return true;
+			
 			case "/ready":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new Ready();
@@ -471,6 +444,35 @@ public class Client implements Runnable {
 			case "/shutdown":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				shutdown();
+				return true;
+			case "/tournament":
+				if (game.tnmt != null){
+					System.out.println("Client: a tournament is already in progress");
+					Trace.getInstance().write(this, player.username + 
+							": can't use " + cmd[0] + " while not in tournament.");
+					return true;
+				}
+				if (!(player.isTurn)) { // not your turn
+					System.out.println("Client: you may not start a tournament when it is not your turn");
+					return true; 
+				}
+				Card card = player.getCard(args[0]);
+				if(card instanceof ActionCard){ // not a display card
+					System.out.println("Client: " + card.toString() +" is not a display card.");
+					return true;
+				}
+				DisplayCard displayCard = (DisplayCard) card;
+				if(displayCard == null){  // don't have the card in hand
+					System.out.println("Client: you don't have the card: " + args[0] + 
+							"\n\t Type '/hand' to view the cards in your hand.");
+					return true;
+				}				
+				if (args.length == 1){
+					action = new StartTournament(displayCard, displayCard.getColour());
+				}else if(args.length == 2){
+					action = new StartTournament(displayCard, args[1]);
+				}
+				send(action);
 				return true;
 			case "/translate":
 				// only one or two arguments allowed

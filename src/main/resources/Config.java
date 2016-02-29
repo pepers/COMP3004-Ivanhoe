@@ -9,14 +9,13 @@ public class Config {
 	// possible commands:
 	public enum ClientCommand { 
 		display(" [player name ('-a' for all, or leave empty for own display)]"), 
-		draw(""), 
 		end(""),
 		hand(""), 
 		help(""), 
 		list(""), 
 		play(" [card name]"), 
 		ready(""), 
-		setname(" [new name (can't be empty, or start with '-')]"), 
+		setname(" [new name (can't already exist, be empty, or start with '-' or '/')]"), 
 		shutdown(""), 
 		translate(" [dialect ('none', 'oldEnglish')] [-c (optional censor)]"), 
 		tournament(""),

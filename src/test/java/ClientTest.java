@@ -72,4 +72,67 @@ public class ClientTest {
 		Trace.getInstance().test(this, "@Test(): shutdown Client");
 		assertTrue(c.shutdown());
 	}
+	
+	@Test
+	public void cmdDisplay() {
+		Trace.getInstance().test(this, "@Test(): /display [player name ('-a' for all, or leave empty for own display)]");
+		assertTrue(c.processCmd("/display"));
+		assertTrue(c.processCmd("/display -a"));
+		assertTrue(c.processCmd("/display"));
+	}
+	
+	@Test
+	public void cmdEnd() {
+		Trace.getInstance().test(this, "@Test(): /end"); // end turn
+	}
+	 
+	@Test
+	public void cmdHand() {
+		Trace.getInstance().test(this, "@Test(): /hand"); 
+	}
+	 
+	@Test
+	public void cmdHelp() {
+		Trace.getInstance().test(this, "@Test(): /help"); 
+	}
+	 
+	@Test
+	public void cmdList() {
+		Trace.getInstance().test(this, "@Test(): /list"); 
+	}
+	 
+	@Test
+	public void cmdPlay() {
+		Trace.getInstance().test(this, "@Test(): /play [card name]"); 
+	}
+	 
+	@Test
+	public void cmdReady() {
+		Trace.getInstance().test(this, "@Test(): /ready"); 
+	}
+	 
+	@Test
+	public void cmdSetname() {
+		Trace.getInstance().test(this, "@Test(): /setname [new name (can't already exist, be empty, or start with '-' or '/')]"); 
+	}
+	 
+	@Test
+	public void cmdShutdown() {
+		Trace.getInstance().test(this, "@Test(): /shutdown"); 
+	}
+	 
+	@Test
+	public void cmdTranslate() {
+		Trace.getInstance().test(this, "@Test(): /translate [dialect ('none', 'oldEnglish')] [-c (optional censor)]"); 
+	}
+	 
+	@Test
+	public void cmdTournament() {
+		Trace.getInstance().test(this, "@Test(): /tournament"); 
+	}
+	 
+	@Test
+	public void cmdWithdraw() {
+		Trace.getInstance().test(this, "@Test(): /withdraw"); 
+	}
 }
