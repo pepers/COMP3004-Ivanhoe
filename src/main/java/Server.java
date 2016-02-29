@@ -277,6 +277,26 @@ public class Server implements Runnable, Serializable{
 		}
 		System.out.println(input);
 	}
+	public void messageExcept(String input, Player p) {
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			if(!(clients.get(t) == p)){t.send(new Chat(input));}
+			
+		}
+		System.out.println(input);
+	}
+	public boolean message(String input, Player p) {
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			if((clients.get(t) == p)){
+				t.send(new Chat(input));
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	// Start a game
 	public boolean startGame() {
@@ -309,11 +329,15 @@ public class Server implements Runnable, Serializable{
 		
 		Player startPlayer = gameState.players.get(new Random().nextInt(gameState.numPlayers));
 		gameState.setTurn(startPlayer);
-		broadcast(startPlayer.username + " starts their turn.");
+		messageExcept(startPlayer.username + " starts their turn.", startPlayer);
+		message("You are the starting player. Start a tournament if able.",  startPlayer);
 		updateGameStates();
 		return true;
 	}
 
+	
+	
+	
 	// Update each client with a new gameState
 	public void updateGameStates(){
 		Iterator<ServerThread> i = clients.keySet().iterator();
