@@ -18,6 +18,7 @@ public class Player implements Serializable{
 	ArrayList<Card> hand;
 	int ready = 0; 
 	boolean inTournament = false;
+	boolean isTurn = false;
 	
 	public Player(String u){
 		username = u;

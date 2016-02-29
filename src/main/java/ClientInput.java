@@ -180,7 +180,14 @@ public class ClientInput extends Thread{
 				if(c == null){
 					System.out.println("Client: you don't have the card: " + sub + 
 							"\n\t Type '/hand' to view the cards in your hand.");
-					return false;
+					return true;
+				}
+				if (!(client.player.isTurn)) { // not your turn
+					// card to be player is not the Ivanhoe action card
+					if (c.toString().equalsIgnoreCase("ivanhoe")) { 
+						System.out.println("Client: you may not play that card when it is not your turn");
+						return true; 
+					}
 				}
 				action = new Play(c);
 				client.send(action);
@@ -235,6 +242,7 @@ public class ClientInput extends Thread{
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new Withdraw();
 				client.send(action);
+				client.player.inTournament = false;
 				return true;
 			default:
 				break;

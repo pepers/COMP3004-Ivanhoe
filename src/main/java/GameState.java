@@ -36,4 +36,19 @@ public class GameState implements Serializable{
 		}
 		return null; // player doesn't exist, return null
 	}
+	
+	/*
+	 * set who's turn it is
+	 */
+	public boolean setTurn (Player player) {
+		if (getPlayer(player.username) == null) { return false; } // player not in game
+		for (Player p: players) {
+			if (player.equals(p)) { // found player 
+				p.isTurn = true; 
+			} else {
+				p.isTurn = false;
+			}
+		}
+		return true;
+	}
 }
