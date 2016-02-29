@@ -2,7 +2,6 @@ package main.java;
 
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
 
 import main.resources.Config;
 import main.resources.Language;
@@ -17,7 +16,7 @@ public class Client implements Runnable {
 	private Socket socket = null; // socket to connect to Server
 	ObjectOutputStream clientOutputStream; // send objects to Server
 	ObjectInputStream clientInputStream; // receive objects from Server
-	Scanner userInput = null; // scanner to get user input
+	BufferedReader input = null; // to get user input
 	Language language; // to translate chat
 
 	GameState game; // the local copy of the game state
@@ -117,29 +116,32 @@ public class Client implements Runnable {
 		Trace.getInstance().write(this, "Client shutting down...");
 		System.out.println("\nClient: Shutting down...");
 
+		// close socket
+		try {
+			socket.close();
+		} catch (IOException e) {
+			Trace.getInstance().exception(this, e);
+			return false;
+		}
+
 		// close threads
 		stop = true;
 		receiveThread = null;
-		if (inputThread != null) {
-			inputThread.stop = true;
-			inputThread = null;
-		}
-
+		inputThread.stop = true;
+		inputThread = null;
+	
+		/*
 		// close scanner
-		if (userInput != null) {
-			userInput.close();
-		}
-
-		// close socket
-		if (socket != null) {
+		if (input != null) {
 			try {
-				socket.close();
+				input.close();
 			} catch (IOException e) {
 				Trace.getInstance().exception(this, e);
-				return false;
 			}
 		}
-
+		*/
+	
+		/*
 		// close socket streams
 		if (clientInputStream != null) {
 			try {
@@ -157,6 +159,8 @@ public class Client implements Runnable {
 				return false;
 			}
 		}
+		*/
+		
 
 		Trace.getInstance().write(this, "Client shut down, successfully.");
 		return true;
@@ -179,11 +183,17 @@ public class Client implements Runnable {
 	 * get user input from console
 	 */
 	public String userInput(String message) {
-		userInput = new Scanner(System.in);
+		input = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println(message);
-		String input = userInput.nextLine();
-		Trace.getInstance().write(this, message + input);
-		return input;
+		String strInput = "";
+		try {
+			strInput = input.readLine();
+		} catch (IOException e) {
+			Trace.getInstance().exception(this, e);
+			return null;
+		}
+		Trace.getInstance().write(this, message + strInput);
+		return strInput;
 	}
 
 	/*
@@ -250,7 +260,7 @@ public class Client implements Runnable {
 			Trace.getInstance().exception(this, ioe);
 			shutdown();
 		}
-		
+
 		return received;
 	}
 

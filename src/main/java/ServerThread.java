@@ -75,7 +75,6 @@ public class ServerThread extends Thread{
 			stop = true;
 		} catch (IOException e) {
 			stop = true;
-			e.printStackTrace();
 		}
 		return null;
 	}
