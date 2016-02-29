@@ -50,7 +50,8 @@ public class Client implements Runnable {
 		action = new SetName(username, true);
 
 		// connect to Server
-		while (true) {
+		boolean search = true;
+		while (search) {
 			// get the Server's inet address
 			String address = userInput(
 					"Where are the tournaments to be held? (enter nothing for default InetAddress): ");
@@ -99,7 +100,9 @@ public class Client implements Runnable {
 					if (ui.equalsIgnoreCase("y")) {
 						break;
 					} else if (ui.equalsIgnoreCase("n")) {
-						shutdown(); // shut down client
+						System.out.println("Client: fare thee well!");
+						search = false;
+						break;
 					} else {
 						System.out.println("That is not an option, my good knight!");
 					}
@@ -163,6 +166,7 @@ public class Client implements Runnable {
 		
 
 		Trace.getInstance().write(this, "Client shut down, successfully.");
+		System.out.println("Client: fare thee well!");
 		return true;
 	}
 
