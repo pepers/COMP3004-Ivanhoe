@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameState implements Serializable{
 	
@@ -51,4 +52,16 @@ public class GameState implements Serializable{
 		}
 		return true;
 	}
+	
+	public Player getNext(){
+		
+		for (int i = 0; i<players.size(); i++){
+			Player p = players.get(i);
+			if(p.isTurn){
+				return players.get((i+1)%players.size());
+			}
+		}
+		return players.get(new Random().nextInt(players.size()));
+	}
+	
 }
