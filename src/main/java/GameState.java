@@ -33,7 +33,7 @@ public class GameState implements Serializable{
 	 */
 	public Player getPlayer (String name) {
 		for (Player p: players) {
-			if (p.username == name) { return p; }
+			if (p.username.equals(name)) { return p; }
 		}
 		return null; // player doesn't exist, return null
 	}
@@ -55,10 +55,21 @@ public class GameState implements Serializable{
 	
 	public Player getNext(){
 		
-		for (int i = 0; i<players.size(); i++){
-			Player p = players.get(i);
+		ArrayList<Player> temp;
+		if(tnmt != null){
+			temp = new ArrayList<Player>();
+			for (Player p : players){
+				if(p.inTournament){
+					temp.add(p);
+				}
+			}
+		}else{
+			temp = players;
+		}
+		for (int i = 0; i<temp.size(); i++){
+			Player p = temp.get(i);
 			if(p.isTurn){
-				return players.get((i+1)%players.size());
+				return temp.get((i+1)%temp.size());
 			}
 		}
 		return players.get(new Random().nextInt(players.size()));

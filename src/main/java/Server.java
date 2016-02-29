@@ -248,6 +248,9 @@ public class Server implements Runnable, Serializable{
 		if (action.object instanceof StartTournament) {
 			Tournament t = new Tournament(((StartTournament)action.object).getColour());
 			gameState.tnmt = t;
+			for (Player p : gameState.players){
+				p.inTournament = true;
+			}
 			broadcast(t.name + " started by " + action.origin.username + " (" + t.colour + ")");
 			return true;
 		}
