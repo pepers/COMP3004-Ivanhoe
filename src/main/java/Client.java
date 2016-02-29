@@ -285,6 +285,7 @@ public class Client implements Runnable {
 		} else if (o instanceof GameState) {
 			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
 			game = (GameState) o;
+			player = ((GameState) o).getPlayer(player.username);
 			Trace.getInstance().write(this, player.username + ": game state has been updated");
 			return true;
 
