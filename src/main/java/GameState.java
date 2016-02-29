@@ -43,11 +43,14 @@ public class GameState implements Serializable{
 	 */
 	public boolean setTurn (Player player) {
 		if (getPlayer(player.username) == null) { return false; } // player not in game
+		
 		for (Player p: players) {
-			if (player.equals(p)) { // found player 
+			if (p == player) { // found player 
 				p.isTurn = true; 
+				System.out.println("ST: found correct");
 			} else {
 				p.isTurn = false;
+				System.out.println("ST: not this player");
 			}
 		}
 		return true;

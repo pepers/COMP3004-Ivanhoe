@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.*;
 import java.net.*;
+import java.util.Arrays;
 
 import main.resources.Config;
 import main.resources.Language;
@@ -286,7 +287,9 @@ public class Client implements Runnable {
 		} else if (o instanceof GameState) {
 			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
 			game = (GameState) o;	
-			player = ((GameState) o).getPlayer(player.username);
+			System.out.println("Got a gamestate where " + game.getPlayer(player.username).username + " turn=" + game.getPlayer(player.username).isTurn);
+			player = game.getPlayer(player.username);
+			
 			Trace.getInstance().write(this, player.username + ": game state has been updated");
 			return true;
 
@@ -322,5 +325,194 @@ public class Client implements Runnable {
 			return false;
 		}
 	}
-
+	public boolean processCmd (String s){
+		// get argument line
+		String[] cmd = s.split("\\s+");                         // array of command + arguments
+		String[] args = Arrays.copyOfRange(cmd, 1, cmd.length); // just arguments
+		String sub = String.join(" ", args);                    // join arguments into one string
+		
+		// switch over command 
+		switch (cmd[0]) {
+			case "/display":
+				if (args.length == 0) { // show own display
+					if (!(player.printDisplay())) {
+						System.out.println("Client: no cards in your display");
+						Trace.getInstance().write(this, player.username + 
+								": No cards in your display to show.");
+					}
+					return true;
+				} else { // show someone else's display
+					if (sub.equalsIgnoreCase("-a")) { // show all displays
+						for (Player p: game.players) {
+							if (!(p.printDisplay())) {
+								System.out.println("Client: no cards in " +
+										p.username + "'s display\n");
+								Trace.getInstance().write(this, player.username +
+										": No cards in " + p.username + "'s display.");
+							}
+						}
+						return true;
+					} else {
+						Player p = game.getPlayer(sub);
+						if (p == null) { // player doesn't exist
+							return false;
+						} else {
+							if (!(p.printDisplay())) {
+								System.out.println("Client: no cards in " +
+										p.username + "'s display\n");
+								Trace.getInstance().write(this, player.username +
+										": No cards in " + p.username + "'s display.");
+							}
+							return true;
+						}
+					}
+				}
+			case "/end":  // end turn
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				player.isTurn = false;
+				action = new EndTurn();
+				send(action);
+				return true;
+			case "/hand":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				if (player.getHand().isEmpty()) {
+					System.out.println("Client: You have no cards in your hand.");
+					return true;
+				}
+				System.out.println("Client: You have the following cards in your hand: ");
+				for (Card card: player.getHand()) {
+					System.out.println("\t- " + card.toString());
+				}
+				return true;
+			case "/help":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				System.out.println("Client: list of possible commands: ");
+				for (Config.ClientCommand helpCmd: Config.ClientCommand.values()) {
+					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
+				}
+				return true;
+			case "/list":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				System.out.println("- State    : Player ");
+				for (int i=0; i<game.players.size(); i++) {
+					Player p = game.players.get(i);
+					String name = p.username;
+					if (name == player.username) { // found yourself
+						name += " (you)";
+					}
+					System.out.printf("%-10s : %s\n", p.getReadyState(), name);
+				}
+				return true;
+			case "/play":
+				if (!(player.inTournament)) { // not in tournament
+					System.out.println("Client: can't perform that action while not in a tournament");
+					Trace.getInstance().write(this, player.username + 
+							": can't use " + cmd[0] + " while not in tournament.");
+					return true;
+				}
+				if (args.length != 1) { return false; } // command must have exactly one argument
+				Card c = player.getCard(sub);
+				if(c == null){
+					System.out.println("Client: you don't have the card: " + sub + 
+							"\n\t Type '/hand' to view the cards in your hand.");
+					return true;
+				}
+				if (!(player.isTurn)) { // not your turn
+					// card to be player is not the Ivanhoe action card
+					if (c.toString().equalsIgnoreCase("ivanhoe")) { 
+						System.out.println("Client: you may not play that card when it is not your turn");
+						return true; 
+					}
+				}
+				action = new Play(c);
+				send(action);
+				return true;
+			case "/tournament":
+				if (game.tnmt != null){
+					System.out.println("Client: a tournament is already in progress");
+					Trace.getInstance().write(this, player.username + 
+							": can't use " + cmd[0] + " while not in tournament.");
+					return true;
+				}
+				Card card = player.getCard(args[0]);
+				if(card instanceof ActionCard){
+					System.out.println("Client: " + card.toString() +" is not a display card.");
+					return true;
+				}
+				DisplayCard displayCard = (DisplayCard) card;
+				if(displayCard == null){
+					System.out.println("Client: you don't have the card: " + args[0] + 
+							"\n\t Type '/hand' to view the cards in your hand.");
+					return true;
+				}
+				if (!(player.isTurn)) { // not your turn
+					// card to be player is not the Ivanhoe action card
+					System.out.println("Client: you may not play that card when it is not your turn");
+					return true; 
+				}
+				
+				if (args.length == 1){
+					action = new StartTournament(displayCard, displayCard.getColour());
+				}else if(args.length == 2){
+					action = new StartTournament(displayCard, args[1]);
+				}
+				send(action);
+				return true;
+			case "/ready":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				action = new Ready();
+				send(action);
+				return true;
+			case "/setname":
+				if ((sub == "") || (sub.startsWith("-"))) { return false; }
+				action = new SetName(sub);
+				send(action);
+				return true;
+			case "/shutdown":
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				shutdown();
+				return true;
+			case "/translate":
+				// only one or two arguments allowed
+				if ((args.length != 1) && (args.length != 2)) { return false; }
+				// if second argument, it must be "-c"
+				if ((args.length == 2) && (!(args[1].equalsIgnoreCase("-c")))) { return false; }
+				for (Language.Dialect dialect: Language.Dialect.values()) {
+					if (dialect.toString().equals(args[0])) {
+						if (args.length == 2) {
+							language = new Language(dialect, true);
+							language = new Language(dialect, true);
+							Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
+									", with censoring.");
+							System.out.println("Client: Translating chat to " + language.getDialect().toString() + 
+									", with censoring...");
+						} else {
+							language = new Language(dialect, false);
+							language = new Language(dialect, false);
+							Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
+									", without censoring.");
+							System.out.println("Client: Translating chat to " + language.getDialect().toString() + 
+									", without censoring...");
+						}
+						return true;
+					}
+				}
+				break;
+			case "/withdraw":
+				if (!(player.inTournament)) { // not in tournament
+					System.out.println("Client: can't perform that action while not in a tournament");
+					Trace.getInstance().write(this, player.username + 
+							": can't use " + cmd[0] + " while not in tournament.");
+					return true;
+				}
+				if (args.length != 0) { return false; } // no arguments allowed for this command
+				action = new Withdraw();
+				send(action);
+				player.inTournament = false;
+				return true;
+			default:
+				break;
+		}
+		return false;
+	}
 }

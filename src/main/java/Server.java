@@ -206,7 +206,7 @@ public class Server implements Runnable, Serializable{
 				if(gameState != null){
 					updateGameStates();
 				}else{
-					//a game command was received at a wrong time
+					
 				}		
 			}
 		}
@@ -261,7 +261,7 @@ public class Server implements Runnable, Serializable{
 				Player next = gameState.getNext();
 				message("Thy turn hath begun!", next);
 				messageExcept(next.username + " hath begun their turn!", next);
-				gameState.setTurn(next);
+				System.out.println("ST=" + gameState.setTurn(next));
 			} 
 			return true;
 		}
@@ -330,7 +330,7 @@ public class Server implements Runnable, Serializable{
 				clients.get(t).ready = 2;
 				
 				for (int j = 0; j < 7; j++){
-					System.out.println(clients.get(t).addHand(gameState.deck.draw()));
+					clients.get(t).addHand(gameState.deck.draw());
 				}
 				gameState.addPlayer(clients.get(t));
 			}

@@ -36,7 +36,7 @@ public class ClientInput extends Thread{
 			} 
 			if(input.length() > 0){
 				if (validCmd(input)) {               // process valid commands
-					if (processCmd(input)) {
+					if (client.processCmd(input)) {
 						Trace.getInstance().write(this, client.player.username +
 									": command processed: " + input);
 					} else {
@@ -83,7 +83,7 @@ public class ClientInput extends Thread{
 		
 		return false;
 	}
-	
+	/*
 	public boolean processCmd (String s){
 		// get argument line
 		String[] cmd = s.split("\\s+");                         // array of command + arguments
@@ -187,7 +187,7 @@ public class ClientInput extends Thread{
 				client.send(action);
 				return true;
 			case "/tournament":
-				if (client.game.tnmt != null){ // no tournament running
+				if (client.game.tnmt != null){
 					System.out.println("Client: a tournament is already in progress");
 					Trace.getInstance().write(this, client.player.username + 
 							": can't use " + cmd[0] + " while not in tournament.");
@@ -274,5 +274,5 @@ public class ClientInput extends Thread{
 		}
 		return false;
 	}
-	
+	*/
 }
