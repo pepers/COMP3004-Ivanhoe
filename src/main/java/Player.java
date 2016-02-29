@@ -19,6 +19,11 @@ public class Player implements Serializable{
 	int ready = 0; 
 	boolean inTournament = false;
 	boolean isTurn = false;
+	ArrayList<Token> tokens;  // tokens won for tournament wins
+	
+	// possible tokens to win
+	public enum Token {purple, red, blue, yellow, green}
+	
 	
 	public Player(String u){
 		username = u;
@@ -59,6 +64,18 @@ public class Player implements Serializable{
 	public int addHand(Card c){
 		hand.add(c);
 		return hand.size();
+	}
+	
+	/*
+	 * give token to player for tournament win
+	 * return false if failed to give token to player (already has that colour)
+	 */
+	public boolean giveToken (Token token) {
+		for (Token t: tokens) {
+			if (token == t) { return false; } // player already has token
+		}
+		tokens.add(token); 
+		return true;
 	}
 
 	/*
