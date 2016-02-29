@@ -191,6 +191,37 @@ public class ClientInput extends Thread{
 				action = new Play(c);
 				client.send(action);
 				return true;
+			case "/tournament":
+				if (client.game.tnmt == null){ // no tournament running
+					System.out.println("Client: a tournament is already in progress");
+					Trace.getInstance().write(this, client.player.username + 
+							": can't use " + cmd[0] + " while not in tournament.");
+					return true;
+				}
+				Card card = client.player.getCard(args[0]);
+				if(card instanceof ActionCard){
+					System.out.println("Client: " + card.toString() +" is not a display card.");
+					return true;
+				}
+				DisplayCard displayCard = (DisplayCard) card;
+				if(displayCard == null){
+					System.out.println("Client: you don't have the card: " + args[0] + 
+							"\n\t Type '/hand' to view the cards in your hand.");
+					return true;
+				}
+				if (!(client.player.isTurn)) { // not your turn
+					// card to be player is not the Ivanhoe action card
+					System.out.println("Client: you may not play that card when it is not your turn");
+					return true; 
+				}
+				
+				if (args.length == 1){
+					action = new StartTournament(displayCard, displayCard.getColour());
+				}else if(args.length == 2){
+					action = new StartTournament(displayCard, args[1]);
+				}
+				client.send(action);
+				return true;
 			case "/ready":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				action = new Ready();

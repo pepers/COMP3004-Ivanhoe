@@ -1,5 +1,6 @@
 package main.java;
 
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.BindException;
@@ -9,6 +10,7 @@ import java.net.Socket;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import main.resources.Config;
@@ -243,6 +245,12 @@ public class Server implements Runnable, Serializable{
 			return false;
 		}
 		//Game state evaluation
+		if (action.object instanceof StartTournament) {
+			Tournament t = new Tournament(((StartTournament)action.object).getColour());
+			gameState.tnmt = t;
+			broadcast(t.name + " started by " + action.origin.username + " (" + t.colour + ")");
+			return true;
+		}
 		if (action.object instanceof DrawCard) {
 			int n = action.origin.addHand(gameState.deck.draw());
 			broadcast(action.origin.username + " draws a card. (" + n + ")");
@@ -291,9 +299,19 @@ public class Server implements Runnable, Serializable{
 			ServerThread t = i.next();
 			if(clients.get(t).ready == 1){
 				clients.get(t).ready = 2;
+				
+				for (int j = 0; j < 7; j++){
+					clients.get(t).addHand(gameState.deck.draw());
+				}
+				
 				gameState.addPlayer(clients.get(t));
+				
 			}
 		}
+		
+		Player startPlayer = gameState.players.get(new Random().nextInt(gameState.numPlayers));
+		gameState.setTurn(startPlayer);
+		broadcast(startPlayer.username + " starts their turn.");
 		return true;
 	}
 

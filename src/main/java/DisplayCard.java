@@ -18,4 +18,8 @@ public class DisplayCard extends Card{
 	public String toString(){
 		return (colour.name() + ":" + value);
 	}
+
+	public String getColour() {
+		return colour.toString();
+	}
 }
