@@ -16,6 +16,9 @@ public class ClientTest {
 	public void setUp() {
 		s.startup();
 		c = new Client();
+		Player p = new Player("TEST PLAYER");
+		GameState g = new GameState();
+		c.initialize(p, g);
 	}
 	
 	@After
@@ -42,7 +45,10 @@ public class ClientTest {
 		assertTrue(c.process(o));
 		
 		// GameState
-		o = new GameState();
+		GameState g = new GameState();
+		Player p = new Player("TEST PLAYER");
+		g.addPlayer(p);
+		o = g;
 		assertTrue(c.process(o));
 		
 		// ActionCard
@@ -84,6 +90,7 @@ public class ClientTest {
 	@Test
 	public void cmdEnd() {
 		Trace.getInstance().test(this, "@Test(): /end"); // end turn
+		assertTrue(c.processCmd("/end"));
 	}
 	 
 	@Test

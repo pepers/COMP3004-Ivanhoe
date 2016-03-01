@@ -20,13 +20,21 @@ public class Client implements Runnable {
 	BufferedReader input = null; // to get user input
 	Language language; // to translate chat
 
-	GameState game; // the local copy of the game state
-	Player player = new Player("Default Name"); // the local copy of this
-												// client's player
+	GameState game = null; // the local copy of the game state
+	Player player = null; // the local copy of this client's player
 
 	public static void main(String args[]) {
 		Client client = new Client(); // client object
 		client.startUp();
+	}
+	
+	/*
+	 * initialize the player and game states
+	 */
+	public void initialize (Player p, GameState g) {
+		g.addPlayer(p);
+		player = p;
+		game = g;
 	}
 
 	/*
@@ -49,7 +57,11 @@ public class Client implements Runnable {
 		// get user's name
 		String username = userInput("What is thy name?: ");
 		action = new SetName(username, true);
-		player.username  = username;
+		
+		// initialize states
+		Player p = new Player(username);
+		GameState g = new GameState();
+		initialize(p, g);
 
 		// connect to Server
 		boolean search = true;
@@ -91,8 +103,6 @@ public class Client implements Runnable {
 				receiveThread = new Thread(this);
 				receiveThread.start();
 
-				// init gamestate
-				game = new GameState();
 				break;
 			} else {
 				System.out.println("There are no tournaments at that location! \n");
