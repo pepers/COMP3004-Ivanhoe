@@ -41,6 +41,13 @@ public class Language {
 	}
 	
 	/*
+	 * return if censoring is on/off
+	 */
+	public boolean isCensored() {
+		return censor;
+	}
+	
+	/*
 	 * translate a string
 	 */
 	public String translate (String input) {

@@ -8,6 +8,7 @@ public class Config {
 	
 	// possible commands:
 	public enum ClientCommand { 
+		censor(""),
 		display(" [player name ('-a' for all, or leave empty for own display)]"), 
 		end(""),
 		hand(""), 
@@ -17,7 +18,7 @@ public class Config {
 		ready(""), 
 		setname(" [new name (can't already exist, be empty, or start with '-' or '/')]"), 
 		shutdown(""), 
-		translate(" [dialect ('none', 'oldEnglish')] [-c (optional censor)]"), 
+		translate(" [dialect ('none', 'oldEnglish')]"), 
 		tournament(""),
 		withdraw("");
 								
