@@ -11,6 +11,7 @@ public class ClientTest {
 
 	Server s = new Server(Config.DEFAULT_PORT);
 	Client c = null;
+	Client c2 = new Client(); // for connect and shutdown tests
 	
 	@Before
 	public void setUp() {
@@ -19,20 +20,21 @@ public class ClientTest {
 		Player p = new Player("TEST PLAYER");
 		GameState g = new GameState();
 		c.initialize(p, g);
+		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 	}
 	
 	@After
 	public void tearDown () {
+		c.shutdown();
 		s.shutdown();
-		c = null;
 	}
 	
 	@Test
 	public void connect() {
 		Trace.getInstance().test(this, "@Test(): connect to Server");
-		
+				
 		// attempt to connect (should fail if Server is not reachable)
-		assertTrue(c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT));
+		assertTrue(c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT));
 	}
 	
 	@Test
@@ -76,7 +78,8 @@ public class ClientTest {
 	@Test
 	public void shutdown() {
 		Trace.getInstance().test(this, "@Test(): shutdown Client");
-		assertTrue(c.shutdown());
+		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+		assertTrue(c2.shutdown());
 	}
 	
 	@Test
@@ -90,6 +93,7 @@ public class ClientTest {
 	@Test
 	public void cmdEnd() {
 		Trace.getInstance().test(this, "@Test(): /end"); // end turn
+		assertFalse(c.processCmd("/end arguments not allowed"));
 		assertTrue(c.processCmd("/end"));
 	}
 	 

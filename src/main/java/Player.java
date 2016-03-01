@@ -103,7 +103,7 @@ public class Player implements Serializable{
 	 */
 	public boolean printDisplay() {
 		if (!(inTournament)) { // not in tournament
-			System.out.println(username + "is not in this tournament.\n");
+			System.out.println(username + " is not in this tournament.\n");
 			return true;
 		}
 		if (display.isEmpty()) { return false; } // empty display

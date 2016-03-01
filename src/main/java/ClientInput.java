@@ -27,7 +27,7 @@ public class ClientInput extends Thread{
 	}
 	
 	public void run () {
-		while(!stop) {
+		while(!this.stop) {
 			try {
 				input = reader.readLine(); // get next line of input
 			} catch (IOException e) {

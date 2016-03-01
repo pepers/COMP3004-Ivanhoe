@@ -34,8 +34,8 @@ public class Client implements Runnable {
 	 */
 	public void initialize (Player p, GameState g) {
 		g.addPlayer(p);
-		player = p;
-		game = g;
+		this.player = p;
+		this.game = g;
 	}
 
 	/*
@@ -53,11 +53,11 @@ public class Client implements Runnable {
 		System.out.println("\nClient: Welcome brave knight!");
 
 		// set up language to translate chat
-		language = new Language(Language.Dialect.none, false);
+		this.language = new Language(Language.Dialect.none, false);
 
 		// get user's name
 		String username = userInput("What is thy name?: ");
-		action = new SetName(username, true);
+		this.action = new SetName(username, true);
 		
 		// initialize states
 		Player p = new Player(username);
@@ -94,15 +94,15 @@ public class Client implements Runnable {
 
 			// attempt to connect to Server
 			if (connect(address, port)) {
-				send(action); // send user's name to Server
+				send(this.action); // send user's name to Server
 
 				// start new thread to get Client commands
-				inputThread = new ClientInput(this, System.in);
-				inputThread.start();
+				this.inputThread = new ClientInput(this, System.in);
+				this.inputThread.start();
 
 				// start new thread to receive from Server
-				receiveThread = new Thread(this);
-				receiveThread.start();
+				this.receiveThread = new Thread(this);
+				this.receiveThread.start();
 
 				break;
 			} else {
@@ -132,6 +132,23 @@ public class Client implements Runnable {
 		Trace.getInstance().write(this, "Client shutting down...");
 		System.out.println("\nClient: Shutting down...");
 
+		// close socket streams
+		try {
+			this.socket.shutdownOutput();
+			clientOutputStream.close();
+		} catch (IOException e) {
+			System.out.println("Unable to close output stream.");
+			Trace.getInstance().exception(this, e);
+		}
+		try {
+			this.socket.shutdownInput();
+			clientInputStream.close();
+		} catch (IOException e) {
+			System.out.println("Unable to close input stream.");
+			Trace.getInstance().exception(this, e);
+		}		
+		
+				
 		// close socket
 		try {
 			socket.close();
@@ -141,9 +158,9 @@ public class Client implements Runnable {
 		}
 
 		// close threads
-		stop = true;
-		receiveThread = null;
 		inputThread.stop = true;
+		this.stop = true;
+		receiveThread = null;
 		inputThread = null;
 	
 		/*
@@ -157,27 +174,6 @@ public class Client implements Runnable {
 		}
 		*/
 	
-		/*
-		// close socket streams
-		if (clientInputStream != null) {
-			try {
-				clientInputStream.close();
-			} catch (IOException e) {
-				Trace.getInstance().exception(this, e);
-				return false;
-			}
-		}
-		if (clientOutputStream != null) {
-			try {
-				clientOutputStream.close();
-			} catch (IOException e) {
-				Trace.getInstance().exception(this, e);
-				return false;
-			}
-		}
-		*/
-		
-
 		Trace.getInstance().write(this, "Client shut down, successfully.");
 		System.out.println("Client: fare thee well!");
 		return true;
@@ -188,7 +184,7 @@ public class Client implements Runnable {
 	 */
 	public void run() {
 		// while Client is running, keep connection with Server
-		while (!stop) {
+		while (!this.stop) {
 			Object o = receive(); // received object
 			if (o != null) { // process object if it can be used
 				process(o);
@@ -200,11 +196,11 @@ public class Client implements Runnable {
 	 * get user input from console
 	 */
 	public String userInput(String message) {
-		input = new BufferedReader(new InputStreamReader(System.in));
+		this.input = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println(message);
 		String strInput = "";
 		try {
-			strInput = input.readLine();
+			strInput = this.input.readLine();
 		} catch (IOException e) {
 			Trace.getInstance().exception(this, e);
 			return null;
@@ -221,10 +217,10 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, "attempting to connect to server...");
 			this.socket = new Socket(IPAddress, port);
 			Trace.getInstance().write(this,
-					"connected to server: " + socket.getInetAddress() + " : " + socket.getLocalPort());
-
-			clientOutputStream = new ObjectOutputStream(socket.getOutputStream());
-			clientInputStream = new ObjectInputStream(socket.getInputStream());
+					"connected to server: " + this.socket.getInetAddress() + " : " + 
+					this.socket.getLocalPort());
+			this.clientOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
+			this.clientInputStream = new ObjectInputStream(this.socket.getInputStream());
 			return true;
 		} catch (SocketException se) {
 			System.out.println("Unable to connect to a server.");
@@ -244,7 +240,7 @@ public class Client implements Runnable {
 	 */
 	public Boolean send(Object o) {
 		try {
-			clientOutputStream.writeObject(o);
+			this.clientOutputStream.writeObject(o);
 			return true;
 		} catch (IOException e) {
 			System.out.println("Unexpected exception: writing object to output stream");
@@ -261,21 +257,19 @@ public class Client implements Runnable {
 		Object received = null;
 
 		try {
-			received = clientInputStream.readObject();
+			received = this.clientInputStream.readObject();
 		} catch (SocketException se) {
-			if (!(stop)) {
-				System.out.println("Server was closed.");
-				Trace.getInstance().exception(this, se);
-				shutdown();
-			}
+			System.out.println("Server was closed.");
+			Trace.getInstance().exception(this, se);
+			this.stop = true;
 		} catch (ClassNotFoundException cnf) {
 			System.out.println("Class Not Found Exception: reading object from input stream");
 			Trace.getInstance().exception(this, cnf);
-			shutdown();
+			this.stop = true;
 		} catch (IOException ioe) {
 			System.out.println("Unexpected Exception: reading object from input stream");
 			Trace.getInstance().exception(this, ioe);
-			shutdown();
+			this.stop = true;
 		}
 
 		return received;
@@ -289,48 +283,48 @@ public class Client implements Runnable {
 		/* STATES: */
 		// Player
 		if (o instanceof Player) {
-			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
-			player = (Player) o;
-			Trace.getInstance().write(this, player.username + ": player has been updated");
+			Trace.getInstance().write(this, this.player.username + ": " + o.getClass().getSimpleName() + " received");
+			this.player = (Player) o;
+			Trace.getInstance().write(this, this.player.username + ": player has been updated");
 			return true;
 
 			// GameState
 		} else if (o instanceof GameState) {
-			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
+			Trace.getInstance().write(this, this.player.username + ": " + o.getClass().getSimpleName() + " received");
 			game = (GameState) o;	
-			System.out.println("Got a gamestate where " + game.getPlayer(player.username).username + " turn=" + game.getPlayer(player.username).isTurn);
-			player = game.getPlayer(player.username);			
-			Trace.getInstance().write(this, player.username + ": game state has been updated");
+			System.out.println("Got a gamestate where " + game.getPlayer(this.player.username).username + " turn=" + game.getPlayer(this.player.username).isTurn);
+			this.player = game.getPlayer(this.player.username);			
+			Trace.getInstance().write(this, this.player.username + ": game state has been updated");
 			return true;
 
 			// ActionCard
 		} else if (o instanceof ActionCard) {
-			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
-			player.addHand((ActionCard) o);
+			Trace.getInstance().write(this, this.player.username + ": " + o.getClass().getSimpleName() + " received");
+			this.player.addHand((ActionCard) o);
 			System.out.println("Client: " + o.toString() + " added to hand");
-			Trace.getInstance().write(this, player.username + ": " + o.toString() + " added to hand");
+			Trace.getInstance().write(this, this.player.username + ": " + o.toString() + " added to hand");
 			return true;
 
 			// DisplayCard
 		} else if (o instanceof DisplayCard) {
-			Trace.getInstance().write(this, player.username + ": " + o.getClass().getSimpleName() + " received");
-			player.addHand((DisplayCard) o);
+			Trace.getInstance().write(this, this.player.username + ": " + o.getClass().getSimpleName() + " received");
+			this.player.addHand((DisplayCard) o);
 			System.out.println("Client: " + o.toString() + " added to hand");
-			Trace.getInstance().write(this, player.username + ": " + o.toString() + " added to hand");
+			Trace.getInstance().write(this, this.player.username + ": " + o.toString() + " added to hand");
 			return true;
 
 			/* ACTIONS: */
 			// Chat
 		} else if (o instanceof Chat) {
 			Trace.getInstance().write(this,
-					player.username + ": " + o.getClass().getSimpleName() + " received: " + ((Chat) o).getMessage());
+					this.player.username + ": " + o.getClass().getSimpleName() + " received: " + ((Chat) o).getMessage());
 			String message = ((Chat) o).getMessage();
-			System.out.println(language.translate(message));
+			System.out.println(this.language.translate(message));
 			return true;
 
 			// unrecognized object
 		} else {
-			Exception e = new Exception(player.username + ": unrecognized object received");
+			Exception e = new Exception(this.player.username + ": unrecognized object received");
 			Trace.getInstance().exception(this, e);
 			return false;
 		}
@@ -408,9 +402,9 @@ public class Client implements Runnable {
 	 * checks if player is in tournament and warns that an action can't be taken if they are not
 	 */
 	public boolean tournamentAction (String cmd) {
-		if (!(player.inTournament)) { 
+		if (!(this.player.inTournament)) { 
 			System.out.println("Client: can't perform that action while not in a tournament");
-			Trace.getInstance().write(this, player.username + 
+			Trace.getInstance().write(this, this.player.username + 
 					": can't use " + cmd + " while not in tournament.");
 			return false;
 		} 
@@ -421,9 +415,9 @@ public class Client implements Runnable {
 	 * toggle censoring of bad words
 	 */
 	public boolean cmdCensor() {
-		Dialect dialect = language.getDialect();
-		boolean censor = language.isCensored();
-		language = new Language(dialect, !censor);
+		Dialect dialect = this.language.getDialect();
+		boolean censor = this.language.isCensored();
+		this.language = new Language(dialect, !censor);
 		return true;
 	}
 	
@@ -435,31 +429,31 @@ public class Client implements Runnable {
 		
 		// show own display
 		if (arr.length == 0) { 
-			if (!(player.printDisplay())) {
+			if (!(this.player.printDisplay())) {
 				System.out.println("Client: no cards in your display");
-				Trace.getInstance().write(this, player.username + 
+				Trace.getInstance().write(this, this.player.username + 
 						": No cards in your display to show.");
 			}
 		// show all displays
 		} else if (args.equalsIgnoreCase("-a")) { 
-			for (Player p: game.players) {
+			for (Player p: this.game.players) {
 				if (!(p.printDisplay())) {
 					System.out.println("Client: no cards in " +
 							p.username + "'s display\n");
-					Trace.getInstance().write(this, player.username +
+					Trace.getInstance().write(this, this.player.username +
 							": No cards in " + p.username + "'s display.");
 				}
 			}
 		// show someone else's display
 		} else {
-			Player p = game.getPlayer(args);
+			Player p = this.game.getPlayer(args);
 			if (p == null) { // player doesn't exist
 				return false;
 			} else {
 				if (!(p.printDisplay())) {
 					System.out.println("Client: no cards in " +
 							p.username + "'s display\n");
-					Trace.getInstance().write(this, player.username +
+					Trace.getInstance().write(this, this.player.username +
 							": No cards in " + p.username + "'s display.");
 				}
 			}
@@ -471,9 +465,9 @@ public class Client implements Runnable {
 	 * end your turn
 	 */
 	public boolean cmdEnd () {
-		player.isTurn = false;
-		action = new EndTurn();
-		send(action);
+		this.player.isTurn = false;
+		this.action = new EndTurn();
+		send(this.action);
 		return true;
 	}
 	
@@ -481,11 +475,11 @@ public class Client implements Runnable {
 	 * show cards in hand
 	 */
 	public boolean cmdHand () {
-		if (player.getHand().isEmpty()) {
+		if (this.player.getHand().isEmpty()) {
 			System.out.println("Client: You have no cards in your hand.");
 		} else {
 			System.out.println("Client: You have the following cards in your hand: ");
-			for (Card card: player.getHand()) {
+			for (Card card: this.player.getHand()) {
 				System.out.println("\t- " + card.toString());
 			}
 		}
@@ -508,10 +502,10 @@ public class Client implements Runnable {
 	 */
 	public boolean cmdList () {
 		System.out.println("- State    : Player ");
-		for (int i=0; i<game.players.size(); i++) {
-			Player p = game.players.get(i);
+		for (int i=0; i<this.game.players.size(); i++) {
+			Player p = this.game.players.get(i);
 			String name = p.username;
-			if (name == player.username) { // found yourself
+			if (name == this.player.username) { // found yourself
 				name += " (you)";
 			}
 			System.out.printf("%-10s : %s\n", p.getReadyState(), name);
@@ -523,21 +517,21 @@ public class Client implements Runnable {
 	 * play a card
 	 */
 	public boolean cmdPlay (String card) {
-		Card c = player.getCard(card); // get the card the user asked for
+		Card c = this.player.getCard(card); // get the card the user asked for
 			
 		// card doesn't exist in hand
 		if (c == null){
 			System.out.println("Client: you don't have the card: " + card + 
 					"\n\t Type '/hand' to view the cards in your hand.");
 		// not the player's turn
-		} else if (!(player.isTurn)) { 
+		} else if (!(this.player.isTurn)) { 
 			// card to be player is the Ivanhoe action card:
 			if (c.toString().equalsIgnoreCase("ivanhoe")) { return true; }
 			// not the Ivanhoe action card:
 			System.out.println("Client: you may not play that card when it is not your turn");
 		} else {
-			action = new Play(c);
-			send(action);
+			this.action = new Play(c);
+			send(this.action);
 			return true;
 		}
 		return false;
@@ -547,8 +541,8 @@ public class Client implements Runnable {
 	 * player is ready to start game
 	 */
 	public boolean cmdReady () {
-		action = new Ready();
-		send(action);
+		this.action = new Ready();
+		send(this.action);
 		return true;
 	}
 	
@@ -564,8 +558,8 @@ public class Client implements Runnable {
 			return false;
 		// valid name
 		} else {
-			action = new SetName(args);
-			send(action);
+			this.action = new SetName(args);
+			send(this.action);
 			return true;
 		}
 	}
@@ -575,16 +569,16 @@ public class Client implements Runnable {
 	 */
 	public boolean cmdTournament (String[] arr) {
 		String args = String.join(" ", arr); // join arguments into one string
-		Card card = player.getCard(args);    // get card to start tournament with
+		Card card = this.player.getCard(args);    // get card to start tournament with
 		
 		// tournament already exists
-		if (game.tnmt != null){
+		if (this.game.tnmt != null){
 			System.out.println("Client: a tournament is already in progress");
-			Trace.getInstance().write(this, player.username + 
+			Trace.getInstance().write(this, this.player.username + 
 						": can't use /tournament, a tournament is already in progress.");
 		
 		// not your turn
-		} else if (!(player.isTurn)) { 
+		} else if (!(this.player.isTurn)) { 
 			System.out.println("Client: you may not start a tournament when it is not your turn");
 		
 		// not a display card
@@ -604,11 +598,11 @@ public class Client implements Runnable {
 			
 			// have display card in hand
 			if (arr.length == 1) {
-				action = new StartTournament(displayCard, displayCard.getColour());
+				this.action = new StartTournament(displayCard, displayCard.getColour());
 			} else if (arr.length == 2) {
-				action = new StartTournament(displayCard, arr[1]);
+				this.action = new StartTournament(displayCard, arr[1]);
 			}
-			send(action);
+			send(this.action);
 			return true;
 		}
 		return false;
@@ -620,10 +614,12 @@ public class Client implements Runnable {
 	public boolean cmdTranslate (String d) {
 		for (Language.Dialect dialect: Language.Dialect.values()) {
 			if (dialect.toString().equals(d)) {
-				language = new Language(dialect, false);
-				Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
+				this.language = new Language(dialect, false);
+				Trace.getInstance().write(this, "Translating chat to " + 
+						this.language.getDialect().toString() + 
 						", without censoring.");
-				System.out.println("Client: Translating chat to " + language.getDialect().toString() + 
+				System.out.println("Client: Translating chat to " + 
+						this.language.getDialect().toString() + 
 						", without censoring...");
 				return true;
 			}
@@ -635,8 +631,8 @@ public class Client implements Runnable {
 	 * withdraw from the current tournament
 	 */
 	public boolean cmdWithdraw () {
-		action = new Withdraw();
-		send(action);
+		this.action = new Withdraw();
+		send(this.action);
 		player.inTournament = false;
 		return true;
 	}
