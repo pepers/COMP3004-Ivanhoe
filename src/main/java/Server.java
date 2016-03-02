@@ -234,9 +234,13 @@ public class Server implements Runnable, Serializable{
 		}
 
 		if (action.object instanceof Ready) {
-			String s = (action.origin.getName() + " is ready!");
+			String s = "";
+			if(action.origin.toggleReady()){
+				s = (action.origin.getName() + " is ready!");
+			}else{
+				s = (action.origin.getName() + " is no longer ready.");
+			}
 			broadcast(s);
-			action.origin.toggleReady();
 			return true;
 		}
 		

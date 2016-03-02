@@ -11,7 +11,7 @@ public class Player implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	private String username;
-	int handSize, displayScore;
+	int handSize, displayScore = 0;
 	private ArrayList<Card> display;
 	private ArrayList<Card> hand;
 	int ready = 0; 
@@ -47,9 +47,15 @@ public class Player implements Serializable{
 	/*
 	 * toggle whether the player is ready to start a game or not
 	 */
-	public void toggleReady() {
-		if(ready == 0){ready = 1;}else
-		if(ready == 1){ready = 0;}
+	public boolean toggleReady() {
+		if(ready == 0){
+			ready = 1;
+			return true;
+		}else if(ready == 1){
+			ready = 0;
+			return false;
+		}
+		return false;
 	}
 	
 	/*
