@@ -449,7 +449,8 @@ public class Server implements Runnable, Serializable{
 		System.out.println(" ============================================");
 		GameState temp = gameState;
 		for (Player p: gameState.players){
-			System.out.printf("%-20s", p.getName());
+			String display = p.getName() + " (" + p.getScore() + ")";
+			System.out.printf("%-20s", display);
 		}
 		System.out.println();
 		for (int i = 0; i < 10; i++){

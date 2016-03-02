@@ -6,11 +6,6 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-
-import main.resources.Config;
-import main.resources.Trace;
 
 public class Player implements Serializable{
 	
@@ -70,6 +65,13 @@ public class Player implements Serializable{
 	}
 	
 	/*
+	 * return the player's display score
+	 */
+	public int getScore() {
+		return this.displayScore;
+	}
+	
+	/*
 	 * add a card to the player's hand
 	 */
 	public int addToHand(Card c){
@@ -85,6 +87,8 @@ public class Player implements Serializable{
 	
 	public int addToDisplay(Card c){
 		display.add(c);
+		DisplayCard d = (DisplayCard) c;
+		displayScore += d.getValue();
 		return display.size();
 	}
 	
@@ -133,9 +137,9 @@ public class Player implements Serializable{
 			return true;
 		}
 		if (display.isEmpty()) { return false; } // empty display
-		System.out.println(username + "'s Display: ");
+		System.out.println(username + "'s Display (" + getScore() + "): ");
 		for (Card c: display) {
-			System.out.print(c.toString() + ", ");
+			System.out.println(c.toString());
 		}
 		System.out.println("");
 		return true;

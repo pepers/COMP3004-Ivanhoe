@@ -23,6 +23,13 @@ public class DisplayCard extends Card{
 		return colour.toString();
 	}
 	
+	/*
+	 * get the display value
+	 */
+	public int getValue () {
+		return this.value;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		Card c = (Card) o;
