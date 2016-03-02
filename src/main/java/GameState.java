@@ -37,6 +37,21 @@ public class GameState implements Serializable{
 		}
 		return null; // player doesn't exist, return null
 	}
+
+	/*
+	 * get highest display score in tournament
+	 */
+	public int highScore() {
+		int highScore = 0;
+		if (tnmt != null) {
+			for (Player p: players) {
+				if ((p.inTournament) && (p.getScore() > highScore)) {
+						highScore = p.getScore();
+				}
+			}
+		}
+		return highScore;
+	}	
 	
 	/*
 	 * set who's turn it is
