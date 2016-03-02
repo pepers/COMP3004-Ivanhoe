@@ -433,7 +433,7 @@ public class Client implements Runnable {
 		
 		// show own display
 		if (arr.length == 0) { 
-			if (!(this.player.printDisplay())) {
+			if (!(this.player.printDisplay(gameState.tnmt.colour))) {
 				System.out.println("Client: no cards in your display");
 				Trace.getInstance().write(this, this.player.getName() + 
 						": No cards in your display to show.");
@@ -441,7 +441,7 @@ public class Client implements Runnable {
 		// show all displays
 		} else if (args.equalsIgnoreCase("-a")) { 
 			for (Player p: this.gameState.players) {
-				if (!(p.printDisplay())) {
+				if (!(p.printDisplay(gameState.tnmt.colour))) {
 					System.out.println("Client: no cards in " +
 							p.getName() + "'s display\n");
 					Trace.getInstance().write(this, this.player.getName() +
@@ -454,7 +454,7 @@ public class Client implements Runnable {
 			if (p == null) { // player doesn't exist
 				return false;
 			} else {
-				if (!(p.printDisplay())) {
+				if (!(p.printDisplay(gameState.tnmt.colour))) {
 					System.out.println("Client: no cards in " +
 							p.getName() + "'s display\n");
 					Trace.getInstance().write(this, this.player.getName() +

@@ -7,6 +7,7 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -263,18 +264,31 @@ public class Server implements Runnable, Serializable{
 		if (action.object instanceof EndTurn) {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
-				if (p.getScore() <= gameState.highScore()){
+				if (p.getScore(gameState.tnmt.colour) <= gameState.highScore){
 					p.inTournament = false;
 					p.getDisplay().clear();
-					message("YOU has been ELIMINATED from " + gameState.tnmt.name + "!",p);
+					message("YOU have been ELIMINATED from " + gameState.tnmt.name + "!",p);
 					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.tnmt.name + "!",p);
+					gameState.highScore = 0;
+				}else{
+					gameState.highScore = p.getScore(gameState.tnmt.colour);
+				}
+				//check if tournament has a winner
+				ArrayList<Player> a = gameState.getTournamentParticipants();
+				if(a.size() == 1){
+					Player winner = a.get(0);
+					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!",p);
+					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!",p);
+					gameState.getPlayer(winner.getName()).giveToken(Player.Token.valueOf(gameState.tnmt.colour));
+					gameState.tnmt = null;
 				}
 				
-				
 				Player next = gameState.getNext();
+				gameState.setTurn(next);
+				gameState.addHand(next, gameState.deck.draw());
 				message("Thy turn hath begun!", next);
 				messageExcept(next.getName() + " hath begun their turn!", next);
-				gameState.setTurn(next);
+				
 			} 
 			return true;
 		}
@@ -461,7 +475,7 @@ public class Server implements Runnable, Serializable{
 		System.out.println(" ============================================");
 		GameState temp = gameState;
 		for (Player p: gameState.players){
-			String display = p.getName() + " (" + p.getScore() + ")";
+			String display = p.getName() + " (" + p.getScore(gameState.getTournamentColor()) + ")";
 			System.out.printf("%-20s", display);
 		}
 		System.out.println();
@@ -474,6 +488,16 @@ public class Server implements Runnable, Serializable{
 				}
 			}
 			System.out.println();
+		}
+		return true;
+	}
+	
+	public boolean printSingleDisplay(Player p){
+		if (!(p.printDisplay(""))) {
+			System.out.println("No cards in " +
+					p.getName() + "'s display\n");
+			Trace.getInstance().write(this, "Server: no cards in " + 
+					p.getName() + "'s display.");
 		}
 		return true;
 	}

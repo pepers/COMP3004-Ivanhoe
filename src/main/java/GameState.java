@@ -12,6 +12,7 @@ public class GameState implements Serializable{
 	Tournament tnmt = null;
 	ArrayList<Player> players;
 	int numPlayers;
+	int highScore = 0;
 	
 	public GameState(){
 		players = new ArrayList<Player>();
@@ -38,27 +39,8 @@ public class GameState implements Serializable{
 		return null; // player doesn't exist, return null
 	}
 
-	/*
-	 * get highest display score in tournament
-	 */
-	public int highScore() {
-		int highScore = 0;
-		if (tnmt != null) {
-			for (Player p: players) {
-				if ((p.inTournament) && (p.getScore() > highScore)) {
-						highScore = p.getScore();
-				}
-			}
-		}
-		return highScore;
-	}	
-	
-	/*
-	 * set who's turn it is
-	 */
 	public boolean setTurn (Player player) {
 		if (getPlayer(player.getName()) == null) { return false; } // player not in game
-		
 		for (Player p: players) {
 			if (p == player) { // found player 
 				p.isTurn = true; 
@@ -105,5 +87,21 @@ public class GameState implements Serializable{
 	
 	public int removeHand(Player player, Card card) {
 		return getPlayer(player.getName()).removeFromHand(card);
+	}
+	
+	public String getTournamentColor(){
+		if(tnmt == null){
+			return "none";
+		}else{
+			return tnmt.colour;
+		}
+	}
+	
+	public ArrayList<Player> getTournamentParticipants(){
+		ArrayList<Player> members = new ArrayList<Player>();
+		for (Player p:players){
+			if (p.inTournament) members.add(p);
+		}
+		return members;
 	}
 }
