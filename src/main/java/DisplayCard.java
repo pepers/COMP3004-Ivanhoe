@@ -22,4 +22,10 @@ public class DisplayCard extends Card{
 	public String getColour() {
 		return colour.toString();
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		Card c = (Card) o;
+		return c.toString().equals(this.toString());
+	}
 }
