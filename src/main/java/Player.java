@@ -32,6 +32,12 @@ public class Player implements Serializable{
 		hand = new ArrayList<Card>();
 		this.id = id;
 	}
+	
+	public Player(String u){
+		username = u;
+		display = new ArrayList<Card>();
+		hand = new ArrayList<Card>();
+	}
 
 	/*
 	 * Set the player's name
