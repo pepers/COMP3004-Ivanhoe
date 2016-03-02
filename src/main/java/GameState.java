@@ -76,12 +76,19 @@ public class GameState implements Serializable{
 		return players.get(new Random().nextInt(players.size()));
 	}
 
-	public boolean addDisplay(Player player, Card card) {
-		return getPlayer(player.getName()).getDisplay().add(card);
+	public int addDisplay(Player player, Card card) {
+		return getPlayer(player.getName()).addToDisplay(card);
 	}
 	
-	public boolean removeHand(Player player, Card card) {
-		getPlayer(player.getName()).removeFromHand(card);
-		return true;
+	public int removeDisplay(Player player, Card card) {
+		return getPlayer(player.getName()).removeFromDisplay(card);
+	}
+	
+	public int addHand(Player player, Card card) {
+		return getPlayer(player.getName()).addToHand(card);
+	}
+	
+	public int removeHand(Player player, Card card) {
+		return getPlayer(player.getName()).removeFromHand(card);
 	}
 }

@@ -78,7 +78,6 @@ public class Player implements Serializable{
 		return hand.size();
 	}
 	public int removeFromHand(Card c){
-		
 		hand.remove(c);
 		handSize--;
 		return hand.size();
