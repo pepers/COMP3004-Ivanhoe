@@ -6,7 +6,9 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
+import main.resources.Config;
 import main.resources.Trace;
 
 public class Player implements Serializable{
@@ -14,8 +16,8 @@ public class Player implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String username;
 	int handSize, displayScore;
-	ArrayList<Card> display;
-	ArrayList<Card> hand;
+	private ArrayList<Card> display;
+	private ArrayList<Card> hand;
 	int ready = 0; 
 	boolean inTournament = false;
 	boolean isTurn = false;
@@ -72,6 +74,11 @@ public class Player implements Serializable{
 	public int addHand(Card c){
 		hand.add(c);
 		handSize++;
+		return hand.size();
+	}
+	public int removeHand(Card c){
+		hand.remove(c);
+		handSize--;
 		return hand.size();
 	}
 	
@@ -131,4 +138,20 @@ public class Player implements Serializable{
 	public String getName() {
 		return username;
 	}
+
+	public boolean hasValidDisplayCard(String colour) {
+		for (Card c : hand){
+			if (c instanceof DisplayCard){
+				if(((DisplayCard) c).getColour().equals(colour) || colour.equals("none")){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public ArrayList<Card> getDisplay() {
+		return display;
+	}
+
 }

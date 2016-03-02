@@ -77,11 +77,7 @@ public class GameState implements Serializable{
 	}
 
 	public boolean addDisplay(Player player, Card card) {
-		
-		
-		
-		
-		return false;
+		return getPlayer(player.getName()).getDisplay().add(card);
 	}
 	
 }

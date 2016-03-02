@@ -102,7 +102,7 @@ public class Server implements Runnable, Serializable{
 			serverThread.start();
 			// Create a player object
 
-			clients.put(serverThread, new Player(name.getName(), serverThread.getID()));
+			clients.put(serverThread, new Player(name.getName()));
 			numClients++;
 		} else {
 			Trace.getInstance().write(this, "Client Tried to connect:" + socket.getLocalSocketAddress());
@@ -247,7 +247,9 @@ public class Server implements Runnable, Serializable{
 		if (action.object instanceof StartTournament) {
 			Tournament t = new Tournament(((StartTournament)action.object).getColour());
 			gameState.tnmt = t;
-			gameState.addDisplay(gameState.getPlayer(action.origin.getName()),((StartTournament) action.object).getCard());
+			Card c = ((StartTournament) action.object).getCard();
+			gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
+			gameState.getPlayer(action.origin.getName()).removeHand(c);
 			for (Player p : gameState.players){
 				p.inTournament = true;
 			}
@@ -257,7 +259,6 @@ public class Server implements Runnable, Serializable{
 		if (action.object instanceof EndTurn) {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
-				message("Thy turn hath finished.", p);
 				Player next = gameState.getNext();
 				message("Thy turn hath begun!", next);
 				messageExcept(next.getName() + " hath begun their turn!", next);
@@ -271,7 +272,11 @@ public class Server implements Runnable, Serializable{
 			return true;
 		}
 		if (action.object instanceof Play) {
-			broadcast(action.origin.getName() + " plays a " + ((Play) action.object).getCard().toString());
+			Card c = ((Play) action.object).getCard();
+			broadcast(action.origin.getName() + " plays a " + c.toString());
+			if(c instanceof DisplayCard){
+				gameState.addDisplay(gameState.getPlayer(action.origin.getName()),c);
+			}
 			return true;
 		}
 		return false;
@@ -348,15 +353,18 @@ public class Server implements Runnable, Serializable{
 	
 	
 	// Update each client with a new gameState
-	public void updateGameStates(){
+	public int updateGameStates(){
+		printLargeDisplays();
 		Iterator<ServerThread> i = clients.keySet().iterator();
+		int c = 0;
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			Player p = clients.get(t);
 			if(p.ready == 2){
-				t.update(gameState);
+				if(t.update(gameState)) c++;
 			}
 		}
+		return c;
 	}
 	// Shutdown the server
 	public boolean shutdown() {
@@ -392,7 +400,7 @@ public class Server implements Runnable, Serializable{
 			return false;
 		}
 		System.out.println("Hand:");
-		for (Card c : p.hand) {
+		for (Card c : p.getHand()) {
 			System.out.println("  " + c.toString());
 		}
 
@@ -431,6 +439,25 @@ public class Server implements Runnable, Serializable{
 		for (Player p : gameState.players){
 			System.out.println(p.getName() + ":" + p.getId());
 			System.out.println("  HAND:"+p.handSize+"\n  TURN:" + p.isTurn+"\n  TOUR:" + p.inTournament+"\n  ");
+		}
+		return true;
+	}
+	
+	public boolean printLargeDisplays(){
+		System.out.println("DISPLAYS:");
+		System.out.println(" ============================================");
+		GameState temp = gameState;
+		for (Player p: gameState.players){
+			System.out.printf("%-20s", p.getName());
+		}
+		for (int i = 0; i < 20; i++){
+			for (Player p: temp.players){
+				if(p.getDisplay().size() < i+1){
+					System.out.printf("%-20s", "");
+				}else{
+					System.out.printf("%-20s", p.getDisplay().get(i));
+				}
+			}
 		}
 		return true;
 	}

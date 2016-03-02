@@ -21,7 +21,7 @@ public class Client implements Runnable {
 	BufferedReader input = null; // to get user input
 	Language language; // to translate chat
 
-	GameState game = null; // the local copy of the game state
+	GameState gameState = null; // the local copy of the game state
 	Player player = null; // the local copy of this client's player
 
 	public static void main(String args[]) {
@@ -35,7 +35,7 @@ public class Client implements Runnable {
 	public void initialize (Player p, GameState g) {
 		g.addPlayer(p);
 		this.player = p;
-		this.game = g;
+		this.gameState = g;
 	}
 
 	/*
@@ -291,8 +291,9 @@ public class Client implements Runnable {
 			// GameState
 		} else if (o instanceof GameState) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
-			game = (GameState) o;	
-			this.player = game.getPlayer(this.player.getName());			
+			gameState = (GameState) o;	
+			
+			this.player = gameState.getPlayer(this.player.getName());			
 			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
 			return true;
 
@@ -350,6 +351,10 @@ public class Client implements Runnable {
 				if (args.length != 0) { return false; } // check number of arguments
 				cmdEnd();
 				break;
+			case "/gamestate":  // show gamestate
+				if (args.length != 0) { return false; } // check number of arguments
+				cmdGameState(gameState);
+				break;
 			case "/hand": // look at cards in hand
 				if (args.length != 0) { return false; } // check number of arguments
 				cmdHand();
@@ -365,7 +370,7 @@ public class Client implements Runnable {
 			case "/play":
 				if (args.length != 1) { return false; } // check number of arguments
 				if (!tournamentAction(cmd[0])) { return false; } // checks in tournament
-				cmdPlay(args[1]);
+				cmdPlay(args[0]);
 				break;
 			case "/ready":
 				if (args.length != 0) { return false; } // check number of arguments
@@ -379,7 +384,7 @@ public class Client implements Runnable {
 				shutdown();
 				break;
 			case "/tournament":
-				if ((args.length != 1) && (args.length != 2)) { return false; } // check number of arguments
+				if (!(args.length == 1) || (args.length == 2)) { return false; } // check number of arguments
 				cmdTournament(args);
 				break;
 			case "/translate":
@@ -435,7 +440,7 @@ public class Client implements Runnable {
 			}
 		// show all displays
 		} else if (args.equalsIgnoreCase("-a")) { 
-			for (Player p: this.game.players) {
+			for (Player p: this.gameState.players) {
 				if (!(p.printDisplay())) {
 					System.out.println("Client: no cards in " +
 							p.getName() + "'s display\n");
@@ -445,7 +450,7 @@ public class Client implements Runnable {
 			}
 		// show someone else's display
 		} else {
-			Player p = this.game.getPlayer(args);
+			Player p = this.gameState.getPlayer(args);
 			if (p == null) { // player doesn't exist
 				return false;
 			} else {
@@ -464,10 +469,18 @@ public class Client implements Runnable {
 	 * end your turn
 	 */
 	public boolean cmdEnd () {
-		this.player.isTurn = false;
-		this.action = new EndTurn();
-		send(this.action);
-		return true;
+		if(!this.player.isTurn){
+			System.out.println("Client: Its not your turn.");
+			return false;
+		}else if(gameState.tnmt == null && this.player.hasValidDisplayCard("none")){
+			System.out.println("Client: You MUST start a tournament if able.");
+			return false;
+		}else{
+			this.player.isTurn = false;
+			this.action = new EndTurn();
+			send(this.action);
+			return true;
+		}
 	}
 	
 	/*
@@ -501,8 +514,8 @@ public class Client implements Runnable {
 	 */
 	public boolean cmdList () {
 		System.out.println("- State    : Player ");
-		for (int i=0; i<this.game.players.size(); i++) {
-			Player p = this.game.players.get(i);
+		for (int i=0; i<this.gameState.players.size(); i++) {
+			Player p = this.gameState.players.get(i);
 			String name = p.getName();
 			if (name == this.player.getName()) { // found yourself
 				name += " (you)";
@@ -528,6 +541,12 @@ public class Client implements Runnable {
 			if (c.toString().equalsIgnoreCase("ivanhoe")) { return true; }
 			// not the Ivanhoe action card:
 			System.out.println("Client: you may not play that card when it is not your turn");
+		} else if (c instanceof DisplayCard){
+			if (gameState.tnmt == null){
+				System.out.println("Client: no tournament is running, start one with /tournament");
+			}else if (gameState.tnmt.colour.equals(((DisplayCard) c).getColour())){
+				System.out.println("Client: not a valid color for the current tournament");
+			}
 		} else {
 			this.action = new Play(c);
 			send(this.action);
@@ -571,7 +590,7 @@ public class Client implements Runnable {
 		Card card = this.player.getCard(args);    // get card to start tournament with
 		
 		// tournament already exists
-		if (this.game.tnmt != null){
+		if (this.gameState.tnmt != null){
 			System.out.println("Client: a tournament is already in progress");
 			Trace.getInstance().write(this, this.player.getName() + 
 						": can't use /tournament, a tournament is already in progress.");
@@ -633,6 +652,21 @@ public class Client implements Runnable {
 		this.action = new Withdraw();
 		send(this.action);
 		player.inTournament = false;
+		return true;
+	}
+	
+	public boolean cmdGameState(GameState g) {
+		if(g == null){
+			return false;
+		}
+		System.out.println("Gamestate::");
+		if(g.tnmt == null){
+			System.out.println("No tournament running.");
+		}
+		for (Player p : g.players){
+			System.out.println(p.getName() + ":" + p.getId());
+			System.out.println("  HAND:"+p.handSize+"\n  TURN:" + p.isTurn+"\n  TOUR:" + p.inTournament+"\n  ");
+		}
 		return true;
 	}
 }

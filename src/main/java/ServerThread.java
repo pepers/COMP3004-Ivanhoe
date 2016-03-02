@@ -104,6 +104,7 @@ public class ServerThread extends Thread{
 
 	public boolean update(GameState gameState) {
 		try {
+			output.reset();
 			output.writeObject(gameState);
 		} catch (IOException e) {
 			e.printStackTrace();

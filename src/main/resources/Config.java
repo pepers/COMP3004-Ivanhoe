@@ -6,11 +6,15 @@ public class Config {
 	public static int MAX_PLAYERS = 5;
 	public static int MIN_PLAYERS = 2;
 	
+	//colours for tournaments and cards
+	public enum Colour {none, purple, red, blue, yellow, green}
+	
 	// possible commands:
 	public enum ClientCommand { 
 		censor(""),
 		display(" [player name ('-a' for all, or leave empty for own display)]"), 
 		end(""),
+		gamestate(""),
 		hand(""), 
 		help(""), 
 		list(""), 
