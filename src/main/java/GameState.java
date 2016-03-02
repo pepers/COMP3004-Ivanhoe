@@ -80,4 +80,8 @@ public class GameState implements Serializable{
 		return getPlayer(player.getName()).getDisplay().add(card);
 	}
 	
+	public boolean removeHand(Player player, Card card) {
+		getPlayer(player.getName()).removeFromHand(card);
+		return true;
+	}
 }

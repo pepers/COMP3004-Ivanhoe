@@ -300,7 +300,7 @@ public class Client implements Runnable {
 			// ActionCard
 		} else if (o instanceof ActionCard) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
-			this.player.addHand((ActionCard) o);
+			this.player.addToHand((ActionCard) o);
 			System.out.println("Client: " + o.toString() + " added to hand");
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.toString() + " added to hand");
 			return true;
@@ -308,7 +308,7 @@ public class Client implements Runnable {
 			// DisplayCard
 		} else if (o instanceof DisplayCard) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
-			this.player.addHand((DisplayCard) o);
+			this.player.addToHand((DisplayCard) o);
 			System.out.println("Client: " + o.toString() + " added to hand");
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.toString() + " added to hand");
 			return true;
@@ -535,24 +535,24 @@ public class Client implements Runnable {
 		if (c == null){
 			System.out.println("Client: you don't have the card: " + card + 
 					"\n\t Type '/hand' to view the cards in your hand.");
+			return false;
 		// not the player's turn
-		} else if (!(this.player.isTurn)) { 
+		} else if (!(this.player.isTurn) && !c.toString().equalsIgnoreCase("ivanhoe")) { 
 			// card to be player is the Ivanhoe action card:
-			if (c.toString().equalsIgnoreCase("ivanhoe")) { return true; }
-			// not the Ivanhoe action card:
 			System.out.println("Client: you may not play that card when it is not your turn");
+			return false;
 		} else if (c instanceof DisplayCard){
 			if (gameState.tnmt == null){
 				System.out.println("Client: no tournament is running, start one with /tournament");
-			}else if (gameState.tnmt.colour.equals(((DisplayCard) c).getColour())){
+				return false;
+			}else if (!gameState.tnmt.colour.equals(((DisplayCard) c).getColour())){
 				System.out.println("Client: not a valid color for the current tournament");
+				return false;
 			}
-		} else {
-			this.action = new Play(c);
-			send(this.action);
-			return true;
 		}
-		return false;
+		this.action = new Play(c);
+		send(this.action);
+		return true;
 	}
 	
 	/*

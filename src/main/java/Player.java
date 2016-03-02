@@ -6,6 +6,7 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import main.resources.Config;
@@ -71,17 +72,27 @@ public class Player implements Serializable{
 	/*
 	 * add a card to the player's hand
 	 */
-	public int addHand(Card c){
+	public int addToHand(Card c){
 		hand.add(c);
 		handSize++;
 		return hand.size();
 	}
-	public int removeHand(Card c){
+	public int removeFromHand(Card c){
+		
 		hand.remove(c);
 		handSize--;
 		return hand.size();
 	}
 	
+	public int addToDisplay(Card c){
+		display.add(c);
+		return display.size();
+	}
+	
+	public int removeFromDisplay(Card c){
+		display.remove(c);
+		return display.size();
+	}
 	/*
 	 * give token to player for tournament win
 	 * return false if failed to give token to player (already has that colour)
@@ -153,5 +164,4 @@ public class Player implements Serializable{
 	public ArrayList<Card> getDisplay() {
 		return display;
 	}
-
 }

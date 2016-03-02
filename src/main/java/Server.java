@@ -249,7 +249,7 @@ public class Server implements Runnable, Serializable{
 			gameState.tnmt = t;
 			Card c = ((StartTournament) action.object).getCard();
 			gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
-			gameState.getPlayer(action.origin.getName()).removeHand(c);
+			gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
 			for (Player p : gameState.players){
 				p.inTournament = true;
 			}
@@ -275,7 +275,8 @@ public class Server implements Runnable, Serializable{
 			Card c = ((Play) action.object).getCard();
 			broadcast(action.origin.getName() + " plays a " + c.toString());
 			if(c instanceof DisplayCard){
-				gameState.addDisplay(gameState.getPlayer(action.origin.getName()),c);
+				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
+				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c); 
 			}
 			return true;
 		}
@@ -335,7 +336,7 @@ public class Server implements Runnable, Serializable{
 				clients.get(t).ready = 2;
 				
 				for (int j = 0; j < 7; j++){
-					clients.get(t).addHand(gameState.deck.draw());
+					clients.get(t).addToHand(gameState.deck.draw());
 				}
 				gameState.addPlayer(clients.get(t));
 			}
@@ -450,7 +451,8 @@ public class Server implements Runnable, Serializable{
 		for (Player p: gameState.players){
 			System.out.printf("%-20s", p.getName());
 		}
-		for (int i = 0; i < 20; i++){
+		System.out.println();
+		for (int i = 0; i < 10; i++){
 			for (Player p: temp.players){
 				if(p.getDisplay().size() < i+1){
 					System.out.printf("%-20s", "");
@@ -458,6 +460,7 @@ public class Server implements Runnable, Serializable{
 					System.out.printf("%-20s", p.getDisplay().get(i));
 				}
 			}
+			System.out.println();
 		}
 		return true;
 	}
