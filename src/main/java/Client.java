@@ -60,7 +60,7 @@ public class Client implements Runnable {
 		this.action = new SetName(username, true);
 		
 		// initialize states
-		Player p = new Player(username);
+		Player p = new Player(username, 0);
 		GameState g = new GameState();
 		initialize(p, g);
 
@@ -283,48 +283,47 @@ public class Client implements Runnable {
 		/* STATES: */
 		// Player
 		if (o instanceof Player) {
-			Trace.getInstance().write(this, this.player.username + ": " + o.getClass().getSimpleName() + " received");
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player = (Player) o;
-			Trace.getInstance().write(this, this.player.username + ": player has been updated");
+			Trace.getInstance().write(this, this.player.getName() + ": player has been updated");
 			return true;
 
 			// GameState
 		} else if (o instanceof GameState) {
-			Trace.getInstance().write(this, this.player.username + ": " + o.getClass().getSimpleName() + " received");
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			game = (GameState) o;	
-			System.out.println("Got a gamestate where " + game.getPlayer(this.player.username).username + " turn=" + game.getPlayer(this.player.username).isTurn);
-			this.player = game.getPlayer(this.player.username);			
-			Trace.getInstance().write(this, this.player.username + ": game state has been updated");
+			this.player = game.getPlayer(this.player.getName());			
+			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
 			return true;
 
 			// ActionCard
 		} else if (o instanceof ActionCard) {
-			Trace.getInstance().write(this, this.player.username + ": " + o.getClass().getSimpleName() + " received");
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player.addHand((ActionCard) o);
 			System.out.println("Client: " + o.toString() + " added to hand");
-			Trace.getInstance().write(this, this.player.username + ": " + o.toString() + " added to hand");
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.toString() + " added to hand");
 			return true;
 
 			// DisplayCard
 		} else if (o instanceof DisplayCard) {
-			Trace.getInstance().write(this, this.player.username + ": " + o.getClass().getSimpleName() + " received");
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player.addHand((DisplayCard) o);
 			System.out.println("Client: " + o.toString() + " added to hand");
-			Trace.getInstance().write(this, this.player.username + ": " + o.toString() + " added to hand");
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.toString() + " added to hand");
 			return true;
 
 			/* ACTIONS: */
 			// Chat
 		} else if (o instanceof Chat) {
 			Trace.getInstance().write(this,
-					this.player.username + ": " + o.getClass().getSimpleName() + " received: " + ((Chat) o).getMessage());
+					this.player.getName() + ": " + o.getClass().getSimpleName() + " received: " + ((Chat) o).getMessage());
 			String message = ((Chat) o).getMessage();
 			System.out.println(this.language.translate(message));
 			return true;
 
 			// unrecognized object
 		} else {
-			Exception e = new Exception(this.player.username + ": unrecognized object received");
+			Exception e = new Exception(this.player.getName() + ": unrecognized object received");
 			Trace.getInstance().exception(this, e);
 			return false;
 		}
@@ -404,7 +403,7 @@ public class Client implements Runnable {
 	public boolean tournamentAction (String cmd) {
 		if (!(this.player.inTournament)) { 
 			System.out.println("Client: can't perform that action while not in a tournament");
-			Trace.getInstance().write(this, this.player.username + 
+			Trace.getInstance().write(this, this.player.getName() + 
 					": can't use " + cmd + " while not in tournament.");
 			return false;
 		} 
@@ -431,7 +430,7 @@ public class Client implements Runnable {
 		if (arr.length == 0) { 
 			if (!(this.player.printDisplay())) {
 				System.out.println("Client: no cards in your display");
-				Trace.getInstance().write(this, this.player.username + 
+				Trace.getInstance().write(this, this.player.getName() + 
 						": No cards in your display to show.");
 			}
 		// show all displays
@@ -439,9 +438,9 @@ public class Client implements Runnable {
 			for (Player p: this.game.players) {
 				if (!(p.printDisplay())) {
 					System.out.println("Client: no cards in " +
-							p.username + "'s display\n");
-					Trace.getInstance().write(this, this.player.username +
-							": No cards in " + p.username + "'s display.");
+							p.getName() + "'s display\n");
+					Trace.getInstance().write(this, this.player.getName() +
+							": No cards in " + p.getName() + "'s display.");
 				}
 			}
 		// show someone else's display
@@ -452,9 +451,9 @@ public class Client implements Runnable {
 			} else {
 				if (!(p.printDisplay())) {
 					System.out.println("Client: no cards in " +
-							p.username + "'s display\n");
-					Trace.getInstance().write(this, this.player.username +
-							": No cards in " + p.username + "'s display.");
+							p.getName() + "'s display\n");
+					Trace.getInstance().write(this, this.player.getName() +
+							": No cards in " + p.getName() + "'s display.");
 				}
 			}
 		}
@@ -504,8 +503,8 @@ public class Client implements Runnable {
 		System.out.println("- State    : Player ");
 		for (int i=0; i<this.game.players.size(); i++) {
 			Player p = this.game.players.get(i);
-			String name = p.username;
-			if (name == this.player.username) { // found yourself
+			String name = p.getName();
+			if (name == this.player.getName()) { // found yourself
 				name += " (you)";
 			}
 			System.out.printf("%-10s : %s\n", p.getReadyState(), name);
@@ -574,7 +573,7 @@ public class Client implements Runnable {
 		// tournament already exists
 		if (this.game.tnmt != null){
 			System.out.println("Client: a tournament is already in progress");
-			Trace.getInstance().write(this, this.player.username + 
+			Trace.getInstance().write(this, this.player.getName() + 
 						": can't use /tournament, a tournament is already in progress.");
 		
 		// not your turn

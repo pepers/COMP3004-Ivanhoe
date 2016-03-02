@@ -33,7 +33,7 @@ public class GameState implements Serializable{
 	 */
 	public Player getPlayer (String name) {
 		for (Player p: players) {
-			if (p.username.equals(name)) { return p; }
+			if (p.getName().equals(name)) { return p; }
 		}
 		return null; // player doesn't exist, return null
 	}
@@ -42,15 +42,13 @@ public class GameState implements Serializable{
 	 * set who's turn it is
 	 */
 	public boolean setTurn (Player player) {
-		if (getPlayer(player.username) == null) { return false; } // player not in game
+		if (getPlayer(player.getName()) == null) { return false; } // player not in game
 		
 		for (Player p: players) {
 			if (p == player) { // found player 
 				p.isTurn = true; 
-				System.out.println("ST: found correct");
 			} else {
 				p.isTurn = false;
-				System.out.println("ST: not this player");
 			}
 		}
 		return true;
@@ -76,6 +74,14 @@ public class GameState implements Serializable{
 			}
 		}
 		return players.get(new Random().nextInt(players.size()));
+	}
+
+	public boolean addDisplay(Player player, Card card) {
+		
+		
+		
+		
+		return false;
 	}
 	
 }

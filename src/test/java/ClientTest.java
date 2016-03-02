@@ -17,7 +17,7 @@ public class ClientTest {
 	public void setUp() {
 		s.startup();
 		c = new Client();
-		Player p = new Player("TEST PLAYER");
+		Player p = new Player("TEST PLAYER", 0);
 		GameState g = new GameState();
 		c.initialize(p, g);
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);

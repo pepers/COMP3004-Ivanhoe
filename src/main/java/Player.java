@@ -12,7 +12,7 @@ import main.resources.Trace;
 public class Player implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
-	String username;
+	private String username;
 	int handSize, displayScore;
 	ArrayList<Card> display;
 	ArrayList<Card> hand;
@@ -20,15 +20,17 @@ public class Player implements Serializable{
 	boolean inTournament = false;
 	boolean isTurn = false;
 	ArrayList<Token> tokens;  // tokens won for tournament wins
+	private int id;
 	
 	// possible tokens to win
 	public enum Token {purple, red, blue, yellow, green}
 	
 	
-	public Player(String u){
+	public Player(String u, int id){
 		username = u;
 		display = new ArrayList<Card>();
 		hand = new ArrayList<Card>();
+		this.id = id;
 	}
 
 	/*
@@ -63,6 +65,7 @@ public class Player implements Serializable{
 	 */
 	public int addHand(Card c){
 		hand.add(c);
+		handSize++;
 		return hand.size();
 	}
 	
@@ -113,5 +116,13 @@ public class Player implements Serializable{
 		}
 		System.out.println("");
 		return true;
+	}
+
+	public int getId() {
+		return id;
+	}
+	
+	public String getName() {
+		return username;
 	}
 }

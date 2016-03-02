@@ -37,6 +37,7 @@ public class Config {
 		ban(""),
 		display(" [player name (leave empty for all)]"),
 		end(""), 
+		gamestate(""),
 		give(""),
 		hand(""),
 		help(""),

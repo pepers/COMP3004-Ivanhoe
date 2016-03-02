@@ -84,9 +84,9 @@ public class ServerInput extends Thread{
 					for (Player p: server.gameState.players) {
 						if (!(p.printDisplay())) {
 								System.out.println("No cards in " +
-										p.username + "'s display\n");
+										p.getName() + "'s display\n");
 								Trace.getInstance().write(this, "Server: no cards in " + 
-										p.username + "'s display.");
+										p.getName() + "'s display.");
 							}
 						}
 						return true;
@@ -97,9 +97,9 @@ public class ServerInput extends Thread{
 					} else {
 						if (!(p.printDisplay())) {
 							System.out.println("No cards in " +
-									p.username + "'s display\n");
+									p.getName() + "'s display\n");
 							Trace.getInstance().write(this, "Server: no cards in " + 
-									p.username + "'s display.");
+									p.getName() + "'s display.");
 						}
 						return true;
 					}
@@ -108,6 +108,11 @@ public class ServerInput extends Thread{
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				// TODO: return true
 				return false;
+			case "/gamestate":
+				if(!server.printGameState()){
+					System.out.println("Failed to find gamestate.");
+				}
+				return true;
 			case "/give":
 				// TODO: return true
 				return false;

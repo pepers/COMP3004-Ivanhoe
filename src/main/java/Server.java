@@ -102,7 +102,7 @@ public class Server implements Runnable, Serializable{
 			serverThread.start();
 			// Create a player object
 
-			clients.put(serverThread, new Player(name.getName()));
+			clients.put(serverThread, new Player(name.getName(), serverThread.getID()));
 			numClients++;
 		} else {
 			Trace.getInstance().write(this, "Client Tried to connect:" + socket.getLocalSocketAddress());
@@ -111,7 +111,7 @@ public class Server implements Runnable, Serializable{
 			return false;
 		}
 
-		System.out.println(clients.get(serverThread).username + " joined.");
+		System.out.println(clients.get(serverThread).getName() + " joined.");
 		Trace.getInstance().write(this, "Client Accepted: " + socket.getPort());
 		return true;
 	}
@@ -122,9 +122,9 @@ public class Server implements Runnable, Serializable{
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			if (t.getID() == id) {
-				System.out.println("Removing player \"" + clients.get(t).username + "\" (" + t.getID() + ")...");
+				System.out.println("Removing player \"" + clients.get(t).getName() + "\" (" + t.getID() + ")...");
 				Trace.getInstance().write(this,
-						"Removing player \"" + clients.get(t).username + "\" (" + t.getID() + ")...");
+						"Removing player \"" + clients.get(t).getName() + "\" (" + t.getID() + ")...");
 				numClients--;
 				t.shutdown();
 				clients.remove(t);
@@ -140,7 +140,7 @@ public class Server implements Runnable, Serializable{
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if (clients.get(t).username.equals(name)) {
+			if (clients.get(t).getName().equals(name)) {
 				System.out.println("Removing player \"" + name + "\" (" + t.getID() + ")...");
 				Trace.getInstance().write(this, "Removing player \"" + name + "\" (" + t.getID() + ")...");
 				numClients--;
@@ -163,7 +163,7 @@ public class Server implements Runnable, Serializable{
 			ServerThread t = i.next();
 			Player p = clients.get(t);
 			String state = p.getReadyState();
-			System.out.printf(" %-3s %-20s %-8s %s\n", t.getID(), p.username, state, t.getNetwork());
+			System.out.printf(" %-3s %-20s %-8s %s\n", t.getID(), p.getName(), state, t.getNetwork());
 		}
 	}
 
@@ -179,7 +179,7 @@ public class Server implements Runnable, Serializable{
 				// check if the serverthread lost its client
 				if (t.getDead()) {
 					numClients--;
-					String name = clients.get(t).username;
+					String name = clients.get(t).getName();
 					t.shutdown();
 					clients.remove(t);
 					broadcast(name + " disconnected.");
@@ -192,7 +192,7 @@ public class Server implements Runnable, Serializable{
 				}
 				readyPlayers = readyPlayers + (p.ready == 1 ? 1 : 0);
 				if (o != null) {
-					Trace.getInstance().write(this, "Got an action from " + p.username);
+					Trace.getInstance().write(this, "Got an action from " + p.getName());
 					actions.add(new ActionWrapper(o, p)); // create a new local
 															// action
 				}
@@ -216,7 +216,7 @@ public class Server implements Runnable, Serializable{
 		if (action.object instanceof SetName) {
 
 			if (!((SetName) action.object).isInit()) {
-				String s = (action.origin.username + " changed name to \"" + ((SetName) action.object).getName()
+				String s = (action.origin.getName() + " changed name to \"" + ((SetName) action.object).getName()
 						+ "\"");
 				broadcast(s);
 			}
@@ -225,7 +225,7 @@ public class Server implements Runnable, Serializable{
 		}
 		if (action.object instanceof Chat) {
 			String message = ((Chat) action.object).getMessage();
-			String from = action.origin.username;
+			String from = action.origin.getName();
 			String translated = language.translate(((Chat) action.object).getMessage());
 			broadcast(from + ": " + translated);
 			Trace.getInstance().write(this, "Server: " + action.object.getClass().getSimpleName() + 
@@ -234,7 +234,7 @@ public class Server implements Runnable, Serializable{
 		}
 
 		if (action.object instanceof Ready) {
-			String s = (action.origin.username + " is ready!");
+			String s = (action.origin.getName() + " is ready!");
 			broadcast(s);
 			action.origin.toggleReady();
 			return true;
@@ -247,30 +247,31 @@ public class Server implements Runnable, Serializable{
 		if (action.object instanceof StartTournament) {
 			Tournament t = new Tournament(((StartTournament)action.object).getColour());
 			gameState.tnmt = t;
+			gameState.addDisplay(gameState.getPlayer(action.origin.getName()),((StartTournament) action.object).getCard());
 			for (Player p : gameState.players){
 				p.inTournament = true;
 			}
-			broadcast(t.name + " started by " + action.origin.username + " (" + t.colour + ")");
+			broadcast(t.name + " started by " + action.origin.getName() + " (" + t.colour + ")");
 			return true;
 		}
 		if (action.object instanceof EndTurn) {
-			Player p = gameState.getPlayer(action.origin.username);
+			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
 				message("Thy turn hath finished.", p);
 				Player next = gameState.getNext();
 				message("Thy turn hath begun!", next);
-				messageExcept(next.username + " hath begun their turn!", next);
-				System.out.println("ST=" + gameState.setTurn(next));
+				messageExcept(next.getName() + " hath begun their turn!", next);
+				gameState.setTurn(next);
 			} 
 			return true;
 		}
 		if (action.object instanceof Withdraw){
 			action.origin.inTournament = false;
-			broadcast(action.origin.username + " withdraws from " + gameState.tnmt.name);
+			broadcast(action.origin.getName() + " withdraws from " + gameState.tnmt.name);
 			return true;
 		}
 		if (action.object instanceof Play) {
-			broadcast(action.origin.username + " plays a " + ((Play) action.object).getCard().toString());
+			broadcast(action.origin.getName() + " plays a " + ((Play) action.object).getCard().toString());
 			return true;
 		}
 		return false;
@@ -337,7 +338,7 @@ public class Server implements Runnable, Serializable{
 		
 		Player startPlayer = gameState.getNext();
 		gameState.setTurn(startPlayer);
-		messageExcept(startPlayer.username + " starts their turn.", startPlayer);
+		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
 		message("You are the starting player. Start a tournament if able.",  startPlayer);
 		updateGameStates();
 		return true;
@@ -351,7 +352,10 @@ public class Server implements Runnable, Serializable{
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			t.update(gameState, clients.get(t));
+			Player p = clients.get(t);
+			if(p.ready == 2){
+				t.update(gameState);
+			}
 		}
 	}
 	// Shutdown the server
@@ -399,7 +403,7 @@ public class Server implements Runnable, Serializable{
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if (clients.get(t).username.equals(name)) {
+			if (clients.get(t).getName().equals(name)) {
 				return clients.get(t);
 			}
 		}
@@ -414,5 +418,20 @@ public class Server implements Runnable, Serializable{
 	public void setMaxPlayers(int n){
 		maxPlayers = n;
 		System.out.println("New MAXIMUM players is " + n);
+	}
+
+	public boolean printGameState() {
+		if(gameState == null){
+			return false;
+		}
+		System.out.println("Gamestate::");
+		if(gameState.tnmt == null){
+			System.out.println("No tournament running.");
+		}
+		for (Player p : gameState.players){
+			System.out.println(p.getName() + ":" + p.getId());
+			System.out.println("  HAND:"+p.handSize+"\n  TURN:" + p.isTurn+"\n  TOUR:" + p.inTournament+"\n  ");
+		}
+		return true;
 	}
 }
