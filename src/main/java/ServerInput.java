@@ -105,7 +105,7 @@ public class ServerInput extends Thread{
 					}
 				}
 			case "/end":
-				if (args.length != 0) { return false; } // no arguments allowed for this command
+				if (args.length != 1) { return false; } // no arguments allowed for this command
 				// TODO: return true
 				return false;
 			case "/gamestate":

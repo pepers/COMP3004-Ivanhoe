@@ -40,10 +40,10 @@ public class Config {
 	public enum ServerCommand { 
 		ban(""),
 		display(" [player name (leave empty for all)]"),
-		end(""), 
+		end(" [-t (for tournament) or -g (for game)]"), 
 		gamestate(""),
 		give(""),
-		hand(""),
+		hand(" [player name]"),
 		help(""),
 		kick(" [player name (or player number)]"),
 		list(""),
