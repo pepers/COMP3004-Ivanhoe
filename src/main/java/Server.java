@@ -530,52 +530,54 @@ public class Server implements Runnable, Serializable{
 	 */
 	public boolean cmdGive (int pnum, String strCard) {
 		Card card;
-		Iterator<ServerThread> i = clients.keySet().iterator();
-		while (i.hasNext()) {
-			ServerThread t = i.next();
-			Player p = clients.get(t);
-			if (p.getId() == pnum) { // found player
-				card = new ActionCard(strCard);
-				if (card.toString() != null) {
-					p.addToHand(card); // give Action Card
-					Trace.getInstance().write(this, card.toString() + " Action Card given to " + 
-										p.getName() + ".");
-					System.out.println(card.toString() + " Action Card given to " + 
-										p.getName() + ".");
-				} else {
-					int value;
-					try {
-						value = Integer.parseInt(strCard.substring(0, 1));
-					} catch (NumberFormatException e) {
-						Trace.getInstance().write(this, "Invalid Display Card Value: could not give card to " + 
-								p.getName());
-						System.out.println("Invalid Display Card Value: could not give card to " + 
-								p.getName());
-						return false;
-					}
-					if ((value >= 1) &&
-							(value <= 7) && 
-							(strCard.charAt(1) == ':')) {
-						String strColour = strCard.substring(3);
-						for (DisplayCard.Colour colour: DisplayCard.Colour.values()) {
-							if (colour.toString().equalsIgnoreCase(strColour)) {
-								card = new DisplayCard(value, colour);
-								p.addToHand(card);  // give Display Card
-								Trace.getInstance().write(this, card.toString() + " Display Card given to " + 
-										p.getName() + ".");
-								System.out.println(card.toString() + " Display Card given to " + 
-										p.getName() + ".");
-							}
-						}
-					} else {
-						Trace.getInstance().write(this, "Invalid Display Card Format: could not give card to " + 
-								p.getName() + ". Try /help");
-						System.out.println("Invalid Display Card Format: could not give card to " + 
-								p.getName() + ". Try /help");
-						return false; // can't give card
-					}					
+		Player p = this.gameState.getPlayer(pnum);
+		if (p != null) { // found player
+			card = new ActionCard(strCard);
+			if (card.toString() != null) {
+				p.addToHand(card); // give Action Card
+				Trace.getInstance().write(this, card.toString() + " Action Card given to " + 
+									p.getName() + ".");
+				System.out.println(card.toString() + " Action Card given to " + 
+									p.getName() + ".");
+			} else {
+				int value;
+				try {
+					value = Integer.parseInt(strCard.substring(0, 1));
+				} catch (NumberFormatException e) {
+					Trace.getInstance().write(this, "Invalid Display Card Value: could not give card to " + 
+							p.getName());
+					System.out.println("Invalid Display Card Value: could not give card to " + 
+							p.getName());
+					return false;
 				}
+				if ((value >= 1) &&
+						(value <= 7) && 
+						(strCard.charAt(1) == ':')) {
+					String strColour = strCard.substring(3);
+					for (DisplayCard.Colour colour: DisplayCard.Colour.values()) {
+						if (colour.toString().equalsIgnoreCase(strColour)) {
+							card = new DisplayCard(value, colour);
+							p.addToHand(card);  // give Display Card
+							Trace.getInstance().write(this, card.toString() + " Display Card given to " + 
+									p.getName() + ".");
+							System.out.println(card.toString() + " Display Card given to " + 
+									p.getName() + ".");
+						}
+					}
+				} else {
+					Trace.getInstance().write(this, "Invalid Display Card Format: could not give card to " + 
+							p.getName() + ". Try /help");
+					System.out.println("Invalid Display Card Format: could not give card to " + 
+							p.getName() + ". Try /help");
+					return false; // can't give card
+				}					
 			}
+		} else { // could not find player in game state
+			Trace.getInstance().write(this, "Could not give card. No player associated with player number " + 
+						pnum + ". Try /list");
+			System.out.println("Could not give card. No player associated with player number " + 
+						pnum + ". Try /list");
+			return false;
 		}
 		return true;
 	}

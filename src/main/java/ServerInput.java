@@ -105,9 +105,11 @@ public class ServerInput extends Thread{
 				if(!server.printGameState()){ System.out.println("Failed to find gamestate."); }
 				break;
 			case "/give":
-				if (args.length < 3) {	return false; } // check number of arguments
-				int playerNum = Integer.parseInt(args[0]);
-				if (!((playerNum >= 0) && (playerNum <= 9))) { return false; } // player number
+				if (args.length < 2) {	return false; } // check number of arguments
+				int playerNum;
+				try {
+					playerNum = Integer.parseInt(args[0]);
+				} catch (NumberFormatException e) {	return false; }
 				server.cmdGive(playerNum, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
 				break;
 			case "/hand":
