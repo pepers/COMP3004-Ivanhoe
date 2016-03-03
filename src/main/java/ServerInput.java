@@ -82,26 +82,14 @@ public class ServerInput extends Thread{
 			case "/display":
 				if (args.length == 0) { // show every player's display
 					for (Player p: server.gameState.players) {
-						if (!(p.printDisplay())) {
-								System.out.println("No cards in " +
-										p.getName() + "'s display\n");
-								Trace.getInstance().write(this, "Server: no cards in " + 
-										p.getName() + "'s display.");
-							}
-						}
-						return true;
+						server.printSingleDisplay(p);
+					}
 				} else {
 					Player p = server.gameState.getPlayer(sub);
 					if (p == null) { // player doesn't exist
 						return false;
 					} else {
-						if (!(p.printDisplay())) {
-							System.out.println("No cards in " +
-									p.getName() + "'s display\n");
-							Trace.getInstance().write(this, "Server: no cards in " + 
-									p.getName() + "'s display.");
-						}
-						return true;
+						server.printSingleDisplay(p);
 					}
 				}
 			case "/end":

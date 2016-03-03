@@ -73,8 +73,12 @@ public class Player implements Serializable{
 	/*
 	 * return the player's display score
 	 */
-	public int getScore() {
-		return this.displayScore;
+	public int getScore(String type) {
+		if(type.equals("green")){
+			return this.display.size();
+		}else{
+			return this.displayScore;
+		}
 	}
 	
 	/*
@@ -137,13 +141,13 @@ public class Player implements Serializable{
 	/*
 	 * prints the player's display
 	 */
-	public boolean printDisplay() {
+	public boolean printDisplay(String type) {
 		if (!(inTournament)) { // not in tournament
 			System.out.println(username + " is not in this tournament.\n");
 			return true;
 		}
 		if (display.isEmpty()) { return false; } // empty display
-		System.out.println(username + "'s Display (" + getScore() + "): ");
+		System.out.println(username + "'s Display (" + getScore(type) + "): ");
 		for (Card c: display) {
 			System.out.println(c.toString());
 		}
