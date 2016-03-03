@@ -111,7 +111,7 @@ public class ServerInput extends Thread{
 					playerNum = Integer.parseInt(args[0]);
 				} catch (NumberFormatException e) {	return false; }
 				if (server.cmdGive(playerNum, String.join(" ", Arrays.copyOfRange(args, 1, args.length)))) {
-					// TODO: send gamestate to players
+					server.updateGameStates();
 				}
 				break;
 			case "/hand":

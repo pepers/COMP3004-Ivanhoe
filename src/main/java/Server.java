@@ -540,6 +540,14 @@ public class Server implements Runnable, Serializable{
 			}
 		}
 		if (p != null) { // found player
+			// check if player in game
+			if (p.ready != 2) {
+				Trace.getInstance().write(this, "Could not give card. " + p.getName() + 
+						" is not yet in the game. Try /list");
+				System.out.println("Could not give card. " + p.getName() + 
+						" is not yet in the game. Try /list");
+				return false;
+			}
 			card = new ActionCard(strCard);
 			if (card.toString() != null) {
 				p.addToHand(card); // give Action Card
