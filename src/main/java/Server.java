@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -103,7 +104,7 @@ public class Server implements Runnable, Serializable{
 			serverThread.start();
 			// Create a player object
 
-			clients.put(serverThread, new Player(name.getName()));
+			clients.put(serverThread, new Player(name.getName(), serverThread.getID()));
 			numClients++;
 		} else {
 			Trace.getInstance().write(this, "Client Tried to connect:" + socket.getLocalSocketAddress());
@@ -157,8 +158,8 @@ public class Server implements Runnable, Serializable{
 	public void listClients() {
 
 		System.out.println("Connected Players:");
-		System.out.printf(" %-3s %-20s %-8s %s\n", "#", "Name", "State", "Port");
-		System.out.println(" ============================================");
+		System.out.printf(" %-3s %-20s %-8s %s\n", "#", "Name", "State", "Inet Address");
+		System.out.println(" ==================================================");
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
@@ -285,9 +286,10 @@ public class Server implements Runnable, Serializable{
 				
 				Player next = gameState.getNext();
 				gameState.setTurn(next);
-				gameState.addHand(next, gameState.deck.draw());
-				message("Thy turn hath begun!", next);
-				messageExcept(next.getName() + " hath begun their turn!", next);
+				Card drew = gameState.deck.draw();
+				gameState.addHand(next, drew);
+				message("Your turn has begun.  You drew a " + drew.toString() + " card!" , next);
+				messageExcept(next.getName() + " has begun their turn!", next);
 				
 			} 
 			return true;
@@ -361,6 +363,7 @@ public class Server implements Runnable, Serializable{
 			if(clients.get(t).ready == 1){
 				clients.get(t).ready = 2;
 				
+				// TODO remove after testing
 				for (int j = 0; j < 7; j++){
 					clients.get(t).addToHand(gameState.deck.draw());
 				}
@@ -530,7 +533,12 @@ public class Server implements Runnable, Serializable{
 	 */
 	public boolean cmdGive (int pnum, String strCard) {
 		Card card;
-		Player p = this.gameState.getPlayer(pnum);
+		Player p = null;
+		for (Entry<ServerThread, Player> entry: clients.entrySet()) {
+			if (entry.getValue().getId() == pnum) {
+				p = entry.getValue();
+			}
+		}
 		if (p != null) { // found player
 			card = new ActionCard(strCard);
 			if (card.toString() != null) {
@@ -544,16 +552,16 @@ public class Server implements Runnable, Serializable{
 				try {
 					value = Integer.parseInt(strCard.substring(0, 1));
 				} catch (NumberFormatException e) {
-					Trace.getInstance().write(this, "Invalid Display Card Value: could not give card to " + 
-							p.getName());
-					System.out.println("Invalid Display Card Value: could not give card to " + 
-							p.getName());
+					Trace.getInstance().write(this, "Invalid Card Format: could not give card to " + 
+							p.getName() + ". Try /help");
+					System.out.println("Invalid Card Format: could not give card to " + 
+							p.getName() + ". Try /help");
 					return false;
 				}
 				if ((value >= 1) &&
 						(value <= 7) && 
 						(strCard.charAt(1) == ':')) {
-					String strColour = strCard.substring(3);
+					String strColour = strCard.substring(2);
 					for (DisplayCard.Colour colour: DisplayCard.Colour.values()) {
 						if (colour.toString().equalsIgnoreCase(strColour)) {
 							card = new DisplayCard(value, colour);
@@ -565,9 +573,9 @@ public class Server implements Runnable, Serializable{
 						}
 					}
 				} else {
-					Trace.getInstance().write(this, "Invalid Display Card Format: could not give card to " + 
+					Trace.getInstance().write(this, "Invalid Card Format: could not give card to " + 
 							p.getName() + ". Try /help");
-					System.out.println("Invalid Display Card Format: could not give card to " + 
+					System.out.println("Invalid Card Format: could not give card to " + 
 							p.getName() + ". Try /help");
 					return false; // can't give card
 				}					
