@@ -34,8 +34,7 @@ public class Server implements Runnable, Serializable{
 	String address = "unknown"; // server address
 	int numClients; // number of clients
 	int numReady; // number of ready player
-	ConcurrentHashMap<ServerThread, Player> clients; // holds the threads mapped
-														// to player objects
+	ConcurrentHashMap<ServerThread, Player> clients; // holds the threads mapped to player objects
 
 	boolean stop = false; // stops the main thread
 	public Queue<ActionWrapper> actions; // server actions to operate upon
@@ -518,6 +517,65 @@ public class Server implements Runnable, Serializable{
 		} else {
 			System.out.println("no longer censoring bad language");
 			Trace.getInstance().write(this, "Server: no longer censoring bad language.");
+		}
+		return true;
+	}
+	
+	/*
+	 * give a player a card
+	 * 
+	 * valid strCard examples:
+	 * - ivanhoe
+	 * - 3:purple
+	 */
+	public boolean cmdGive (int pnum, String strCard) {
+		Card card;
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			Player p = clients.get(t);
+			if (p.getId() == pnum) { // found player
+				card = new ActionCard(strCard);
+				if (card.toString() != null) {
+					p.addToHand(card); // give Action Card
+					Trace.getInstance().write(this, card.toString() + " Action Card given to " + 
+										p.getName() + ".");
+					System.out.println(card.toString() + " Action Card given to " + 
+										p.getName() + ".");
+				} else {
+					int value;
+					try {
+						value = Integer.parseInt(strCard.substring(0, 1));
+					} catch (NumberFormatException e) {
+						Trace.getInstance().write(this, "Invalid Display Card Value: could not give card to " + 
+								p.getName());
+						System.out.println("Invalid Display Card Value: could not give card to " + 
+								p.getName());
+						return false;
+					}
+					if ((value >= 1) &&
+							(value <= 7) && 
+							(strCard.charAt(1) == ':')) {
+						String strColour = strCard.substring(3);
+						for (DisplayCard.Colour colour: DisplayCard.Colour.values()) {
+							if (colour.toString().equalsIgnoreCase(strColour)) {
+								card = new DisplayCard(value, colour);
+								p.addToHand(card);  // give Display Card
+								Trace.getInstance().write(this, card.toString() + " Display Card given to " + 
+										p.getName() + ".");
+								System.out.println(card.toString() + " Display Card given to " + 
+										p.getName() + ".");
+							}
+						}
+					} else {
+						Trace.getInstance().write(this, "Invalid Display Card Format: could not give card to " + 
+								p.getName() + ". Try /help");
+						System.out.println("Invalid Display Card Format: could not give card to " + 
+								p.getName() + ". Try /help");
+						return false; // can't give card
+					}					
+				}
+			}
 		}
 		return true;
 	}

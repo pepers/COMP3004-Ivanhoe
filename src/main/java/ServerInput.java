@@ -80,10 +80,9 @@ public class ServerInput extends Thread{
 				// TODO: return true
 				return false;
 			case "/censor": // toggle the bad word censor
-				// check number of arguments
-				if (args.length != 0) {	return false; } 
+				if (args.length != 0) {	return false; } // check number of arguments 
 				server.cmdCensor();
-				return true;
+				break;
 			case "/display":
 				if (args.length == 0) { // show every player's display
 					for (Player p: server.gameState.players) {
@@ -97,49 +96,50 @@ public class ServerInput extends Thread{
 						server.printSingleDisplay(p);
 					}
 				}
+				break;
 			case "/end":
 				if (args.length != 1) { return false; } // no arguments allowed for this command
 				// TODO: return true
 				return false;
 			case "/gamestate":
-				if(!server.printGameState()){
-					System.out.println("Failed to find gamestate.");
-				}
-				return true;
+				if(!server.printGameState()){ System.out.println("Failed to find gamestate."); }
+				break;
 			case "/give":
-				// TODO: return true
-				return false;
+				if (args.length < 3) {	return false; } // check number of arguments
+				int playerNum = Integer.parseInt(args[0]);
+				if (!((playerNum >= 0) && (playerNum <= 9))) { return false; } // player number
+				server.cmdGive(playerNum, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+				break;
 			case "/hand":
 				server.printHand(sub);
-				return true;
+				break;
 			case "/help":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				System.out.println("Server: list of possible commands: ");
 				for (Config.ServerCommand helpCmd: Config.ServerCommand.values()) {
 					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
-                return true;
+                break;
 			case "/kick":
 				if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
 					int toRemove = Integer.parseInt(sub);
 					server.removeThread(toRemove);
-					return true;
 				} else {
 					server.removeThread(sub);
-					return true;
 				}
+				break;
 			case "/list":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				server.listClients();
-				return true;
+				break;
 			case "/max":
 				if (args.length != 1) { return false; } // only one argument allowed
 				server.setMaxPlayers(Integer.parseInt(sub));
-				return true;
+				break;
 			case "/min":
 				if (args.length != 1) { return false; } // only one argument allowed
 				server.setMinPlayers(Integer.parseInt(sub));
-				return true;
+				break;
 			case "/pardon":
 				// TODO: return true
 				return false;
@@ -150,22 +150,22 @@ public class ServerInput extends Thread{
 					port = Integer.parseInt(args[0]);
 				} catch (NumberFormatException nfe) { return false; }
 				server.port = port;
-				return true;
+				break;
 			case "/shutdown":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				server.shutdown();
-				return true;
+				break;
 			case "/start":
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				server.startGame();
-				return true;
+				break;
 			case "/translate":
 				if (args.length != 1) { return false; } // check number of arguments 
 				server.cmdTranslate(args[0]);
-				return true;
-			default:
 				break;
+			default:
+				return false;
 		}
-		return false;
+		return true;
 	}
 }
