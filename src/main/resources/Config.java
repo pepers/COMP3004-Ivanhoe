@@ -43,7 +43,7 @@ public class Config {
 		display(" [player name (leave empty for all)]"),
 		end(" [-t (for tournament) or -g (for game)]"), 
 		gamestate(""),
-		give(" [player number] [card name (ex: ivanhoe, 3:purple)]"),
+		give(" [player number] [card name (eg: ivanhoe, purple:3)]"),
 		hand(" [player name]"),
 		help(""),
 		kick(" [player name (or player number)]"),

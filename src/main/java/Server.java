@@ -529,7 +529,7 @@ public class Server implements Runnable, Serializable{
 	 * 
 	 * valid strCard examples:
 	 * - ivanhoe
-	 * - 3:purple
+	 * - purple:3
 	 */
 	public boolean cmdGive (int pnum, String strCard) {
 		Card card;
@@ -547,10 +547,19 @@ public class Server implements Runnable, Serializable{
 									p.getName() + ".");
 				System.out.println(card.toString() + " Action Card given to " + 
 									p.getName() + ".");
+				return true;
 			} else {
+				String[] strDC = strCard.split(":");
+				if (strDC.length != 2) {
+					Trace.getInstance().write(this, "Invalid Card Format: could not give card to " + 
+							p.getName() + ". Try /help");
+					System.out.println("Invalid Card Format: could not give card to " + 
+							p.getName() + ". Try /help");
+					return false; // can't give card
+				}
 				int value;
 				try {
-					value = Integer.parseInt(strCard.substring(0, 1));
+					value = Integer.parseInt(strDC[1]);
 				} catch (NumberFormatException e) {
 					Trace.getInstance().write(this, "Invalid Card Format: could not give card to " + 
 							p.getName() + ". Try /help");
@@ -558,10 +567,8 @@ public class Server implements Runnable, Serializable{
 							p.getName() + ". Try /help");
 					return false;
 				}
-				if ((value >= 1) &&
-						(value <= 7) && 
-						(strCard.charAt(1) == ':')) {
-					String strColour = strCard.substring(2);
+				if ((value >= 1) &&	(value <= 7)) {
+					String strColour = strDC[0];
 					for (DisplayCard.Colour colour: DisplayCard.Colour.values()) {
 						if (colour.toString().equalsIgnoreCase(strColour)) {
 							card = new DisplayCard(value, colour);
@@ -570,6 +577,7 @@ public class Server implements Runnable, Serializable{
 									p.getName() + ".");
 							System.out.println(card.toString() + " Display Card given to " + 
 									p.getName() + ".");
+							return true;
 						}
 					}
 				} else {
@@ -587,7 +595,9 @@ public class Server implements Runnable, Serializable{
 						pnum + ". Try /list");
 			return false;
 		}
-		return true;
+		Trace.getInstance().write(this, "Invalid Card Format: could not give card. Try /help");
+		System.out.println("Invalid Card Format: could not give card. Try /help");
+		return false;
 	}
 
 	/*
