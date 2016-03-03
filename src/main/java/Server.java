@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import main.resources.Config;
 import main.resources.Language;
 import main.resources.Trace;
+import main.resources.Language.Dialect;
 
 public class Server implements Runnable, Serializable{
 
@@ -501,4 +502,49 @@ public class Server implements Runnable, Serializable{
 		}
 		return true;
 	}
+	
+	/*
+	 * toggle censoring of bad words
+	 */
+	public boolean cmdCensor() {
+		Dialect dialect = this.language.getDialect();
+		boolean censor = !this.language.isCensored(); // toggle censor
+		this.language = new Language(dialect, censor);
+		// censored
+		if (censor) {
+			System.out.println("now censoring bad language");
+			Trace.getInstance().write(this, "Server: now censoring bad language.");
+		// not censored
+		} else {
+			System.out.println("no longer censoring bad language");
+			Trace.getInstance().write(this, "Server: no longer censoring bad language.");
+		}
+		return true;
+	}
+
+	/*
+	 * change the language to translate chat messages with
+	 */
+	public boolean cmdTranslate(String d) {
+		boolean censor = this.language.isCensored();
+		// no translating
+		if (Language.Dialect.none.toString().equals(d)) {
+			this.language = new Language(Language.Dialect.none, censor);
+			Trace.getInstance().write(this, "No longer translating chat messages.");
+			System.out.println("No longer translating chat messages.");
+			return true;
+		}
+		// translating
+		for (Language.Dialect dialect : Language.Dialect.values()) {
+			if (dialect.toString().equals(d)) {
+				this.language = new Language(dialect, censor);
+				Trace.getInstance().write(this,
+						"Translating chat to " + this.language.getDialect().toString() + ".");
+				System.out.println("Translating chat to " + this.language.getDialect().toString() + ".");
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

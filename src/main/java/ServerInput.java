@@ -79,6 +79,11 @@ public class ServerInput extends Thread{
 			case "/ban":
 				// TODO: return true
 				return false;
+			case "/censor": // toggle the bad word censor
+				// check number of arguments
+				if (args.length != 0) {	return false; } 
+				server.cmdCensor();
+				return true;
 			case "/display":
 				if (args.length == 0) { // show every player's display
 					for (Player p: server.gameState.players) {
@@ -155,31 +160,9 @@ public class ServerInput extends Thread{
 				server.startGame();
 				return true;
 			case "/translate":
-				// only one or two arguments allowed
-				if ((args.length != 1) && (args.length != 2)) { return false; }
-				// if second argument, it must be "-c"
-				if ((args.length == 2) && (!(args[1].equalsIgnoreCase("-c")))) { return false; }
-				for (Language.Dialect dialect: Language.Dialect.values()) {
-					if (dialect.toString().equals(args[0])) {
-						if (args.length == 2) {
-							server.language = new Language(dialect, true);
-							language = new Language(dialect, true);
-							Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
-									", with censoring.");
-							System.out.println("Translating chat to " + language.getDialect().toString() + 
-									", with censoring...");
-						} else {
-							server.language = new Language(dialect, false);
-							language = new Language(dialect, false);
-							Trace.getInstance().write(this, "Translating chat to " + language.getDialect().toString() + 
-									", without censoring.");
-							System.out.println("Translating chat to " + language.getDialect().toString() + 
-									", without censoring...");
-						}
-						return true;
-					}
-				}
-				break;
+				if (args.length != 1) { return false; } // check number of arguments 
+				server.cmdTranslate(args[0]);
+				return true;
 			default:
 				break;
 		}

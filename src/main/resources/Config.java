@@ -38,6 +38,7 @@ public class Config {
 	}
 	
 	public enum ServerCommand { 
+		censor(""),
 		ban(""),
 		display(" [player name (leave empty for all)]"),
 		end(" [-t (for tournament) or -g (for game)]"), 
@@ -53,7 +54,7 @@ public class Config {
 		port(" [port #]"),
 		shutdown(""),
 		start(""),  
-		translate(" [dialect ('none', 'oldEnglish')] [-c (optional censor)]");
+		translate(" [dialect ('none', 'oldEnglish')]");
 		
 		private String syntax;  // syntax for the command
 		

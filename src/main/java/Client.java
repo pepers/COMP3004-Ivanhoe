@@ -335,97 +335,58 @@ public class Client implements Runnable {
 		// switch over command
 		switch (cmd[0]) {
 		case "/censor": // toggle the bad word censor
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			cmdCensor();
 			break;
 		case "/display": // look at display cards
 			cmdDisplay(args);
 			break;
 		case "/end": // end turn
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			cmdEnd();
 			break;
 		case "/gamestate": // show gamestate
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			cmdGameState(gameState);
 			break;
 		case "/hand": // look at cards in hand
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			cmdHand();
 			break;
 		case "/help":
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			cmdHelp();
 			break;
 		case "/list":
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			cmdList();
 			break;
 		case "/play":
-			// check number of arguments
-			if (args.length != 1) {
-				return false;
-			} 
-			// checks if in tournament
-			if (!tournamentAction(cmd[0])) {
-				return false;
-			} 
+			if (args.length != 1) { return false; } // check number of arguments 
+			if (!tournamentAction(cmd[0])) { return false; } // checks if in tournament 
 			cmdPlay(args[0]);
 			break;
 		case "/ready":
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			cmdReady();
 			break;
 		case "/setname":
 			cmdSetname(args);
 			break;
 		case "/shutdown":
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			shutdown();
 			break;
 		case "/tournament":
-			// check number of arguments
-			if (!(args.length == 1) || (args.length == 2)) {
-				return false;
-			} 
+			if (!(args.length == 1) || (args.length == 2)) { return false; } // check number of args 
 			cmdTournament(args);
 			break;
 		case "/translate":
-			// check number of arguments
-			if (args.length != 1) {
-				return false;
-			} 
+			if (args.length != 1) { return false; } // check number of arguments 
 			cmdTranslate(args[0]);
 			break;
 		case "/withdraw":
-			// check number of arguments
-			if (args.length != 0) {
-				return false;
-			} 
+			if (args.length != 0) { return false; } // check number of arguments 
 			cmdTournament(args);
 			cmdWithdraw();
 			break;
@@ -453,8 +414,17 @@ public class Client implements Runnable {
 	 */
 	public boolean cmdCensor() {
 		Dialect dialect = this.language.getDialect();
-		boolean censor = this.language.isCensored();
-		this.language = new Language(dialect, !censor);
+		boolean censor = !this.language.isCensored(); // toggle censor
+		this.language = new Language(dialect, censor);
+		// censored
+		if (censor) {
+			System.out.println("Client: now censoring bad language.");
+			Trace.getInstance().write(this, "Client: now censoring bad language.");
+		// not censored
+		} else {
+			System.out.println("Client: no longer censoring bad language.");
+			Trace.getInstance().write(this, "Client: no longer censoring bad language.");
+		}
 		return true;
 	}
 
@@ -662,13 +632,21 @@ public class Client implements Runnable {
 	 * change the language to translate chat messages with
 	 */
 	public boolean cmdTranslate(String d) {
+		boolean censor = this.language.isCensored();
+		// no translating
+		if (Language.Dialect.none.toString().equals(d)) {
+			this.language = new Language(Language.Dialect.none, censor);
+			Trace.getInstance().write(this, "Client: no longer translating chat messages");
+			System.out.println("Client: no longer translating chat messages");
+			return true;
+		}
+		// translating
 		for (Language.Dialect dialect : Language.Dialect.values()) {
 			if (dialect.toString().equals(d)) {
-				this.language = new Language(dialect, false);
+				this.language = new Language(dialect, censor);
 				Trace.getInstance().write(this,
-						"Translating chat to " + this.language.getDialect().toString() + ", without censoring.");
-				System.out.println("Client: Translating chat to " + this.language.getDialect().toString()
-						+ ", without censoring...");
+						"Client: translating chat to " + this.language.getDialect().toString());
+				System.out.println("Client: translating chat to " + this.language.getDialect().toString());
 				return true;
 			}
 		}
