@@ -15,6 +15,8 @@ public class ClientTest {
 	Client c3 = null; // for shutdown() test
 	Action action;
 	static int pnum;
+	Player p;
+	GameState g;
 	
 	@BeforeClass
 	public static void before() {
@@ -34,8 +36,8 @@ public class ClientTest {
 		c = new Client();
 		pnum += 1;
 		String[] arr = {"TEST PLAYER " + pnum};
-		Player p = new Player(String.join(" ", arr));
-		GameState g = new GameState();
+		p = new Player(String.join(" ", arr));
+		g = new GameState();
 		c.initialize(p, g);
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c.cmdSetname(arr);
@@ -61,10 +63,10 @@ public class ClientTest {
 		c2 = new Client(); // for connect() test
 		
 		String[] arr2 = {"CONNECT TEST PLAYER"};
-		Player p = new Player(String.join(" ", arr2));
-		GameState g = new GameState();
+		Player p2 = new Player(String.join(" ", arr2));
+		GameState g2 = new GameState();
 				
-		c2.initialize(p, g);
+		c2.initialize(p2, g2);
 		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c2.cmdSetname(arr2);
 
@@ -85,9 +87,7 @@ public class ClientTest {
 		assertTrue(c.process(o));
 		
 		// GameState
-		GameState g = new GameState();
-		Player p = new Player("GAMESTATE TEST PLAYER");
-		g.addPlayer(p);
+		g.addPlayer((Player) o);  // add player from previous player assert
 		o = g;
 		assertTrue(c.process(o));
 		
@@ -135,7 +135,8 @@ public class ClientTest {
 	public void cmdDisplay() {
 		System.out.println("\n@Test(): cmdDisplay()");
 		Trace.getInstance().test(this, "@Test(): /display [player name ('-a' for all, or leave empty for own display)]");
-		assertTrue(c.processCmd("/display"));
+		String pname = p.getName();
+		assertTrue(c.processCmd("/display " + pname));
 		assertTrue(c.processCmd("/display -a"));
 		assertTrue(c.processCmd("/display"));
 	}
