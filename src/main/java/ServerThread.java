@@ -113,4 +113,8 @@ public class ServerThread extends Thread{
 		}
 		return true;
 	}
+	
+	public String getAddress(){
+		return socket.getInetAddress().toString().substring(1);
+	}
 }

@@ -77,8 +77,8 @@ public class ServerInput extends Thread{
 		// switch over command 
 		switch (cmd[0]) {
 			case "/ban":
-				// TODO: return true
-				return false;
+				server.ban(sub);
+				return true;
 			case "/censor": // toggle the bad word censor
 				if (args.length != 0) {	return false; } // check number of arguments 
 				server.cmdCensor();
@@ -145,8 +145,8 @@ public class ServerInput extends Thread{
 				server.setMinPlayers(Integer.parseInt(sub));
 				break;
 			case "/pardon":
-				// TODO: return true
-				return false;
+				server.unban(sub);
+				return true;
 			case "/port":  // change Server's port on which Clients connect
 				if (args.length != 1) { return false; } // only one argument allowed
 				int port;
