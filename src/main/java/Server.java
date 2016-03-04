@@ -312,11 +312,11 @@ public class Server implements Runnable, Serializable {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
 				if (p.getScore(gameState.tnmt.colour) <= gameState.highScore) {
-					p.inTournament = false;
-					p.getDisplay().clear();
+					gameState.getPlayer(p.getId()).inTournament = false;
+					gameState.getPlayer(p.getId()).getDisplay().clear();
+					gameState.getPlayer(p.getId()).displayScore = 0;
 					message("YOU have been ELIMINATED from " + gameState.tnmt.name + "!", p);
 					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.tnmt.name + "!", p);
-					gameState.highScore = 0;
 				} else {
 					gameState.highScore = p.getScore(gameState.tnmt.colour);
 				}
@@ -328,6 +328,7 @@ public class Server implements Runnable, Serializable {
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", p);
 					gameState.getPlayer(winner.getName()).giveToken(Player.Token.valueOf(gameState.tnmt.colour));
 					gameState.tnmt = null;
+					gameState.highScore = 0;
 				}
 
 				Player next = gameState.getNext();
@@ -413,8 +414,7 @@ public class Server implements Runnable, Serializable {
 			if (clients.get(t).ready == 1) {
 				clients.get(t).ready = 2;
 
-				// TODO remove after testing
-				for (int j = 0; j < 7; j++) {
+				for (int j = 0; j < 8; j++) {
 					clients.get(t).addToHand(gameState.deck.draw());
 				}
 				gameState.addPlayer(clients.get(t));

@@ -286,7 +286,7 @@ public class Client implements Runnable {
 		} else if (o instanceof GameState) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			gameState = (GameState) o;
-
+			player = gameState.getPlayer(this.player.getName());
 			this.player = gameState.getPlayer(this.player.getName());
 			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
 			return true;
@@ -387,7 +387,6 @@ public class Client implements Runnable {
 			break;
 		case "/withdraw":
 			if (args.length != 0) { return false; } // check number of arguments 
-			cmdTournament(args);
 			cmdWithdraw();
 			break;
 		default:
@@ -547,7 +546,7 @@ public class Client implements Runnable {
 			if (gameState.tnmt == null) {
 				System.out.println("Client: no tournament is running, start one with /tournament");
 				return false;
-			} else if (!gameState.tnmt.colour.equals(((DisplayCard) c).getColour())) {
+			} else if (!(((DisplayCard) c).getColour().equals("none") || gameState.tnmt.colour.equals(((DisplayCard) c).getColour()))){
 				System.out.println("Client: not a valid color for the current tournament");
 				return false;
 			}

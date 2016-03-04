@@ -57,7 +57,6 @@ public class ServerThread extends Thread{
 	
 	public void run(){
 		while(!stop){
-		
 			Object o = receive();
 			if(o != null){
 				actions.add(o);

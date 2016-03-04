@@ -28,6 +28,7 @@ public class Player implements Serializable{
 		username = u;
 		display = new ArrayList<Card>();
 		hand = new ArrayList<Card>();
+		tokens = new ArrayList<Token>();
 		this.id = id;
 	}
 	
