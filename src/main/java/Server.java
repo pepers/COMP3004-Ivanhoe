@@ -312,9 +312,9 @@ public class Server implements Runnable, Serializable {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
 				if (p.getScore(gameState.tnmt.colour) <= gameState.highScore) {
-					gameState.getPlayer(p.getId()).inTournament = false;
-					gameState.getPlayer(p.getId()).getDisplay().clear();
-					gameState.getPlayer(p.getId()).displayScore = 0;
+					p.inTournament = false;
+					p.getDisplay().clear();
+					p.displayScore = 0;
 					message("YOU have been ELIMINATED from " + gameState.tnmt.name + "!", p);
 					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.tnmt.name + "!", p);
 				} else {
@@ -324,9 +324,9 @@ public class Server implements Runnable, Serializable {
 				ArrayList<Player> a = gameState.getTournamentParticipants();
 				if (a.size() == 1) {
 					Player winner = a.get(0);
-					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", p);
-					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", p);
-					gameState.getPlayer(winner.getName()).giveToken(Player.Token.valueOf(gameState.tnmt.colour));
+					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
+					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
+				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.colour));
 					gameState.tnmt = null;
 					gameState.highScore = 0;
 				}
@@ -372,7 +372,7 @@ public class Server implements Runnable, Serializable {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if (!(clients.get(t) == p)) {
+			if (!(clients.get(t).equals(p))) {
 				t.send(new Chat(input));
 			}
 
@@ -384,7 +384,7 @@ public class Server implements Runnable, Serializable {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if ((clients.get(t) == p)) {
+			if ((clients.get(t).equals(p))) {
 				t.send(new Chat(input));
 				return true;
 			}

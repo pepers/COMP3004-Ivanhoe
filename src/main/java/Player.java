@@ -178,4 +178,15 @@ public class Player implements Serializable{
 	public ArrayList<Card> getDisplay() {
 		return display;
 	}
+	
+	@Override
+	public boolean equals(Object o){
+		if (this.id == ((Player) o).id){
+			return true;
+		}
+		if (this.username.equals(((Player) o).username)){
+			return true;
+		}
+		return false;
+	}
 }

@@ -48,6 +48,16 @@ public class GameState implements Serializable{
 		}
 		return null; // player doesn't exist, return null
 	}
+	
+	/*
+	 * get a player by their player object
+	 */
+	public Player getPlayer (Player player) {
+		for (Player p: players) {
+			if (p.equals(player)) { return p; }
+		}
+		return null; // player doesn't exist, return null
+	}
 
 	public boolean setTurn (Player player) {
 		if (getPlayer(player.getName()) == null) { return false; } // player not in game
