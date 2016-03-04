@@ -124,4 +124,14 @@ public class GameState implements Serializable{
 		}
 		return members;
 	}
+	
+	public void endTournament(){
+		tnmt = null;
+		highScore = 0;
+		for (Player p:players){
+			p.inTournament = false;
+			p.displayScore = 0;
+			p.getDisplay().clear();
+		}
+	}
 }

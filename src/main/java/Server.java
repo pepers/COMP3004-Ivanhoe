@@ -327,8 +327,7 @@ public class Server implements Runnable, Serializable {
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.colour));
-					gameState.tnmt = null;
-					gameState.highScore = 0;
+					gameState.endTournament();
 				}
 
 				Player next = gameState.getNext();
