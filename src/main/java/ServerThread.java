@@ -16,6 +16,7 @@ public class ServerThread extends Thread{
 	private int id;
 	private Socket socket;
 	private boolean stop = false;
+	private boolean disconnected = false;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 	
@@ -72,7 +73,7 @@ public class ServerThread extends Thread{
 			System.out.println("Exception: Found foreign object.");
 			e.printStackTrace();
 		} catch (SocketException e){
-			stop = true;
+			disconnected = true;
 		} catch (IOException e) {
 			stop = true;
 		}
@@ -80,9 +81,9 @@ public class ServerThread extends Thread{
 	}
 	//shutdown command: closes the socket and flags the thread to stop
 	public void shutdown() {
-		stop = true;
-		
 		try {
+			input.close();
+			output.close();
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -99,7 +100,7 @@ public class ServerThread extends Thread{
 	}
 	
 	public boolean getDead(){
-		return stop;
+		return disconnected;
 	}
 
 	public boolean update(GameState gameState) {

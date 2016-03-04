@@ -12,28 +12,52 @@ import main.resources.Config;
 
 public class ServerTest {
 	
-	Server s = new Server(Config.DEFAULT_PORT);
+	Server s;
 	
 	@Before
 	public void before(){
+		s = new Server(Config.DEFAULT_PORT);
 		s.startup();
-	}
-	
-	@Test
-	public void TestInit(){
-		
-	}
-	
-	@Test
-	public void TestClientAdded(){
-		Client c = new Client();
-		c.connect("localhost", Config.DEFAULT_PORT);
-		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}
-		assertEquals(s.getConnected(), 1);
 	}
 	
 	@After
 	public void after(){
 		s.shutdown();
+	}
+	
+	@Test
+	public void TestAddClient(){
+		System.out.println("\nTest: Adding a Client");
+		Client c = new Client();
+		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+		c.cmdSetname(new String[]{"Client"});
+		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}
+		assertEquals(1, s.getConnected());
+	}
+	
+	@Test
+	public void TestKickClient(){
+		System.out.println("\nTest: Kicking a Client");
+		Client c = new Client();
+		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+		c.cmdSetname(new String[]{"Client"});
+		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}
+		assertEquals(1, s.getConnected());
+		s.removeThread("Client");
+		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}
+		assertEquals(0, s.getConnected());
+	}
+	
+	@Test
+	public void TestRejectClient(){
+		System.out.println("\nTest: Rejecting a Client");
+		for(int i=0;i<6;i++){
+			Client c = new Client();
+			c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+			c.cmdSetname(new String[]{"Client" + i});
+		}
+		
+		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}
+		assertEquals(5, s.getConnected());
 	}
 }

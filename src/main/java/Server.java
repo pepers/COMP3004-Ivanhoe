@@ -2,6 +2,7 @@ package main.java;
 
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.BindException;
 import java.net.InetAddress;
@@ -94,20 +95,22 @@ public class Server implements Runnable, Serializable{
 
 	// Adding a new connection
 	public boolean addThread(Socket socket) {
-		Trace.getInstance().write(this, "Client Requesting connection: " + socket.getPort());
+		Trace.getInstance().write(this, "Client Requesting connection: " + socket.getLocalSocketAddress());
 		ServerThread serverThread;
-
 		if (numClients < maxPlayers) {
-			// Create a new thread
 			serverThread = new ServerThread(this, socket);
 			SetName name = ((SetName) serverThread.receive());
 			serverThread.start();
-			// Create a player object
-
 			clients.put(serverThread, new Player(name.getName(), serverThread.getID()));
 			numClients++;
 		} else {
-			Trace.getInstance().write(this, "Client Tried to connect:" + socket.getLocalSocketAddress());
+			try {
+				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+				out.writeObject(new Chat("Sorry, too many knights at that location."));
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			Trace.getInstance().write(this, "Client refused: maximum number of clients reached (" + numClients + ")");
 			System.out.println("Client refused: maximum number of clients reached (" + numClients + ")");
 			return false;
@@ -146,8 +149,8 @@ public class Server implements Runnable, Serializable{
 				System.out.println("Removing player \"" + name + "\" (" + t.getID() + ")...");
 				Trace.getInstance().write(this, "Removing player \"" + name + "\" (" + t.getID() + ")...");
 				numClients--;
-				t.shutdown();
 				clients.remove(t);
+				t.shutdown();
 				return true;
 			}
 		}
@@ -179,20 +182,22 @@ public class Server implements Runnable, Serializable{
 				ServerThread t = i.next();
 
 				// check if the serverthread lost its client
+				if (t==null){continue;}
 				if (t.getDead()) {
-					numClients--;
-					String name = clients.get(t).getName();
+					Player c = clients.get(t);
+					String name = c.getName();
 					t.shutdown();
 					clients.remove(t);
 					broadcast(name + " disconnected.");
+					numClients = clients.size();
 					continue;
+				}
+				
+				Player p = clients.get(t);
+				if (p != null){
+					readyPlayers = readyPlayers + (p.ready == 1 ? 1 : 0);
 				}
 				Object o = t.actions.poll(); // get an action from the thread
-				Player p = clients.get(t);
-				if (p == null) {
-					continue;
-				}
-				readyPlayers = readyPlayers + (p.ready == 1 ? 1 : 0);
 				if (o != null) {
 					Trace.getInstance().write(this, "Got an action from " + p.getName());
 					actions.add(new ActionWrapper(o, p)); // create a new local
