@@ -311,20 +311,21 @@ public class Server implements Runnable, Serializable {
 			for (Player p : gameState.players) {
 				p.inTournament = true;
 			}
-			broadcast(t.name + " started by " + action.origin.getName() + " (" + t.colour + ")");
+			gameState.setLastColour(t.getColour());
+			broadcast(t.name + " started by " + action.origin.getName() + " (" + t.getColour() + ")");
 			return true;
 		}
 		if (action.object instanceof EndTurn) {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
-				if (p.getScore(gameState.tnmt.colour) <= gameState.highScore) {
+				if (p.getScore(gameState.tnmt.getColour()) <= gameState.highScore) {
 					p.inTournament = false;
 					p.getDisplay().clear();
 					p.displayScore = 0;
 					message("YOU have been ELIMINATED from " + gameState.tnmt.name + "!", p);
 					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.tnmt.name + "!", p);
 				} else {
-					gameState.highScore = p.getScore(gameState.tnmt.colour);
+					gameState.highScore = p.getScore(gameState.tnmt.getColour());
 				}
 				// check if tournament has a winner
 				ArrayList<Player> a = gameState.getTournamentParticipants();
@@ -332,8 +333,8 @@ public class Server implements Runnable, Serializable {
 					Player winner = a.get(0);
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.colour));
-					message("You get a " + gameState.tnmt.name + " token of favour!", winner);
+				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()));
+					message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
 					gameState.endTournament();
 				}
 
@@ -362,7 +363,8 @@ public class Server implements Runnable, Serializable {
 					Player winner = a.get(0);
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.colour));
+				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()));
+					message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
 					gameState.endTournament();
 				}
 

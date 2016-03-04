@@ -546,7 +546,8 @@ public class Client implements Runnable {
 			if (gameState.tnmt == null) {
 				System.out.println("Client: no tournament is running, start one with /tournament");
 				return false;
-			} else if (!(((DisplayCard) c).getColour().equals("none") || gameState.tnmt.colour.equals(((DisplayCard) c).getColour()))){
+			} else if (!(((DisplayCard) c).getColour().equals("none") || 
+					gameState.tnmt.getColour().equals(((DisplayCard) c).getColour()))){
 				System.out.println("Client: not a valid color for the current tournament");
 				return false;
 			}
@@ -605,6 +606,11 @@ public class Client implements Runnable {
 				(!colour.equals("yellow")) &&
 				(!colour.equals("green"))) {
 			System.out.println("Client: " + colour + " is not a valid tournament colour. Type '/help'.");
+			
+		// last tournament was purple (another colour must be chosen)
+		} else if ((gameState.getLastColour().equals("purple")) && (colour.equals("purple"))) {
+			System.out.println("Client: the last tournament was Jousting (purple). "
+					+ "\n A tournament of a different colour must be started.");
 			
 		// not a display card
 		} else if (card instanceof ActionCard) {

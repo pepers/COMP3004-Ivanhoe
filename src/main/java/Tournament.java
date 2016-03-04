@@ -14,10 +14,17 @@ public class Tournament implements Serializable{
 	
 	String name;               // tournament name
 	int turns;
-	public String colour;      // colour of tournament
+	private String colour;     // colour of tournament
 	
 	public Tournament(String colour) {
 		name = MedievalNames.genTournament();
 		this.colour = colour;
+	}
+	
+	/*
+	 * get colour of tournament
+	 */
+	public String getColour () {
+		return this.colour;
 	}
 }

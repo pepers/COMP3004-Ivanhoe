@@ -10,7 +10,7 @@ public class GameState implements Serializable{
 	//Game stuff
 	Deck deck;
 	Tournament tnmt = null;
-	Tournament.Colour lastColour = null;
+	private String lastColour = null;
 	ArrayList<Player> players;
 	int numPlayers;
 	int highScore = 0;
@@ -116,7 +116,7 @@ public class GameState implements Serializable{
 		if(tnmt == null){
 			return "none";
 		}else{
-			return tnmt.colour;
+			return tnmt.getColour();
 		}
 	}
 	
@@ -129,6 +129,13 @@ public class GameState implements Serializable{
 		} else {
 			return lastColour.toString();
 		}
+	}
+	
+	/*
+	 * set colour of last tournament
+	 */
+	public void setLastColour(String colour) {
+		this.lastColour = colour;
 	}
 	
 	public ArrayList<Player> getTournamentParticipants(){
