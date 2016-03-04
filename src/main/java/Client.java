@@ -658,7 +658,8 @@ public class Client implements Runnable {
 	public boolean cmdWithdraw() {
 		this.action = new Withdraw();
 		send(this.action);
-		player.inTournament = false;
+		this.player.inTournament = false;
+		this.player.isTurn = false;
 		return true;
 	}
 

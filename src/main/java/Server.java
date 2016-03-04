@@ -241,11 +241,17 @@ public class Server implements Runnable, Serializable {
 				Object o = t.actions.poll(); // get an action from the thread
 				if (o != null) {
 					Trace.getInstance().write(this, "Got an action from " + p.getName());
-					actions.add(new ActionWrapper(o, p)); // create a new local
-															// action
+					actions.add(new ActionWrapper(o, p)); // create a new local action
 				}
 			}
 			numReady = readyPlayers;
+			
+			// start game automatically if:
+			// all players are ready and
+			// the minimum number of players are ready
+			if ((numReady == numClients) && (numReady >= minPlayers)) {
+				startGame();
+			}
 
 			if (!actions.isEmpty()) {
 				ActionWrapper a = actions.poll();
@@ -327,6 +333,7 @@ public class Server implements Runnable, Serializable {
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.colour));
+					message("You get a " + gameState.tnmt.name + " token of favour!", winner);
 					gameState.endTournament();
 				}
 
@@ -341,8 +348,31 @@ public class Server implements Runnable, Serializable {
 			return true;
 		}
 		if (action.object instanceof Withdraw) {
-			action.origin.inTournament = false;
-			broadcast(action.origin.getName() + " withdraws from " + gameState.tnmt.name);
+			Player p = gameState.getPlayer(action.origin.getName());
+			if (p != null) {
+				p.inTournament = false;
+				p.getDisplay().clear();
+				p.displayScore = 0;
+				message("You withdraw from " + gameState.tnmt.name + "!", p);
+				messageExcept(p.getName() + " has withdrew from " + gameState.tnmt.name + "!", p);
+				
+				// check if tournament has a winner
+				ArrayList<Player> a = gameState.getTournamentParticipants();
+				if (a.size() == 1) {
+					Player winner = a.get(0);
+					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
+					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
+				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.colour));
+					gameState.endTournament();
+				}
+
+				Player next = gameState.getNext();
+				gameState.setTurn(next);
+				Card drew = gameState.deck.draw();
+				gameState.addHand(next, drew);
+				message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
+				messageExcept(next.getName() + " has begun their turn!", next);
+			}
 			return true;
 		}
 		if (action.object instanceof Play) {
@@ -357,7 +387,9 @@ public class Server implements Runnable, Serializable {
 		return false;
 	}
 
-	// send a message to all players(threads)
+	/*
+	 *  send a message to all players(threads)
+	 */
 	public void broadcast(String input) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
@@ -367,6 +399,9 @@ public class Server implements Runnable, Serializable {
 		System.out.println(input);
 	}
 
+	/*
+	 * send a message to everyone in game, except for one player
+	 */
 	public void messageExcept(String input, Player p) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
@@ -379,6 +414,9 @@ public class Server implements Runnable, Serializable {
 		System.out.println(input);
 	}
 
+	/*
+	 * send a message to one player
+	 */
 	public boolean message(String input, Player p) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
@@ -391,7 +429,9 @@ public class Server implements Runnable, Serializable {
 		return false;
 	}
 
-	// Start a game
+	/*
+	 *  Start a game
+	 */
 	public boolean startGame() {
 
 		if (numClients < minPlayers) {
@@ -428,7 +468,9 @@ public class Server implements Runnable, Serializable {
 		return true;
 	}
 
-	// Update each client with a new gameState
+	/*
+	 *  Update each client with a new gameState
+	 */
 	public int updateGameStates() {
 		printLargeDisplays();
 		Iterator<ServerThread> i = clients.keySet().iterator();
@@ -444,7 +486,9 @@ public class Server implements Runnable, Serializable {
 		return c;
 	}
 
-	// Shutdown the server
+	/*
+	 * shuts down the server
+	 */
 	public boolean shutdown() {
 		Trace.getInstance().write(this, "Shutting down server, please wait  ...");
 		System.out.println("Shutting down server, please wait  ...");
@@ -480,6 +524,9 @@ public class Server implements Runnable, Serializable {
 		return true;
 	}
 
+	/*
+	 * prints a player's hand of cards
+	 */
 	public boolean printHand(String name) {
 		Player p = fromString(name);
 		if (p == null) {
@@ -493,6 +540,9 @@ public class Server implements Runnable, Serializable {
 		return true;
 	}
 
+	/*
+	 * finds player in clients (map thread and player) by their name
+	 */
 	public Player fromString(String name) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
@@ -505,16 +555,25 @@ public class Server implements Runnable, Serializable {
 		return null;
 	}
 
+	/* 
+	 * set the minimum number of allowed players connected
+	 */
 	public void setMinPlayers(int n) {
 		minPlayers = n;
 		System.out.println("New MINIMUM players is " + n);
 	}
 
+	/*
+	 * set the maximum number of allowed players connected
+	 */
 	public void setMaxPlayers(int n) {
 		maxPlayers = n;
 		System.out.println("New MAXIMUM players is " + n);
 	}
 
+	/*
+	 * print information about the current game state
+	 */
 	public boolean printGameState() {
 		if (gameState == null) {
 			return false;
@@ -530,6 +589,9 @@ public class Server implements Runnable, Serializable {
 		return true;
 	}
 
+	/*
+	 * print the displays of all players in game
+	 */
 	public boolean printLargeDisplays() {
 		System.out.println("DISPLAYS:");
 		System.out.println(" ============================================");
@@ -552,6 +614,9 @@ public class Server implements Runnable, Serializable {
 		return true;
 	}
 
+	/*
+	 * print one player's display
+	 */
 	public boolean printSingleDisplay(Player p) {
 		if (!(p.printDisplay(""))) {
 			System.out.println("No cards in " + p.getName() + "'s display\n");
@@ -582,7 +647,9 @@ public class Server implements Runnable, Serializable {
 	/*
 	 * give a player a card
 	 * 
-	 * valid strCard examples: - ivanhoe - purple:3
+	 * valid strCard examples: 
+	 * - ivanhoe 
+	 * - purple:3
 	 */
 	public boolean cmdGive(int pnum, String strCard) {
 		Card card;
@@ -677,6 +744,9 @@ public class Server implements Runnable, Serializable {
 		return false;
 	}
 
+	/*
+	 * add client ip address to ban list
+	 */
 	public boolean ban(String address) {
 		try {
 			banWriter.write(address + System.getProperty("line.separator"));
@@ -696,6 +766,9 @@ public class Server implements Runnable, Serializable {
 		return true;
 	}
 
+	/*
+	 * remove client ip address from ban list
+	 */
 	public boolean unban(String address) {
 		try {
 			File tempFile = new File("tempBanList.txt");
