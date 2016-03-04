@@ -74,7 +74,7 @@ public class Deck implements Serializable{
 		discard.add(c);
 	}
 	
-	private void shuffle(){
+	public void shuffle(){
 		ArrayList<Card> a = new ArrayList<Card>();
 		Random r = new Random();
 		while(deck.size() > 0){
@@ -94,4 +94,7 @@ public class Deck implements Serializable{
 		
 	}
 
+	public Card peek(){
+		return deck.get(0);
+	}
 }

@@ -13,12 +13,13 @@ public class DeckTest {
 	@Before
 	public void before(){
 		d = new Deck();
-		d.addDummyCards(30);
+		d.initialize();
 	}
 	
 	@Test
 	public void TestDrawing(){
-		int i = 30;
+		System.out.println("Test: Drawing the whole deck.");
+		int i = 70;
 		int counter = 0;
 		boolean b = true;
 		
@@ -36,5 +37,13 @@ public class DeckTest {
 			}
 			assert(d.size() == i);
 		}
+	}
+	@Test
+	public void TestShuffle(){
+		System.out.println("Test: Shuffling the deck.");
+		Card top = d.peek();
+		d.shuffle();
+		Card top2 = d.peek();
+		assert(!top.equals(top2));
 	}
 }
