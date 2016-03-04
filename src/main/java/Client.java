@@ -20,7 +20,7 @@ public class Client implements Runnable {
 	ObjectOutputStream clientOutputStream; // send objects to Server
 	ObjectInputStream clientInputStream; // receive objects from Server
 	BufferedReader input = null; // to get user input
-	Language language; // to translate chat
+	Language language = new Language(Language.Dialect.none, false); // to translate chat
 
 	GameState gameState = null; // the local copy of the game state
 	Player player = null; // the local copy of this client's player
@@ -52,9 +52,6 @@ public class Client implements Runnable {
 		System.out.println(" _| |\\ V / (_| | | | | | | | (_) |  __/");
 		System.out.println("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
 		System.out.println("\nClient: Welcome brave knight!");
-
-		// set up language to translate chat
-		this.language = new Language(Language.Dialect.none, false);
 
 		// get user's name
 		String username = userInput("What is thy name?: ");

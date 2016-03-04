@@ -136,6 +136,9 @@ public class ClientTest {
 		System.out.println("\n@Test(): cmdCensor()");
 		Trace.getInstance().test(this, "@Test(): /censor"); 
 		assertFalse(c.processCmd("/censor too many arguments")); // too many arguments
+		
+		assertTrue(c.cmdCensor()); // censor
+		assertTrue(c.cmdCensor()); // stop censoring
 	}
 	
 	@Test
@@ -155,10 +158,19 @@ public class ClientTest {
 	public void cmdEnd() {
 		System.out.println("\n@Test(): cmdEnd()");
 		Trace.getInstance().test(this, "@Test(): /end"); // end turn
+		
 		assertFalse(c.processCmd("/end arguments not allowed")); // too many arguments
-		assertTrue(c.processCmd("/end")); // not your turn
+		
+		assertFalse(c.cmdEnd()); // not your turn
+		
 		p.setTurn();
-		assertTrue(c.processCmd("/end")); // is your turn
+		assertTrue(c.cmdEnd()); // is your turn
+		
+		g.endTournament();
+		Card card = new DisplayCard(3, DisplayCard.Colour.purple);
+		p.addToHand(card);
+		p.setTurn();
+		assertFalse(c.cmdEnd()); // not in tournament, and have card to start tournament with
 	}
 	 
 	@Test
@@ -166,6 +178,7 @@ public class ClientTest {
 		System.out.println("\n@Test(): cmdHand()");
 		Trace.getInstance().test(this, "@Test(): /hand"); 
 		assertFalse(c.processCmd("/hand too many arguments")); // too many arguments
+		assertTrue(c.cmdHand());
 	}
 	 
 	@Test
