@@ -334,7 +334,11 @@ public class Server implements Runnable, Serializable {
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()));
-					message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
+				    if (winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()))) {
+				    	message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
+				    } else {
+				    	message("You already have a " + gameState.tnmt.getColour() + " token, but you still get the satisfaction of winning.", winner);
+				    }
 					gameState.endTournament();
 				}
 
@@ -363,8 +367,11 @@ public class Server implements Runnable, Serializable {
 					Player winner = a.get(0);
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()));
-					message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
+				    if (winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()))) {
+				    	message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
+				    } else {
+				    	message("You already have a " + gameState.tnmt.getColour() + " token, but you still get the satisfaction of winning.", winner);
+				    }
 					gameState.endTournament();
 				}
 
@@ -720,6 +727,22 @@ public class Server implements Runnable, Serializable {
 		Trace.getInstance().write(this, "Invalid Card Format: could not give card. Try /help");
 		System.out.println("Invalid Card Format: could not give card. Try /help");
 		return false;
+	}
+	
+	/*
+	 * view everyone's tokens
+	 */
+	public boolean cmdTokens() {
+		if (this.gameState.numPlayers < 1) {
+			System.out.println("There are no players in the game.");
+		} else {
+			System.out.println("Listing tokens: ");
+		}
+		for (Player p: this.gameState.players) {
+			Trace.getInstance().write(this, "Tokens: " + p.getName() + " : " + p.listTokens());
+			System.out.printf("%-20s: %s\n", p.getName(), p.listTokens());
+		}
+		return true;
 	}
 
 	/*

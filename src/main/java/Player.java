@@ -132,6 +132,26 @@ public class Player implements Serializable{
 		tokens.add(token); 
 		return true;
 	}
+	
+	/*
+	 * list player's tokens
+	 */
+	public String listTokens() {
+		boolean empty = true; 
+		
+		for (Token t: tokens) {
+		  if (t != null) {
+		    empty = false;
+		    break;
+		  }
+		}
+		
+		if (empty) {
+			return "no tokens";
+		} else {
+			return String.join(", ", tokens.toString());
+		}
+	}
 
 	/*
 	 * get a card from the player's hand

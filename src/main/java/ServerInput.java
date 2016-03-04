@@ -163,6 +163,10 @@ public class ServerInput extends Thread{
 				if (args.length != 0) { return false; } // no arguments allowed for this command
 				server.startGame();
 				break;
+			case "/tokens":
+				if (args.length != 0) { return false; } // check number of arguments 
+				server.cmdTokens();
+				break;	
 			case "/translate":
 				if (args.length != 1) { return false; } // check number of arguments 
 				server.cmdTranslate(args[0]);

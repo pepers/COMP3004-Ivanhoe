@@ -23,6 +23,7 @@ public class Config {
 		setname(" [new name (can't already exist, be empty, or start with '-' or '/')]"), 
 		shutdown(""), 
 		translate(" [dialect ('none', 'oldEnglish')]"), 
+		tokens(""),
 		tournament(" [tournament colour (purple, red, blue, yellow, or green)] [card name]"),
 		withdraw("");
 								
@@ -54,6 +55,7 @@ public class Config {
 		port(" [port #]"),
 		shutdown(""),
 		start(""),  
+		tokens(""),
 		translate(" [dialect ('none', 'oldEnglish')]");
 		
 		private String syntax;  // syntax for the command

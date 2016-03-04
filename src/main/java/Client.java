@@ -377,8 +377,12 @@ public class Client implements Runnable {
 			if (args.length != 0) { return false; } // check number of arguments 
 			shutdown();
 			break;
+		case "/tokens":
+			if (args.length != 0) { return false; } // check number of arguments 
+			cmdTokens();
+			break;
 		case "/tournament":
-			if (args.length != 2) { return false; } // check number of args 
+			if (args.length != 2) { return false; } // check number of arguments 
 			cmdTournament(args[0], args[1]);
 			break;
 		case "/translate":
@@ -581,6 +585,22 @@ public class Client implements Runnable {
 			send(this.action);
 			return true;
 		}
+	}
+	
+	/*
+	 * view everyone's tokens
+	 */
+	public boolean cmdTokens() {
+		if (this.gameState.numPlayers < 1) {
+			System.out.println("Client: there are no players in the game.");
+		} else {
+			System.out.println("Client: listing tokens: ");
+		}
+		for (Player p: this.gameState.players) {
+			Trace.getInstance().write(this, "Tokens: " + p.getName() + " : " + p.listTokens());
+			System.out.printf("%-20s: %s\n", p.getName(), p.listTokens());
+		}
+		return true;
 	}
 
 	/*
