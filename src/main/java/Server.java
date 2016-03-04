@@ -14,6 +14,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -131,9 +132,12 @@ public class Server implements Runnable, Serializable {
 					return false;
 				}
 			}
-		} catch (IOException e1) {
+			
+		}catch (NoSuchFileException e){
+			Trace.getInstance().write(this, "Couldn't find banList.txt.");
+		}catch (IOException e1) {
 			e1.printStackTrace();
-		}
+		} 
 
 		// Check if there is space
 		if (numClients < maxPlayers) {
@@ -241,11 +245,12 @@ public class Server implements Runnable, Serializable {
 				Object o = t.actions.poll(); // get an action from the thread
 				if (o != null) {
 					Trace.getInstance().write(this, "Got an action from " + p.getName());
-					actions.add(new ActionWrapper(o, p)); // create a new local action
+					actions.add(new ActionWrapper(o, p)); // create a new local
+															// action
 				}
 			}
 			numReady = readyPlayers;
-			
+
 			// start game automatically if:
 			// all players are ready and
 			// the minimum number of players are ready
@@ -333,12 +338,13 @@ public class Server implements Runnable, Serializable {
 					Player winner = a.get(0);
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-				    winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()));
-				    if (winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()))) {
-				    	message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
-				    } else {
-				    	message("You already have a " + gameState.tnmt.getColour() + " token, but you still get the satisfaction of winning.", winner);
-				    }
+					winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()));
+					if (winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()))) {
+						message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
+					} else {
+						message("You already have a " + gameState.tnmt.getColour()
+								+ " token, but you still get the satisfaction of winning.", winner);
+					}
 					gameState.endTournament();
 				}
 
@@ -360,18 +366,19 @@ public class Server implements Runnable, Serializable {
 				p.displayScore = 0;
 				message("You withdraw from " + gameState.tnmt.name + "!", p);
 				messageExcept(p.getName() + " has withdrew from " + gameState.tnmt.name + "!", p);
-				
+
 				// check if tournament has a winner
 				ArrayList<Player> a = gameState.getTournamentParticipants();
 				if (a.size() == 1) {
 					Player winner = a.get(0);
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-				    if (winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()))) {
-				    	message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
-				    } else {
-				    	message("You already have a " + gameState.tnmt.getColour() + " token, but you still get the satisfaction of winning.", winner);
-				    }
+					if (winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()))) {
+						message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
+					} else {
+						message("You already have a " + gameState.tnmt.getColour()
+								+ " token, but you still get the satisfaction of winning.", winner);
+					}
 					gameState.endTournament();
 				}
 
@@ -397,7 +404,7 @@ public class Server implements Runnable, Serializable {
 	}
 
 	/*
-	 *  send a message to all players(threads)
+	 * send a message to all players(threads)
 	 */
 	public void broadcast(String input) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
@@ -439,7 +446,7 @@ public class Server implements Runnable, Serializable {
 	}
 
 	/*
-	 *  Start a game
+	 * Start a game
 	 */
 	public boolean startGame() {
 
@@ -478,7 +485,7 @@ public class Server implements Runnable, Serializable {
 	}
 
 	/*
-	 *  Update each client with a new gameState
+	 * Update each client with a new gameState
 	 */
 	public int updateGameStates() {
 		printLargeDisplays();
@@ -564,7 +571,7 @@ public class Server implements Runnable, Serializable {
 		return null;
 	}
 
-	/* 
+	/*
 	 * set the minimum number of allowed players connected
 	 */
 	public void setMinPlayers(int n) {
@@ -656,9 +663,7 @@ public class Server implements Runnable, Serializable {
 	/*
 	 * give a player a card
 	 * 
-	 * valid strCard examples: 
-	 * - ivanhoe 
-	 * - purple:3
+	 * valid strCard examples: - ivanhoe - purple:3
 	 */
 	public boolean cmdGive(int pnum, String strCard) {
 		Card card;
@@ -728,7 +733,7 @@ public class Server implements Runnable, Serializable {
 		System.out.println("Invalid Card Format: could not give card. Try /help");
 		return false;
 	}
-	
+
 	/*
 	 * view everyone's tokens
 	 */
@@ -739,7 +744,7 @@ public class Server implements Runnable, Serializable {
 		} else {
 			System.out.println("Listing tokens: ");
 		}
-		for (Player p: this.gameState.players) {
+		for (Player p : this.gameState.players) {
 			Trace.getInstance().write(this, "Tokens: " + p.getName() + " : " + p.listTokens());
 			System.out.printf("%-20s: %s\n", p.getName(), p.listTokens());
 		}
@@ -774,9 +779,21 @@ public class Server implements Runnable, Serializable {
 	 * add client ip address to ban list
 	 */
 	public boolean ban(String address) {
+
+		// Check the banList
 		try {
-			banWriter.write(address + System.getProperty("line.separator"));
-			banWriter.flush();
+			boolean found = false;
+			for (String line : Files.readAllLines(Paths.get("banList.txt"))) {
+				if (line.equals(address)) {
+					System.out.println(address + " is already banned.");
+					found = true;
+				}
+			}
+			if(!found){
+				banWriter.write(address + System.getProperty("line.separator"));
+				banWriter.flush();
+				System.out.println("Banning: " + address + "...");
+			}
 		} catch (IOException e) {
 			System.out.println("Error writing to banlist.");
 		}
@@ -788,7 +805,7 @@ public class Server implements Runnable, Serializable {
 				removeThread(clients.get(t).getName());
 			}
 		}
-		System.out.println("Banning: " + address + "...");
+		printBannedIPs();
 		return true;
 	}
 
@@ -796,25 +813,35 @@ public class Server implements Runnable, Serializable {
 	 * remove client ip address from ban list
 	 */
 	public boolean unban(String address) {
+		ArrayList<String> bannedPlayers = new ArrayList<String>();
 		try {
-			File tempFile = new File("tempBanList.txt");
-			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-			String line;
-			while ((line = banReader.readLine()) != null) {
-				String trimmedLine = address.trim();
-				if (trimmedLine.equals(address))
-					continue;
-				writer.write(line + System.getProperty("line.separator"));
+			for (String line : Files.readAllLines(Paths.get("banList.txt"))) {
+				bannedPlayers.add(line);
 			}
-			writer.close();
-			tempFile.renameTo(banList);
-			tempFile = new File("tempBanList.txt");
-			tempFile.delete();
+			
+			BufferedWriter tempBanWriter = new BufferedWriter(new FileWriter(banList));
+			for (String line : bannedPlayers) {
+				if(!line.equals(address)){
+					tempBanWriter.write(line + System.getProperty("line.separator"));
+				}
+			}
+			tempBanWriter.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error unbanning a player (IOException)");
 		}
 		System.out.println("Unbanning: " + address + "...");
+		printBannedIPs();
 		return true;
+	}
+	
+	public void printBannedIPs(){
+		System.out.println("Banned IPs:");
+		try {
+			for (String line : Files.readAllLines(Paths.get("banList.txt"))) {
+				System.out.println("  " + line);
+			}
+		} catch (IOException e) {
+			System.out.println("Error reading bannedPlayers (IOException)");
+		}
 	}
 }

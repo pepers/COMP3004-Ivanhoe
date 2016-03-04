@@ -18,7 +18,7 @@ public class DeckTest {
 	
 	@Test
 	public void TestDrawing(){
-		System.out.println("Test: Drawing the whole deck.");
+		System.out.println("/nTest: Drawing the whole deck.");
 		int i = 70;
 		int counter = 0;
 		boolean b = true;
@@ -40,7 +40,7 @@ public class DeckTest {
 	}
 	@Test
 	public void TestShuffle(){
-		System.out.println("Test: Shuffling the deck.");
+		System.out.println("/nTest: Shuffling the deck.");
 		Card top = d.peek();
 		d.shuffle();
 		Card top2 = d.peek();
