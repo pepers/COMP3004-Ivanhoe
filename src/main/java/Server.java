@@ -309,14 +309,11 @@ public class Server implements Runnable, Serializable {
 
 		if (action.object instanceof StartTournament) {
 			Tournament t = new Tournament(((StartTournament) action.object).getColour());
-			gameState.tnmt = t;
+			gameState.startTournament(t);
+			
 			Card c = ((StartTournament) action.object).getCard();
 			gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
 			gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
-			for (Player p : gameState.players) {
-				p.inTournament = true;
-			}
-			gameState.setLastColour(t.getColour());
 			broadcast(t.name + " started by " + action.origin.getName() + " (" + t.getColour() + ")");
 			return true;
 		}

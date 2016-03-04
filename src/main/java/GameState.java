@@ -109,6 +109,17 @@ public class GameState implements Serializable{
 		return getPlayer(player.getName()).removeFromHand(card);
 	}
 	
+	
+	public Tournament getTournament(){
+		return tnmt;
+	}
+	public void startTournament(Tournament t){
+		tnmt = t;
+		for (Player p : players) {
+			p.inTournament = true;
+		}
+		setLastColour(t.getColour());
+	}
 	/*
 	 * get colour of current tournament
 	 */

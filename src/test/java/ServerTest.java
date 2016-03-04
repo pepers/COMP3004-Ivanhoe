@@ -32,7 +32,7 @@ public class ServerTest {
 		s.shutdown();
 	}
 
-	public void resetBans() {
+	private void resetBans() {
 		// reset the banlist
 		try {
 			File f = new File("banList.txt");

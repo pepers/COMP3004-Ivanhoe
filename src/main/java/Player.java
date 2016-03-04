@@ -223,4 +223,8 @@ public class Player implements Serializable{
 		}
 		return false;
 	}
+
+	public void setTurn() {
+		isTurn = true;
+	}
 }
