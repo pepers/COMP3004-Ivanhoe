@@ -575,11 +575,26 @@ public class Client implements Runnable {
 	 */
 	public boolean cmdSetname(String[] arr) {
 		String args = String.join(" ", arr); // join arguments into one string
+		/* TODO: fix:
+		// name can't already exist in game
+		if (this.gameState.players != null) {
+			for (Player p: this.gameState.players) {
+				if (p.getName().equals(args)) { 
+					Trace.getInstance().write(this, "can't change name to '" + args + "'. Name already exists in game.");
+					System.out.println("Client: can't change name to '" + args + "'. Name already exists in game.");
+					return false;
+				}
+			}
+		}
+		*/
 
 		// check for invalid names
-		if ((args == "") || (args.startsWith("-"))) {
+		if ((args.equals("")) || (args.startsWith("-") || (args.startsWith("/")))) {
+			Trace.getInstance().write(this, "can't change name to '" + args + "'. Invalid name.");
+			System.out.println("Client: can't change name to '" + args + "'. Invalid name.");
 			return false;
-			// valid name
+			
+		// valid name
 		} else {
 			this.action = new SetName(args);
 			send(this.action);

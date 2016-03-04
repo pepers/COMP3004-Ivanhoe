@@ -28,7 +28,7 @@ public class ClientTest {
 	@Before
 	public void setUp() {
 		try {
-			Thread.sleep(500);
+			Thread.sleep(200);
 		} catch (InterruptedException e) {
 			System.out.println("ClientTest can't wait.");
 		}
@@ -47,7 +47,7 @@ public class ClientTest {
 	@After
 	public void tearDown () {
 		try {
-			Thread.sleep(500);
+			Thread.sleep(200);
 		} catch (InterruptedException e) {
 			System.out.println("ClientTest can't wait.");
 		}
@@ -92,7 +92,7 @@ public class ClientTest {
 		assertTrue(c.process(o));
 		
 		// ActionCard
-		o = new ActionCard("TEST ACTION CARD");
+		o = new ActionCard("Ivanhoe");
 		assertTrue(c.process(o));
 		
 		// DisplayCard
@@ -111,7 +111,7 @@ public class ClientTest {
 		Trace.getInstance().test(this, "@Test(): send to Server");
 		Object o = new Player("TEST PLAYER");
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		assertTrue(c.send(o));
+		assertFalse(c.send(o)); // not an action
 	}
 	
 	@Test
@@ -132,6 +132,13 @@ public class ClientTest {
 	}
 	
 	@Test
+	public void cmdCensor() {
+		System.out.println("\n@Test(): cmdCensor()");
+		Trace.getInstance().test(this, "@Test(): /censor"); 
+		assertFalse(c.processCmd("/censor too many arguments")); // too many arguments
+	}
+	
+	@Test
 	public void cmdDisplay() {
 		System.out.println("\n@Test(): cmdDisplay()");
 		Trace.getInstance().test(this, "@Test(): /display [player name ('-a' for all, or leave empty for own display)]");
@@ -139,76 +146,111 @@ public class ClientTest {
 		if (!p.inTournament()) {
 			p.toggleTnmt(); // adds them to tournament
 		}
-		assertTrue(c.processCmd("/display " + pname));
-		assertTrue(c.processCmd("/display -a"));
-		assertTrue(c.processCmd("/display"));
+		assertTrue(c.processCmd("/display " + pname)); // pname's display
+		assertTrue(c.processCmd("/display -a"));       // all players' displays (just this player)
+		assertTrue(c.processCmd("/display"));          // this player's display display
 	}
 	
 	@Test
 	public void cmdEnd() {
 		System.out.println("\n@Test(): cmdEnd()");
 		Trace.getInstance().test(this, "@Test(): /end"); // end turn
-		assertFalse(c.processCmd("/end arguments not allowed"));
-		assertTrue(c.processCmd("/end"));
+		assertFalse(c.processCmd("/end arguments not allowed")); // too many arguments
+		assertTrue(c.processCmd("/end")); // not your turn
+		p.setTurn();
+		assertTrue(c.processCmd("/end")); // is your turn
 	}
 	 
 	@Test
 	public void cmdHand() {
 		System.out.println("\n@Test(): cmdHand()");
 		Trace.getInstance().test(this, "@Test(): /hand"); 
+		assertFalse(c.processCmd("/hand too many arguments")); // too many arguments
 	}
 	 
 	@Test
 	public void cmdHelp() {
 		System.out.println("\n@Test(): cmdHelp()");
 		Trace.getInstance().test(this, "@Test(): /help"); 
+		assertFalse(c.processCmd("/help too many arguments")); // too many arguments
 	}
 	 
 	@Test
 	public void cmdList() {
 		System.out.println("\n@Test(): cmdList()");
 		Trace.getInstance().test(this, "@Test(): /list"); 
+		assertFalse(c.processCmd("/list too many arguments")); // too many arguments
 	}
 	 
 	@Test
 	public void cmdPlay() {
 		System.out.println("\n@Test(): cmdPlay()");
 		Trace.getInstance().test(this, "@Test(): /play [card name]"); 
+		assertFalse(c.processCmd("/play too many arguments")); // too many arguments
 	}
 	 
 	@Test
 	public void cmdReady() {
 		System.out.println("\n@Test(): cmdReady()");
 		Trace.getInstance().test(this, "@Test(): /ready"); 
+		assertFalse(c.processCmd("/ready too many arguments")); // too many arguments
 	}
 	 
 	@Test
 	public void cmdSetname() {
 		System.out.println("\n@Test(): cmdSetname()");
 		Trace.getInstance().test(this, "@Test(): /setname [new name (can't already exist, be empty, or start with '-' or '/')]"); 
+		String name = p.getName();
+		String[] args = name.split("\\s+"); 
+		//TODO: assertFalse(c.cmdSetname(args)); // can't already exist
+
+		args = new String[1];
+		args[0] = "";
+		assertFalse(c.cmdSetname(args)); // can't be empty
+		
+		name = "-can't start with -";
+		args = name.split("\\s+"); 
+		assertFalse(c.cmdSetname(args)); // can't start with '-'
+		
+		name = "/can't start with /";
+		args = name.split("\\s+"); 
+		assertFalse(c.cmdSetname(args)); // can't start with '/'
 	}
 	 
 	@Test
 	public void cmdShutdown() {
 		System.out.println("\n@Test(): cmdShutdown()");
 		Trace.getInstance().test(this, "@Test(): /shutdown"); 
+		assertFalse(c.processCmd("/shutdown too many arguments")); // too many arguments
+	}
+	
+	@Test
+	public void cmdTokens() {
+		System.out.println("\n@Test(): cmdTokens()");
+		Trace.getInstance().test(this, "@Test(): /tokens"); 
+		assertFalse(c.processCmd("/tokens too many arguments")); // too many arguments
+	}
+	
+	@Test
+	public void cmdTournament() {
+		System.out.println("\n@Test(): cmdTournament()");
+		Trace.getInstance().test(this, "@Test(): /tournament [tournament colour (purple, red, blue, yellow, or green)] [card name]"); 
+		assertFalse(c.processCmd("/tournament too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/tournament few")); // too few arguments
 	}
 	 
 	@Test
 	public void cmdTranslate() {
 		System.out.println("\n@Test(): cmdTranslate()");
-		Trace.getInstance().test(this, "@Test(): /translate [dialect ('none', 'oldEnglish')] [-c (optional censor)]"); 
+		Trace.getInstance().test(this, "@Test(): /translate [dialect ('none', 'oldEnglish')]"); 
+		assertFalse(c.processCmd("/translate too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/translate")); // too few arguments
 	}
-	 
-	@Test
-	public void cmdTournament() {
-		System.out.println("\n@Test(): cmdTournament()");
-		Trace.getInstance().test(this, "@Test(): /tournament"); 
-	}
-	 
+	
 	@Test
 	public void cmdWithdraw() {
 		System.out.println("\n@Test(): cmdWithdraw()");
 		Trace.getInstance().test(this, "@Test(): /withdraw"); 
+		assertFalse(c.processCmd("/withdraw too many arguments")); // too many arguments
 	}
 }
