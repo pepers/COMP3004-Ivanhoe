@@ -136,6 +136,9 @@ public class ClientTest {
 		System.out.println("\n@Test(): cmdDisplay()");
 		Trace.getInstance().test(this, "@Test(): /display [player name ('-a' for all, or leave empty for own display)]");
 		String pname = p.getName();
+		if (!p.inTournament()) {
+			p.toggleTnmt(); // adds them to tournament
+		}
 		assertTrue(c.processCmd("/display " + pname));
 		assertTrue(c.processCmd("/display -a"));
 		assertTrue(c.processCmd("/display"));

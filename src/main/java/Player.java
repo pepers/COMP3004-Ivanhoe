@@ -44,6 +44,20 @@ public class Player implements Serializable{
 	public void setName(String u){
 		username = u;
 	}
+	
+	/*
+	 * check if player is in tournament
+	 */
+	public boolean inTournament() {
+		return this.inTournament;
+	}
+	
+	/*
+	 * toggle player in tournament
+	 */
+	public void toggleTnmt() {
+		this.inTournament = !this.inTournament;
+	}
 
 	/*
 	 * toggle whether the player is ready to start a game or not
