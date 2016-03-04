@@ -733,8 +733,9 @@ public class Server implements Runnable, Serializable {
 	 * view everyone's tokens
 	 */
 	public boolean cmdTokens() {
-		if (this.gameState.numPlayers < 1) {
+		if (this.gameState == null) {
 			System.out.println("There are no players in the game.");
+			return false;
 		} else {
 			System.out.println("Listing tokens: ");
 		}
