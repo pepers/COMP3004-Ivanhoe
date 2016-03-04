@@ -23,7 +23,7 @@ public class Config {
 		setname(" [new name (can't already exist, be empty, or start with '-' or '/')]"), 
 		shutdown(""), 
 		translate(" [dialect ('none', 'oldEnglish')]"), 
-		tournament(""),
+		tournament(" [tournament colour (purple, red, blue, yellow, or green)] [card name]"),
 		withdraw("");
 								
 		private String syntax;  // syntax for the command
@@ -39,7 +39,7 @@ public class Config {
 	
 	public enum ServerCommand { 
 		censor(""),
-		ban(""),
+		ban(" [ip address]"),
 		display(" [player name (leave empty for all)]"),
 		end(" [-t (for tournament) or -g (for game)]"), 
 		gamestate(""),
@@ -50,7 +50,7 @@ public class Config {
 		list(""),
 		max(" [maximum # of players]"),
 		min(" [minimum # of players]"),
-		pardon(""),
+		pardon(" [ip address]"),
 		port(" [port #]"),
 		shutdown(""),
 		start(""),  

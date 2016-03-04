@@ -70,7 +70,7 @@ class StartTournament implements Action {
 	private Card c;
 	private String s;
 	
-	public StartTournament(Card c, String s) {
+	public StartTournament(String s, Card c) {
 		this.c = c;
 		this.s = s;
 		Trace.getInstance().test(this, this.getAction());

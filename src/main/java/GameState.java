@@ -10,6 +10,7 @@ public class GameState implements Serializable{
 	//Game stuff
 	Deck deck;
 	Tournament tnmt = null;
+	Tournament.Colour lastColour = null;
 	ArrayList<Player> players;
 	int numPlayers;
 	int highScore = 0;
@@ -27,7 +28,6 @@ public class GameState implements Serializable{
 		players.add(p);
 		numPlayers++;
 	}
-	
 	
 	/*
 	 * get a player by their user name
@@ -109,11 +109,25 @@ public class GameState implements Serializable{
 		return getPlayer(player.getName()).removeFromHand(card);
 	}
 	
-	public String getTournamentColor(){
+	/*
+	 * get colour of current tournament
+	 */
+	public String getTournamentColour(){
 		if(tnmt == null){
 			return "none";
 		}else{
 			return tnmt.colour;
+		}
+	}
+	
+	/*
+	 * get colour of last tournament
+	 */
+	public String getLastColour() {
+		if (this.lastColour == null) {
+			return "none";
+		} else {
+			return lastColour.toString();
 		}
 	}
 	

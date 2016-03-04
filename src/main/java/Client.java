@@ -378,8 +378,8 @@ public class Client implements Runnable {
 			shutdown();
 			break;
 		case "/tournament":
-			if (!(args.length == 1) || (args.length == 2)) { return false; } // check number of args 
-			cmdTournament(args);
+			if (args.length != 2) { return false; } // check number of args 
+			cmdTournament(args[0], args[1]);
 			break;
 		case "/translate":
 			if (args.length != 1) { return false; } // check number of arguments 
@@ -435,14 +435,14 @@ public class Client implements Runnable {
 
 		// show own display
 		if (arr.length == 0) { 
-			if (!(this.player.printDisplay(gameState.getTournamentColor()))) {
+			if (!(this.player.printDisplay(gameState.getTournamentColour()))) {
 				System.out.println("Client: no cards in your display");
 				Trace.getInstance().write(this, this.player.getName() + ": No cards in your display to show.");
 			}
 		// show all displays
 		} else if (args.equalsIgnoreCase("-a")) { 
 			for (Player p: this.gameState.players) {
-				if (!(p.printDisplay(gameState.getTournamentColor()))) {
+				if (!(p.printDisplay(gameState.getTournamentColour()))) {
 					System.out.println("Client: no cards in " +
 							p.getName() + "'s display\n");
 					Trace.getInstance().write(this, this.player.getName() +
@@ -455,7 +455,7 @@ public class Client implements Runnable {
 			if (p == null) { // player doesn't exist
 				return false;
 			} else {
-				if (!(p.printDisplay(gameState.getTournamentColor()))) {
+				if (!(p.printDisplay(gameState.getTournamentColour()))) {
 					System.out.println("Client: no cards in " +
 							p.getName() + "'s display\n");
 					Trace.getInstance().write(this, this.player.getName() +
@@ -585,10 +585,8 @@ public class Client implements Runnable {
 	/*
 	 * start a tournament
 	 */
-	public boolean cmdTournament(String[] arr) {
-		String args = String.join(" ", arr); // join arguments into one string
-		Card card = this.player.getCard(args); // get card to start tournament
-												// with
+	public boolean cmdTournament(String colour, String strCard) {
+		Card card = this.player.getCard(strCard); // get card to start tournament with
 
 		// tournament already exists
 		if (this.gameState.tnmt != null) {
@@ -596,31 +594,44 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this,
 					this.player.getName() + ": can't use /tournament, a tournament is already in progress.");
 
-			// not your turn
+		// not your turn
 		} else if (!(this.player.isTurn)) {
 			System.out.println("Client: you may not start a tournament when it is not your turn");
-
-			// not a display card
+			
+		// not a tournament colour
+		} else if ((!colour.equals("purple")) &&
+				(!colour.equals("red")) &&
+				(!colour.equals("blue")) &&
+				(!colour.equals("yellow")) &&
+				(!colour.equals("green"))) {
+			System.out.println("Client: " + colour + " is not a valid tournament colour. Type '/help'.");
+			
+		// not a display card
 		} else if (card instanceof ActionCard) {
 			System.out.println("Client: " + card.toString() + " is not a display card.");
 
-			// attempt tournament!
+		// attempt tournament!
 		} else {
 			DisplayCard displayCard = (DisplayCard) card;
 
 			// card is not in hand
 			if (displayCard == null) {
-				System.out.println("Client: you don't have the card: " + args
+				System.out.println("Client: you don't have the card: " + card.toString()
 						+ "\n\t Type '/hand' to view the cards in your hand.");
 				return false;
 			}
 
-			// have display card in hand
-			if (arr.length == 1) {
-				this.action = new StartTournament(displayCard, displayCard.getColour());
-			} else if (arr.length == 2) {
-				this.action = new StartTournament(displayCard, arr[1]);
+			// display card is not a squire or maiden
+			if (!displayCard.getColour().equals("none")) {
+				// tournament colour selected doesn't equal display card colour
+				if (!displayCard.getColour().equals(colour)) {
+					System.out.println("Client: " + displayCard.toString() 
+							+ " does not match the colour of the tournament you are trying to start. "
+							+ "\n\t Type '/hand' to view the cards in your hand.");
+					return false;
+				} 
 			}
+			this.action = new StartTournament(colour, displayCard);
 			send(this.action);
 			return true;
 		}

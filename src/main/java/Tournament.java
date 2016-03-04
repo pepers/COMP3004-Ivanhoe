@@ -7,9 +7,9 @@ public class Tournament implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	// possible card colours (none is for squires and maidens)
+	// possible tournament colours
 	public enum Colour {
-		none, purple, red, blue, yellow, green
+		purple, red, blue, yellow, green
 	}
 	
 	String name;               // tournament name
