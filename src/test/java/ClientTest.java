@@ -14,11 +14,13 @@ public class ClientTest {
 	Client c2 = null; // for connect() test
 	Client c3 = null; // for shutdown() test
 	Action action;
+	static int pnum;
 	
 	@BeforeClass
 	public static void before() {
 		Server s = new Server(Config.DEFAULT_PORT);
 		s.startup();
+		pnum = 0;
 	}
 	
 	@Before
@@ -30,23 +32,14 @@ public class ClientTest {
 		}
 		
 		c = new Client();
-		c2 = new Client(); // for connect() test
-		c3 = new Client(); // for shutdown() test
-		
-		String[] arr = {"TEST PLAYER"};
-		Player p = new Player(arr[0], 0);
+		pnum += 1;
+		String[] arr = {"TEST PLAYER " + pnum};
+		Player p = new Player(String.join(" ", arr));
 		GameState g = new GameState();
 		c.initialize(p, g);
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c.cmdSetname(arr);
 		
-		// for shutdown() test
-		String[] arr3 = {"SHUTDOWN TEST PLAYER"};
-		Player p3 = new Player(arr3[0], 0);
-		GameState g3 = new GameState();
-		c3.initialize(p3, g3);
-		c3.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c3.cmdSetname(arr);
 	}
 	
 	@After
@@ -65,16 +58,20 @@ public class ClientTest {
 		System.out.println("\n@Test(): connect()");
 		Trace.getInstance().test(this, "@Test(): connect to Server");
 		
-		String[] arr = {"CONNECT TEST PLAYER"};
-		Player p = new Player(arr[0], 0);
+		c2 = new Client(); // for connect() test
+		
+		String[] arr2 = {"CONNECT TEST PLAYER"};
+		Player p = new Player(String.join(" ", arr2));
 		GameState g = new GameState();
 				
 		c2.initialize(p, g);
 		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c2.cmdSetname(arr);
+		c2.cmdSetname(arr2);
 
 		// attempt to connect (should fail if Server is not reachable)
 		assertTrue(c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT));
+		
+		c2.shutdown();
 	}
 	
 	@Test
@@ -121,15 +118,17 @@ public class ClientTest {
 	public void shutdown() {
 		System.out.println("\n@Test(): shutdown()");
 		Trace.getInstance().test(this, "@Test(): shutdown Client");
-		String[] arr = {"TEST PLAYER"};
-		Player p = new Player(arr[0], 0);
-		GameState g = new GameState();
-		c.initialize(p, g);
-		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c.cmdSetname(arr);
-		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+
+		// for shutdown() test
+		c3 = new Client(); 
 		
-		assertTrue(c2.shutdown());
+		String[] arr3 = {"SHUTDOWN TEST PLAYER"};
+		Player p3 = new Player(String.join(" ", arr3));
+		GameState g3 = new GameState();
+		c3.initialize(p3, g3);
+		c3.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+		c3.cmdSetname(arr3);
+		assertTrue(c3.shutdown());
 	}
 	
 	@Test
