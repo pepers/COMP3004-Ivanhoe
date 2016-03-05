@@ -269,6 +269,7 @@ public class ClientTest {
 	public void cmdReady() {
 		System.out.println("\n@Test(): cmdReady()");
 		Trace.getInstance().test(this, "@Test(): /ready"); 
+		assertTrue(c.cmdReady());
 	}
 	 
 	@Test
@@ -293,15 +294,15 @@ public class ClientTest {
 	}
 	 
 	@Test
-	public void cmdShutdown() {
-		System.out.println("\n@Test(): cmdShutdown()");
-		Trace.getInstance().test(this, "@Test(): /shutdown"); 
-	}
-	
-	@Test
 	public void cmdTokens() {
 		System.out.println("\n@Test(): cmdTokens()");
-		Trace.getInstance().test(this, "@Test(): /tokens"); 
+		Trace.getInstance().test(this, "@Test(): /tokens");
+		
+		assertTrue(c.cmdTokens()); // no tokens
+		
+		p.giveToken(Player.Token.blue);
+		p.giveToken(Player.Token.red);
+		assertTrue(c.cmdTokens()); // two tokens
 	}
 	
 	@Test

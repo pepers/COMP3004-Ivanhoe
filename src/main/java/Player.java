@@ -17,7 +17,7 @@ public class Player implements Serializable{
 	int ready = 0; 
 	boolean inTournament = false;
 	boolean isTurn = false;
-	ArrayList<Token> tokens;  // tokens won for tournament wins
+	private ArrayList<Token> tokens = new ArrayList<Token>();  // tokens won for tournament wins
 	private int id;
 	
 	// possible tokens to win
@@ -139,11 +139,13 @@ public class Player implements Serializable{
 	public String listTokens() {
 		boolean empty = true; 
 		
-		for (Token t: tokens) {
-		  if (t != null) {
-		    empty = false;
-		    break;
-		  }
+		if (tokens != null) {
+			for (Token t: tokens) {
+				if (t != null) {
+					empty = false;
+					break;
+				}
+			}
 		}
 		
 		if (empty) {
