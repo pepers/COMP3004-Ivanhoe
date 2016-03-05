@@ -32,12 +32,11 @@ public class GameStateTest {
 	@Test
 	public void TestNextTurn(){
 		System.out.println("\nTest: Getting the next turn.");
-		Player currentPlayer;
+		Player currentPlayer = players[0];
 		for (int i = 0; i<10; i++){
-			currentPlayer = g.getNext();
 			System.out.println(currentPlayer.getName() + "'s turn...");
 			assertEquals(players[i%players.length].getName(), currentPlayer.getName());
-		}
-		
+			currentPlayer = g.nextTurn();
+		}	
 	}
 }

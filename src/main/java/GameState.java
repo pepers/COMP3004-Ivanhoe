@@ -12,6 +12,7 @@ public class GameState implements Serializable{
 	Tournament tnmt = null;
 	private String lastColour = null;
 	ArrayList<Player> players;
+	int turnIndex = 0;
 	int numPlayers;
 	int highScore = 0;
 	
@@ -27,6 +28,10 @@ public class GameState implements Serializable{
 	public void addPlayer(Player p){
 		players.add(p);
 		numPlayers++;
+	}
+	
+	public void setTurnIndex(int i){
+		turnIndex = i;
 	}
 	
 	/*
@@ -58,39 +63,25 @@ public class GameState implements Serializable{
 		}
 		return null; // player doesn't exist, return null
 	}
-
-	public boolean setTurn (Player player) {
-		if (getPlayer(player.getName()) == null) { return false; } // player not in game
-		for (Player p: players) {
-			if (p == player) { // found player 
-				p.isTurn = true; 
-			} else {
-				p.isTurn = false;
-			}
-		}
-		return true;
-	}
 	
-	public Player getNext(){
-		
-		ArrayList<Player> temp;
-		if(tnmt != null){
-			temp = new ArrayList<Player>();
-			for (Player p : players){
-				if(p.inTournament){
-					temp.add(p);
-				}
+	public Player nextTurn(){
+		if(tnmt == null){
+			players.get(turnIndex).isTurn = false;
+			turnIndex++;
+			if(turnIndex >= players.size()){
+				turnIndex = 0;
 			}
 		}else{
-			temp = players;
+			do{
+				players.get(turnIndex).isTurn = false;
+				turnIndex++;
+				if(turnIndex >= players.size()){
+					turnIndex = 0;
+				}
+			}while(!players.get(turnIndex).inTournament);
 		}
-		for (int i = 0; i<temp.size(); i++){
-			Player p = temp.get(i);
-			if(p.isTurn){
-				return temp.get((i+1)%temp.size());
-			}
-		}
-		return players.get(new Random().nextInt(players.size()));
+		players.get(turnIndex).isTurn=true;
+		return players.get(turnIndex);
 	}
 
 	public int addDisplay(Player player, Card card) {

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import main.resources.Config;
@@ -344,9 +345,7 @@ public class Server implements Runnable, Serializable {
 					}
 					gameState.endTournament();
 				}
-
-				Player next = gameState.getNext();
-				gameState.setTurn(next);
+				Player next = gameState.nextTurn();
 				Card drew = gameState.deck.draw();
 				gameState.addHand(next, drew);
 				message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
@@ -379,8 +378,7 @@ public class Server implements Runnable, Serializable {
 					gameState.endTournament();
 				}
 
-				Player next = gameState.getNext();
-				gameState.setTurn(next);
+				Player next = gameState.nextTurn();
 				Card drew = gameState.deck.draw();
 				gameState.addHand(next, drew);
 				message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
@@ -473,8 +471,10 @@ public class Server implements Runnable, Serializable {
 			}
 		}
 
-		Player startPlayer = gameState.getNext();
-		gameState.setTurn(startPlayer);
+		int startIndex = (new Random()).nextInt(gameState.numPlayers);
+		Player startPlayer = gameState.players.get(startIndex);
+		startPlayer.isTurn = true;
+		gameState.turnIndex = startIndex;
 		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
 		message("You are the starting player. Start a tournament if able.", startPlayer);
 		updateGameStates();
