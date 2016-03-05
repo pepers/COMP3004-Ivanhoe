@@ -541,19 +541,34 @@ public class Client implements Runnable {
 			System.out.println(
 					"Client: you don't have the card: " + card + "\n\t Type '/hand' to view the cards in your hand.");
 			return false;
-			// not the player's turn
-		} else if (!(this.player.isTurn) && !c.toString().equalsIgnoreCase("ivanhoe")) {
-			// card to be player is the Ivanhoe action card:
-			System.out.println("Client: you may not play that card when it is not your turn");
-			return false;
-		} else if (c instanceof DisplayCard) {
-			if (gameState.tnmt == null) {
-				System.out.println("Client: no tournament is running, start one with /tournament");
+		// not the player's turn
+		} else if (!this.player.isTurn) {
+			if (c.toString().equalsIgnoreCase("ivanhoe")) {
+				// card to be player is the Ivanhoe action card:
+				this.action = new Play(c);
+				send(this.action);
+				return true;
+			} else {
+				System.out.println("Client: you may not play that card when it is not your turn");
 				return false;
-			} else if (!(((DisplayCard) c).getColour().equals("none") || 
-					gameState.tnmt.getColour().equals(((DisplayCard) c).getColour()))){
-				System.out.println("Client: not a valid color for the current tournament");
-				return false;
+			}
+		// is player's turn
+		} else {
+			if (c instanceof DisplayCard) {
+				if (gameState.tnmt == null) {
+					System.out.println("Client: no tournament is running, start one with /tournament");
+					return false;
+				} else if (!(((DisplayCard) c).getColour().equals("none") || 
+						gameState.tnmt.getColour().equals(((DisplayCard) c).getColour()))){
+					System.out.println("Client: not a valid color for the current tournament");
+					return false;
+				}
+			// action card
+			} else {
+				if (gameState.tnmt == null) {
+					System.out.println("Client: no tournament is running, start one with /tournament");
+					return false;
+				}
 			}
 		}
 		this.action = new Play(c);

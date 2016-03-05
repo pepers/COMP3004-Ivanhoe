@@ -27,12 +27,6 @@ public class ClientTest {
 	
 	@Before
 	public void setUp() {
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			System.out.println("ClientTest can't wait.");
-		}
-		
 		c = new Client();
 		pnum += 1;
 		String[] arr = {"TEST PLAYER " + pnum};
@@ -46,12 +40,6 @@ public class ClientTest {
 	
 	@After
 	public void tearDown () {
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			System.out.println("ClientTest can't wait.");
-		}
-		
 		c.shutdown();
 	}
 	
@@ -238,12 +226,43 @@ public class ClientTest {
 	public void cmdList() {
 		System.out.println("\n@Test(): cmdList()");
 		Trace.getInstance().test(this, "@Test(): /list"); 
+		assertTrue(c.cmdList());
 	}
 	 
 	@Test
 	public void cmdPlay() {
 		System.out.println("\n@Test(): cmdPlay()");
 		Trace.getInstance().test(this, "@Test(): /play [card name]"); 
+		
+		assertFalse(c.cmdPlay("not real card")); // not a real card
+		
+		assertFalse(c.cmdPlay("purple:3")); // real display card, but not in hand
+		assertFalse(c.cmdPlay("Dodge"));  // real action card, but not in hand
+		
+		// add some cards to hand
+		Card card1 = new DisplayCard(3, DisplayCard.Colour.purple);
+		Card card2 = new ActionCard("Dodge");
+		Card card3 = new ActionCard("ivanhoe");
+		p.addToHand(card1);
+		p.addToHand(card2);
+		p.addToHand(card3);
+		
+		assertFalse(c.cmdPlay("purple:3")); // display card in hand, but not my turn
+		assertFalse(c.cmdPlay("Dodge"));  // action card in hand, but not my turn
+		
+		assertTrue(c.cmdPlay("ivanhoe")); // can play Ivanhoe when not your turn
+		
+		p.setTurn(); 
+		assertFalse(c.cmdPlay("purple:3")); // is turn, but no tournament running
+		assertFalse(c.cmdPlay("Dodge"));  // is turn, but no tournament running
+		
+		Tournament t = new Tournament("purple");
+		g.startTournament(t);
+		if (!p.inTournament()) {
+			p.toggleTnmt(); // adds them to tournament
+		}
+		assertTrue(c.cmdPlay("purple:3")); // is turn, and in tournament, play the card
+		assertTrue(c.cmdPlay("Dodge"));  // is turn, and in tournament, play the card
 	}
 	 
 	@Test

@@ -159,7 +159,7 @@ public class Player implements Serializable{
 	 */
 	public Card getCard(String sub) {
 		for (Card c : hand){
-			if(c.toString().equals(sub)){
+			if(c.toString().equalsIgnoreCase(sub)){
 				return c;
 			}
 		}
