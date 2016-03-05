@@ -5,16 +5,28 @@ import java.util.Random;
 public class MedievalNames {
 	static Random r = new Random();
 	
-	public static String genTournament(){
+	public static String genTrinket(String context){
+		
 		switch (r.nextInt(4)){
 			case 0:
-				return castle[r.nextInt(castle.length)] + " Joust";
+				return context + " Joust";
 			case 1:
-				return "Tournament of " + castle[r.nextInt(castle.length)];
+				return "Tournament of " + context;
 			case 2:
-				return "Grand Tourney of  " + festival[r.nextInt(festival.length)];
+				return "Grand Tourney of " + context;
 			case 3:
-				return festival[r.nextInt(festival.length)]+ " Celebratory Joust";
+				return context+ " Celebratory Joust";
+			default:
+				return "An Unknown Tournament";
+		}
+	}
+	
+	public static String genContext(){
+		switch (r.nextInt(2)){
+			case 0:
+				return castle[r.nextInt(castle.length)];
+			case 1:
+				return festival[r.nextInt(festival.length)];
 			default:
 				return "An Unknown Tournament";
 		}

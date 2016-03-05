@@ -21,7 +21,7 @@ public class Player implements Serializable{
 	private int id;
 	
 	// possible tokens to win
-	public enum Token {purple, red, blue, yellow, green}
+	//TODO public enum Token {purple, red, blue, yellow, green}
 	
 	
 	public Player(String u, int id){
@@ -127,7 +127,7 @@ public class Player implements Serializable{
 	 */
 	public boolean giveToken (Token token) {
 		for (Token t: tokens) {
-			if (token == t) { return false; } // player already has token
+			if (token.equals(t)) { return false; } // player already has token
 		}
 		tokens.add(token); 
 		return true;

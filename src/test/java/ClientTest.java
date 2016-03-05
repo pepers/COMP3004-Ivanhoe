@@ -134,7 +134,7 @@ public class ClientTest {
 		assertFalse(c.processCmd("/shutdown too many arguments")); // too many arguments
 		assertFalse(c.processCmd("/tokens too many arguments")); // too many arguments
 		assertFalse(c.processCmd("/tournament too many arguments")); // too many arguments
-		assertFalse(c.processCmd("/tournament few")); // too few arguments
+		assertFalse(c.processCmd("/tournament")); // too few arguments
 		assertFalse(c.processCmd("/translate too many arguments")); // too many arguments
 		assertFalse(c.processCmd("/translate")); // too few arguments
 		assertFalse(c.processCmd("/withdraw too many arguments")); // too many arguments
@@ -300,8 +300,8 @@ public class ClientTest {
 		
 		assertTrue(c.cmdTokens()); // no tokens
 		
-		p.giveToken(Player.Token.blue);
-		p.giveToken(Player.Token.red);
+		p.giveToken(new Token("blue", "the test realm."));
+		p.giveToken(new Token("red", "the test realm."));
 		assertTrue(c.cmdTokens()); // two tokens
 	}
 	

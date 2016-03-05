@@ -11,13 +11,14 @@ public class Tournament implements Serializable{
 	public enum Colour {
 		purple, red, blue, yellow, green
 	}
-	
+	String context;
 	String name;               // tournament name
 	int turns;
 	private String colour;     // colour of tournament
 	
-	public Tournament(String colour) {
-		name = MedievalNames.genTournament();
+	public Tournament(String colour){
+		context = MedievalNames.genContext();
+		name = MedievalNames.genTrinket(context);
 		this.colour = colour;
 	}
 	
@@ -27,4 +28,10 @@ public class Tournament implements Serializable{
 	public String getColour () {
 		return this.colour;
 	}
+
+	public String getContext() {
+		return context;
+	}
+	
+	
 }

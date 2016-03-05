@@ -328,43 +328,7 @@ public class Server implements Runnable, Serializable {
 				} else {
 					gameState.highScore = p.getScore(gameState.tnmt.getColour());
 				}
-				// check if tournament has a winner
-				ArrayList<Player> a = gameState.getTournamentParticipants();
-				if (a.size() == 1) {
-					Player winner = a.get(0);
-					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-					
-					String colour = gameState.tnmt.getColour();
-					if(colour.equals("purple")){
-						colour = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
-					}
-					
-					if (winner.giveToken(Player.Token.valueOf(colour))) {
-						message("You get a " +colour + " token of favour!", winner);
-					} else {
-						message("You already have a " + colour
-								+ " token, but you still get the satisfaction of winning.", winner);
-					}
-					gameState.endTournament();
-					
-					//check if the game is done TODO fix the number
-					if (gameState.numPlayers < 4 && winner.getNumTokens() == 1){
-						broadcast(winner.getName() + " has won the game. Play again soon!");
-						gameState = null;
-						return true;
-					} else if (gameState.numPlayers >= 4 && winner.getNumTokens() == 4){
-						System.out.println(winner.getName() + "has won the game.");
-						return true;
-					}
-					
-				}
-				Player next = gameState.nextTurn();
-				Card drew = gameState.deck.draw();
-				gameState.addHand(next, drew);
-				message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
-				messageExcept(next.getName() + " has begun their turn!", next);
-
+				endTurn();
 			}
 			return true;
 		}
@@ -376,27 +340,7 @@ public class Server implements Runnable, Serializable {
 				p.displayScore = 0;
 				message("You withdraw from " + gameState.tnmt.name + "!", p);
 				messageExcept(p.getName() + " has withdrew from " + gameState.tnmt.name + "!", p);
-
-				// check if tournament has a winner
-				ArrayList<Player> a = gameState.getTournamentParticipants();
-				if (a.size() == 1) {
-					Player winner = a.get(0);
-					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-					if (winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()))) {
-						message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
-					} else {
-						message("You already have a " + gameState.tnmt.getColour()
-								+ " token, but you still get the satisfaction of winning.", winner);
-					}
-					gameState.endTournament();
-				}
-
-				Player next = gameState.nextTurn();
-				Card drew = gameState.deck.draw();
-				gameState.addHand(next, drew);
-				message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
-				messageExcept(next.getName() + " has begun their turn!", next);
+				endTurn();
 			}
 			return true;
 		}
@@ -412,6 +356,45 @@ public class Server implements Runnable, Serializable {
 		return false;
 	}
 
+	private boolean endTurn(){
+		// check if tournament has a winner
+		ArrayList<Player> a = gameState.getTournamentParticipants();
+		if (a.size() == 1) {
+			Player winner = a.get(0);
+			message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
+			messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
+			
+			String colour = gameState.tnmt.getColour();
+			if(colour.equals("purple")){
+				colour = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
+			}
+			
+			if (winner.giveToken(new Token(colour, gameState.tnmt.getContext()))) {
+				message("You get a " +colour + " token of favour!", winner);
+			} else {
+				message("You already have a " + colour
+						+ " token, but you still get the satisfaction of winning.", winner);
+			}
+			gameState.endTournament();
+			//check if the game is done
+			if (gameState.numPlayers < 4 && winner.getNumTokens() == 5){
+				broadcast(winner.getName() + " has won the game. Play again soon!");
+				gameState = null;
+				return true;
+			} else if (gameState.numPlayers >= 4 && winner.getNumTokens() == 4){
+				System.out.println(winner.getName() + "has won the game.");
+				return true;
+			}
+		}
+		
+		Player next = gameState.nextTurn();
+		Card drew = gameState.deck.draw();
+		gameState.addHand(next, drew);
+		message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
+		messageExcept(next.getName() + " has begun their turn!", next);
+		return false;
+	}
+	
 	/*
 	 * send a message to all players(threads)
 	 */
