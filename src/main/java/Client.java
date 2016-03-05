@@ -368,6 +368,7 @@ public class Client implements Runnable {
 			cmdReady();
 			break;
 		case "/setname":
+			if (args.length == 0) { return false; } // check number of arguments 
 			cmdSetname(args);
 			break;
 		case "/shutdown":

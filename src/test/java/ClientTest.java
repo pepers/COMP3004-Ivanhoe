@@ -132,10 +132,30 @@ public class ClientTest {
 	}
 	
 	@Test
+	public void processCmd() {
+		System.out.println("\n@Test(): processCmd()");
+		Trace.getInstance().test(this, "@Test(): processCmd() - # arguments"); 
+		assertFalse(c.processCmd("/censor too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/end arguments not allowed")); // too many arguments
+		assertFalse(c.processCmd("/hand too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/help too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/list too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/play too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/ready too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/setname")); // too few arguments
+		assertFalse(c.processCmd("/shutdown too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/tokens too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/tournament too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/tournament few")); // too few arguments
+		assertFalse(c.processCmd("/translate too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/translate")); // too few arguments
+		assertFalse(c.processCmd("/withdraw too many arguments")); // too many arguments
+	}
+	
+	@Test
 	public void cmdCensor() {
 		System.out.println("\n@Test(): cmdCensor()");
 		Trace.getInstance().test(this, "@Test(): /censor"); 
-		assertFalse(c.processCmd("/censor too many arguments")); // too many arguments
 		
 		assertTrue(c.cmdCensor()); // censor
 		assertTrue(c.cmdCensor()); // stop censoring
@@ -145,25 +165,39 @@ public class ClientTest {
 	public void cmdDisplay() {
 		System.out.println("\n@Test(): cmdDisplay()");
 		Trace.getInstance().test(this, "@Test(): /display [player name ('-a' for all, or leave empty for own display)]");
+		
 		String pname = p.getName();
 		if (!p.inTournament()) {
 			p.toggleTnmt(); // adds them to tournament
 		}
-		assertTrue(c.processCmd("/display " + pname)); // pname's display
-		assertTrue(c.processCmd("/display -a"));       // all players' displays (just this player)
-		assertTrue(c.processCmd("/display"));          // this player's display display
+		String[] arr = pname.split("\\s+"); 
+		assertTrue(c.cmdDisplay(arr)); // pname's display
+		
+		String all = "-a";
+		arr = all.split("\\s+");
+		Player otherPlayer = new Player("Other Player");
+		Card card1 = new DisplayCard(3, DisplayCard.Colour.red);
+		Card card2 = new DisplayCard(6, DisplayCard.Colour.none);
+		otherPlayer.addToDisplay(card1);
+		otherPlayer.addToDisplay(card2);
+		g.addPlayer(otherPlayer);
+		if (!otherPlayer.inTournament()) {
+			otherPlayer.toggleTnmt(); // adds them to tournament
+		}
+		assertTrue(c.cmdDisplay(arr)); // all players' displays (p = empty display, otherPlayer = 2 cards)
+		
+		arr = new String[0]; 
+		assertTrue(c.cmdDisplay(arr)); // this player's display display
 		
 		String name = "Non-Existent Player";
-		String[] arr = name.split("\\s+"); 
-		assertFalse(c.cmdDisplay(arr));                // player doesn't exist
+		arr = name.split("\\s+"); 
+		assertFalse(c.cmdDisplay(arr)); // player doesn't exist
 	}
 	
 	@Test
 	public void cmdEnd() {
 		System.out.println("\n@Test(): cmdEnd()");
 		Trace.getInstance().test(this, "@Test(): /end"); // end turn
-		
-		assertFalse(c.processCmd("/end arguments not allowed")); // too many arguments
 		
 		assertFalse(c.cmdEnd()); // not your turn
 		
@@ -181,7 +215,6 @@ public class ClientTest {
 	public void cmdHand() {
 		System.out.println("\n@Test(): cmdHand()");
 		Trace.getInstance().test(this, "@Test(): /hand"); 
-		assertFalse(c.processCmd("/hand too many arguments")); // too many arguments
 		
 		assertTrue(c.cmdHand());  // no cards in hand, let user know
 		
@@ -198,8 +231,6 @@ public class ClientTest {
 	public void cmdHelp() {
 		System.out.println("\n@Test(): cmdHelp()");
 		Trace.getInstance().test(this, "@Test(): /help"); 
-		assertFalse(c.processCmd("/help too many arguments")); // too many arguments
-		assertTrue(c.processCmd("/help"));
 		assertTrue(c.cmdHelp());
 	}
 	 
@@ -207,21 +238,18 @@ public class ClientTest {
 	public void cmdList() {
 		System.out.println("\n@Test(): cmdList()");
 		Trace.getInstance().test(this, "@Test(): /list"); 
-		assertFalse(c.processCmd("/list too many arguments")); // too many arguments
 	}
 	 
 	@Test
 	public void cmdPlay() {
 		System.out.println("\n@Test(): cmdPlay()");
 		Trace.getInstance().test(this, "@Test(): /play [card name]"); 
-		assertFalse(c.processCmd("/play too many arguments")); // too many arguments
 	}
 	 
 	@Test
 	public void cmdReady() {
 		System.out.println("\n@Test(): cmdReady()");
 		Trace.getInstance().test(this, "@Test(): /ready"); 
-		assertFalse(c.processCmd("/ready too many arguments")); // too many arguments
 	}
 	 
 	@Test
@@ -249,36 +277,29 @@ public class ClientTest {
 	public void cmdShutdown() {
 		System.out.println("\n@Test(): cmdShutdown()");
 		Trace.getInstance().test(this, "@Test(): /shutdown"); 
-		assertFalse(c.processCmd("/shutdown too many arguments")); // too many arguments
 	}
 	
 	@Test
 	public void cmdTokens() {
 		System.out.println("\n@Test(): cmdTokens()");
 		Trace.getInstance().test(this, "@Test(): /tokens"); 
-		assertFalse(c.processCmd("/tokens too many arguments")); // too many arguments
 	}
 	
 	@Test
 	public void cmdTournament() {
 		System.out.println("\n@Test(): cmdTournament()");
 		Trace.getInstance().test(this, "@Test(): /tournament [tournament colour (purple, red, blue, yellow, or green)] [card name]"); 
-		assertFalse(c.processCmd("/tournament too many arguments")); // too many arguments
-		assertFalse(c.processCmd("/tournament few")); // too few arguments
 	}
 	 
 	@Test
 	public void cmdTranslate() {
 		System.out.println("\n@Test(): cmdTranslate()");
 		Trace.getInstance().test(this, "@Test(): /translate [dialect ('none', 'oldEnglish')]"); 
-		assertFalse(c.processCmd("/translate too many arguments")); // too many arguments
-		assertFalse(c.processCmd("/translate")); // too few arguments
 	}
 	
 	@Test
 	public void cmdWithdraw() {
 		System.out.println("\n@Test(): cmdWithdraw()");
 		Trace.getInstance().test(this, "@Test(): /withdraw"); 
-		assertFalse(c.processCmd("/withdraw too many arguments")); // too many arguments
 	}
 }
