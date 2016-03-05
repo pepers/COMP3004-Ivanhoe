@@ -133,6 +133,10 @@ public class Player implements Serializable{
 		return true;
 	}
 	
+	public int getNumTokens() {
+		return tokens.size();
+	}
+	
 	/*
 	 * list player's tokens
 	 */

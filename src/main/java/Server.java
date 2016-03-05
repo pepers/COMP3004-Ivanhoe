@@ -264,8 +264,6 @@ public class Server implements Runnable, Serializable {
 				evaluate(a);
 				if (gameState != null) {
 					updateGameStates();
-				} else {
-
 				}
 			}
 		}
@@ -341,7 +339,7 @@ public class Server implements Runnable, Serializable {
 					if(colour.equals("purple")){
 						colour = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
 					}
-					winner.giveToken(Player.Token.valueOf(colour));
+					
 					if (winner.giveToken(Player.Token.valueOf(colour))) {
 						message("You get a " +colour + " token of favour!", winner);
 					} else {
@@ -349,6 +347,17 @@ public class Server implements Runnable, Serializable {
 								+ " token, but you still get the satisfaction of winning.", winner);
 					}
 					gameState.endTournament();
+					
+					//check if the game is done TODO fix the number
+					if (gameState.numPlayers < 4 && winner.getNumTokens() == 1){
+						broadcast(winner.getName() + " has won the game. Play again soon!");
+						gameState = null;
+						return true;
+					} else if (gameState.numPlayers >= 4 && winner.getNumTokens() == 4){
+						System.out.println(winner.getName() + "has won the game.");
+						return true;
+					}
+					
 				}
 				Player next = gameState.nextTurn();
 				Card drew = gameState.deck.draw();
