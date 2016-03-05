@@ -152,6 +152,10 @@ public class ClientTest {
 		assertTrue(c.processCmd("/display " + pname)); // pname's display
 		assertTrue(c.processCmd("/display -a"));       // all players' displays (just this player)
 		assertTrue(c.processCmd("/display"));          // this player's display display
+		
+		String name = "Non-Existent Player";
+		String[] arr = name.split("\\s+"); 
+		assertFalse(c.cmdDisplay(arr));                // player doesn't exist
 	}
 	
 	@Test
@@ -178,7 +182,16 @@ public class ClientTest {
 		System.out.println("\n@Test(): cmdHand()");
 		Trace.getInstance().test(this, "@Test(): /hand"); 
 		assertFalse(c.processCmd("/hand too many arguments")); // too many arguments
-		assertTrue(c.cmdHand());
+		
+		assertTrue(c.cmdHand());  // no cards in hand, let user know
+		
+		Card card1 = new DisplayCard(3, DisplayCard.Colour.purple);
+		Card card2 = new ActionCard("ivanhoe");
+		Card card3 = new DisplayCard(2, DisplayCard.Colour.none);
+		p.addToHand(card1);
+		p.addToHand(card2);
+		p.addToHand(card3);
+		assertTrue(c.cmdHand());  // cards in hand
 	}
 	 
 	@Test
@@ -186,6 +199,8 @@ public class ClientTest {
 		System.out.println("\n@Test(): cmdHelp()");
 		Trace.getInstance().test(this, "@Test(): /help"); 
 		assertFalse(c.processCmd("/help too many arguments")); // too many arguments
+		assertTrue(c.processCmd("/help"));
+		assertTrue(c.cmdHelp());
 	}
 	 
 	@Test

@@ -454,6 +454,8 @@ public class Client implements Runnable {
 		} else {
 			Player p = this.gameState.getPlayer(args);
 			if (p == null) { // player doesn't exist
+				Trace.getInstance().write(this, args + " doesn't exist.  Can't print their Display.");
+				System.out.println("Client: " + args + " doesn't exist.  Can't print their Display.");
 				return false;
 			} else {
 				if (!(p.printDisplay(gameState.getTournamentColour()))) {
