@@ -21,12 +21,14 @@ public class ServerThread extends Thread{
 	private ObjectOutputStream output;
 	
 	public Queue<Object> actions;
+	public Queue<Prompt> promptResponses; // server actions to operate upon
 	
 	public ServerThread(Server server, Socket socket) {
 		super();
 		this.id = ++incID;
 		this.socket = socket;
 		actions = new LinkedList<Object>();
+		promptResponses = new LinkedList<Prompt>();
 		//Open socket streams
 		setup();
 	}
@@ -59,7 +61,11 @@ public class ServerThread extends Thread{
 		while(!stop){
 			Object o = receive();
 			if(o != null){
-				actions.add(o);
+				if(o instanceof Prompt){
+					promptResponses.add((Prompt) o);
+				}else{
+					actions.add(o);
+				}
 			}
 		}
 	}

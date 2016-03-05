@@ -440,6 +440,22 @@ public class Server implements Runnable, Serializable {
 		return false;
 	}
 
+	public String prompt(String input, Player p) {
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			if ((clients.get(t).equals(p))) {
+				t.send(new Prompt(input));
+				while(t.promptResponses.isEmpty()){
+					System.out.flush();
+				}
+				Prompt o = t.promptResponses.poll();
+				return o.getMessage();
+			}
+		}
+		return "player doesn't exist...";
+	}
+	
 	/*
 	 * Start a game
 	 */

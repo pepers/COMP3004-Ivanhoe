@@ -312,7 +312,14 @@ public class Client implements Runnable {
 			String message = ((Chat) o).getMessage();
 			System.out.println(this.language.translate(message));
 			return true;
-
+			//Prompt
+		} else if (o instanceof Prompt) {
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " was prompted: "
+					+ ((Prompt) o).getMessage());
+			String s = userInput(((Prompt) o).getMessage());
+			send(new Prompt(s));
+			return true;
+			
 			// unrecognized object
 		} else {
 			Exception e = new Exception(this.player.getName() + ": unrecognized object received");

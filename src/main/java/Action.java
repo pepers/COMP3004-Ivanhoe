@@ -35,6 +35,21 @@ class Chat implements Action {
 	}
 }
 
+class Prompt implements Action {
+
+	private static final long serialVersionUID = 1L;
+	private String message;
+	
+	public Prompt (String message) {
+		this.message = message;
+		//Trace.getInstance().test(this, this.getAction() + ": " + this.message);
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+}
+
 /*
  * player ends their turn
  */
