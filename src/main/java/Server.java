@@ -336,11 +336,16 @@ public class Server implements Runnable, Serializable {
 					Player winner = a.get(0);
 					message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
 					messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-					winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()));
-					if (winner.giveToken(Player.Token.valueOf(gameState.tnmt.getColour()))) {
-						message("You get a " + gameState.tnmt.getColour() + " token of favour!", winner);
+					
+					String colour = gameState.tnmt.getColour();
+					if(colour.equals("purple")){
+						colour = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
+					}
+					winner.giveToken(Player.Token.valueOf(colour));
+					if (winner.giveToken(Player.Token.valueOf(colour))) {
+						message("You get a " +colour + " token of favour!", winner);
 					} else {
-						message("You already have a " + gameState.tnmt.getColour()
+						message("You already have a " + colour
 								+ " token, but you still get the satisfaction of winning.", winner);
 					}
 					gameState.endTournament();
