@@ -309,17 +309,20 @@ public class ClientTest {
 	public void cmdTournament() {
 		System.out.println("\n@Test(): cmdTournament()");
 		Trace.getInstance().test(this, "@Test(): /tournament [tournament colour (purple, red, blue, yellow, or green)] [card name]"); 
+		// TODO
 	}
 	 
 	@Test
 	public void cmdTranslate() {
 		System.out.println("\n@Test(): cmdTranslate()");
 		Trace.getInstance().test(this, "@Test(): /translate [dialect ('none', 'oldEnglish')]"); 
+		//TODO
 	}
 	
 	@Test
 	public void cmdWithdraw() {
 		System.out.println("\n@Test(): cmdWithdraw()");
 		Trace.getInstance().test(this, "@Test(): /withdraw"); 
+		assertTrue(c.cmdWithdraw());
 	}
 }

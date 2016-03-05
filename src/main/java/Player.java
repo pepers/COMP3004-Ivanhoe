@@ -139,15 +139,13 @@ public class Player implements Serializable{
 	public String listTokens() {
 		boolean empty = true; 
 		
-		if (tokens != null) {
-			for (Token t: tokens) {
-				if (t != null) {
-					empty = false;
-					break;
-				}
+		for (Token t: tokens) {
+			if (t != null) {
+				empty = false;
+				break;
 			}
 		}
-		
+				
 		if (empty) {
 			return "no tokens";
 		} else {
