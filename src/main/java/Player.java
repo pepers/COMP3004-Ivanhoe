@@ -134,8 +134,22 @@ public class Player implements Serializable{
 	
 	public int removeFromDisplay(Card c){
 		display.remove(c);
+		DisplayCard d = (DisplayCard) c;
+		displayScore += d.getValue();
 		return display.size();
 	}
+	
+	/*
+	 * remove the last played card on the display
+	 */
+	public void removeLastFromDisplay() {
+		if (display.size() > 0) {
+			DisplayCard d = (DisplayCard) display.get(display.size()-1);
+			display.remove(display.size()-1);
+			displayScore -= d.getValue();
+		}
+	}
+	
 	/*
 	 * give token to player for tournament win
 	 * return false if failed to give token to player (already has that colour)

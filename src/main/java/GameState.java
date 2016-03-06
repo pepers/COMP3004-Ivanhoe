@@ -165,6 +165,21 @@ public class GameState implements Serializable{
 			p.clearDisplay();
 		}
 	}
+	
+	/* 
+	 * calculate the highscore of all participants in tournament
+	 */
+	private void calcHighScore() {
+		ArrayList<Player> ps = getTournamentParticipants();
+		if (ps == null) { return; }
+		int high = 0;
+		int score = 0;
+		for (Player p: ps) {
+			score = p.getScore(getTournamentColour());
+			if (score > high) { high = score; }
+		}
+		this.highScore = high;
+	}
 
 	public boolean execute(ActionCard c) {
 		switch(c.toString()){
@@ -178,12 +193,20 @@ public class GameState implements Serializable{
 					System.out.println("Drop Weapon card has no effect.");
 				}
 				break;
+			case "Outmaneuver":
+				ArrayList<Player> ps = getTournamentParticipants();
+				for (Player p: ps) {
+					p.removeLastFromDisplay();
+				}
+				System.out.println("All players remove the last card played on their Display.");
+				break;
 			case "Outwit":
 				System.out.println("played an outwit card");
 				break;
 			default:
 				return false;
-		}
+		}	
+		calcHighScore();
 		return true;
 	}
 }
