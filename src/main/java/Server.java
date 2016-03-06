@@ -312,7 +312,7 @@ public class Server implements Runnable, Serializable {
 				Card c = ((StartTournament) action.object).getCard();
 				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
 				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
-				broadcast(t.name + " started by " + action.origin.getName() + " (" + t.getColour() + ")");
+				broadcast(t.getName() + " started by " + action.origin.getName() + " (" + t.getColour() + ")");
 				return true;
 			}
 		}
@@ -323,8 +323,8 @@ public class Server implements Runnable, Serializable {
 					p.inTournament = false;
 					p.getDisplay().clear();
 					p.displayScore = 0;
-					message("YOU have been ELIMINATED from " + gameState.tnmt.name + "!", p);
-					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.tnmt.name + "!", p);
+					message("YOU have been ELIMINATED from " + gameState.tnmt.getName() + "!", p);
+					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.tnmt.getName()+ "!", p);
 				} else {
 					gameState.highScore = p.getScore(gameState.tnmt.getColour());
 				}
@@ -338,8 +338,8 @@ public class Server implements Runnable, Serializable {
 				p.inTournament = false;
 				p.getDisplay().clear();
 				p.displayScore = 0;
-				message("You withdraw from " + gameState.tnmt.name + "!", p);
-				messageExcept(p.getName() + " has withdrew from " + gameState.tnmt.name + "!", p);
+				message("You withdraw from " + gameState.tnmt.getName() + "!", p);
+				messageExcept(p.getName() + " has withdrew from " + gameState.tnmt.getName() + "!", p);
 				endTurn();
 			}
 			return true;
@@ -367,8 +367,8 @@ public class Server implements Runnable, Serializable {
 		ArrayList<Player> a = gameState.getTournamentParticipants();
 		if (a.size() == 1) {
 			Player winner = a.get(0);
-			message("YOU have been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
-			messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.name + "!", winner);
+			message("YOU have been VICTORIOUS in " + gameState.tnmt.getName() + "!", winner);
+			messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.getName() + "!", winner);
 			
 			String colour = gameState.tnmt.getColour();
 			if(colour.equals("purple")){
