@@ -285,6 +285,12 @@ public class Client implements Runnable {
 		} else if (o instanceof GameState) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			gameState = (GameState) o;
+			//this signals that the game is done
+			if (gameState.numPlayers == 0){
+				this.gameState = null;
+				this.player.reset();
+				return true;
+			}
 			player = gameState.getPlayer(this.player.getName());
 			this.player = gameState.getPlayer(this.player.getName());
 			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
@@ -658,6 +664,7 @@ public class Client implements Runnable {
 	public boolean cmdTokens() {
 		if (this.gameState.numPlayers < 1) {
 			System.out.println("Client: there are no players in the game.");
+			return false;
 		} else {
 			System.out.println("Client: listing tokens: ");
 		}

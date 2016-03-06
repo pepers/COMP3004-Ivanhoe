@@ -36,8 +36,20 @@ public class Player implements Serializable{
 		username = u;
 		display = new ArrayList<Card>();
 		hand = new ArrayList<Card>();
+		
 	}
 
+	public void reset(){
+		display = new ArrayList<Card>();
+		hand = new ArrayList<Card>();
+		tokens = new ArrayList<Token>();
+		handSize = 0;
+		displayScore = 0;
+		inTournament = false;
+		isTurn = false;
+		ready = 0;
+	}
+	
 	/*
 	 * Set the player's name
 	 */
