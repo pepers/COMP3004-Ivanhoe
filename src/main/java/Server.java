@@ -385,11 +385,20 @@ public class Server implements Runnable, Serializable {
 			
 			String colour = gameState.getTournament().getColour();
 			if(colour.equals("purple")){
-				colour = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
+				while (true) {
+					colour = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
+					if ((colour.equalsIgnoreCase("purple")) ||
+						(colour.equalsIgnoreCase("red")) ||
+						(colour.equalsIgnoreCase("blue")) ||
+						(colour.equalsIgnoreCase("yellow")) ||
+						(colour.equalsIgnoreCase("green"))) {
+						break;
+					}
+				}
 			}
 			
 			if (winner.giveToken(new Token(colour, gameState.getTournament().getContext()))) {
-				message("You get a " +colour + " token of favour!", winner);
+				message("You get a " + colour + " token of favour!", winner);
 			} else {
 				message("You already have a " + colour
 						+ " token, but you still get the satisfaction of winning.", winner);
@@ -457,6 +466,9 @@ public class Server implements Runnable, Serializable {
 		return false;
 	}
 
+	/*
+	 * prompt player for some input
+	 */
 	public String prompt(String input, Player p) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
