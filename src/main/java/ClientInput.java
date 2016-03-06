@@ -35,22 +35,22 @@ public class ClientInput extends Thread {
 						if (validCmd(this.input)) { // process valid commands
 							if (client.processCmd(this.input)) {
 								Trace.getInstance().write(this,
-										client.player.getName() + ": command processed: " + this.input);
+										client.getPlayer().getName() + ": command processed: " + this.input);
 							} else {
 								Trace.getInstance().write(this,
-										client.player.getName() + ": invalid command: " + this.input);
+										client.getPlayer().getName() + ": invalid command: " + this.input);
 								System.out.println("Client: invalid command, try typing '/help' for more info.");
 							}
 						} else if (this.input.charAt(0) == '/') { // process invalid commands
 							System.out.println("Client: invalid command, try typing '/help' for more info.");
 							Trace.getInstance().write(this,
-									client.player.getName() + ": invalid command: " + this.input);
+									client.getPlayer().getName() + ": invalid command: " + this.input);
 						} else { // process chat
 							String translated = language.translate(this.input);
 							this.action = new Chat(translated);
 							client.send(this.action);
 							Trace.getInstance().write(this,
-									client.player.getName() + ": " + "chat sent: " + this.input);
+									client.getPlayer().getName() + ": " + "chat sent: " + this.input);
 						}
 					}
 				}

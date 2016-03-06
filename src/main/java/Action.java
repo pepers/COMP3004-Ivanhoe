@@ -1,8 +1,4 @@
 package main.java;
-/*
- * Actions that the Client can perform:
- * 	SetName(String name) 
- */
 
 import java.io.Serializable;
 
