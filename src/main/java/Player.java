@@ -8,25 +8,26 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Player implements Serializable{
-	
 	private static final long serialVersionUID = 1L;
+	
 	private String username;
-	int handSize, displayScore = 0;
+	private int handSize = 0;
+	private int displayScore = 0;
 	private ArrayList<Card> display;
 	private ArrayList<Card> hand;
-	int ready = 0; 
 	
-	boolean inTournament = false;
-	boolean isTurn = false;
-	boolean isStunned = false;
-	boolean isShielded = false;
-	
+	private boolean inTournament = false;
+	private boolean isStunned = false;
+	private boolean isShielded = false;
 	private ArrayList<Token> tokens = new ArrayList<Token>();  // tokens won for tournament wins
 	private int id;
 	
-	// possible tokens to win
-	//TODO public enum Token {purple, red, blue, yellow, green}
+	public boolean isTurn = false;
+	public int ready = 0;
 	
+	public int getHandSize(){return handSize;}
+	public boolean getParticipation(){return inTournament;}
+	public void setParticipation(boolean b){inTournament = b;}
 	
 	public Player(String u, int id){
 		username = u;
@@ -40,9 +41,14 @@ public class Player implements Serializable{
 		username = u;
 		display = new ArrayList<Card>();
 		hand = new ArrayList<Card>();
-		
+		tokens = new ArrayList<Token>();
 	}
 
+	public void clearDisplay(){
+		display.clear();
+		displayScore = 0;
+	}
+	
 	public void reset(){
 		display = new ArrayList<Card>();
 		hand = new ArrayList<Card>();
@@ -59,13 +65,6 @@ public class Player implements Serializable{
 	 */
 	public void setName(String u){
 		username = u;
-	}
-	
-	/*
-	 * check if player is in tournament
-	 */
-	public boolean inTournament() {
-		return this.inTournament;
 	}
 	
 	/*

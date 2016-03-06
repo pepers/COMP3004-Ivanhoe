@@ -77,7 +77,7 @@ public class GameState implements Serializable{
 				if(turnIndex >= players.size()){
 					turnIndex = 0;
 				}
-			}while(!players.get(turnIndex).inTournament);
+			}while(!players.get(turnIndex).getParticipation());
 		}
 		players.get(turnIndex).isTurn=true;
 		return players.get(turnIndex);
@@ -110,7 +110,7 @@ public class GameState implements Serializable{
 		}
 		tnmt = t;
 		for (Player p : players) {
-			p.inTournament = true;
+			p.setParticipation(true);
 		}
 		setLastColour(t.getColour());
 		return true;
@@ -147,7 +147,7 @@ public class GameState implements Serializable{
 	public ArrayList<Player> getTournamentParticipants(){
 		ArrayList<Player> members = new ArrayList<Player>();
 		for (Player p:players){
-			if (p.inTournament) members.add(p);
+			if (p.getParticipation()) members.add(p);
 		}
 		return members;
 	}
@@ -157,9 +157,8 @@ public class GameState implements Serializable{
 		lastColour = "none";
 		highScore = 0;
 		for (Player p:players){
-			p.inTournament = false;
-			p.displayScore = 0;
-			p.getDisplay().clear();
+			p.setParticipation(false);
+			p.clearDisplay();
 		}
 	}
 

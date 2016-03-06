@@ -155,7 +155,7 @@ public class ClientTest {
 		Trace.getInstance().test(this, "@Test(): /display [player name ('-a' for all, or leave empty for own display)]");
 		
 		String pname = p.getName();
-		if (!p.inTournament()) {
+		if (!p.getParticipation()) {
 			p.toggleTnmt(); // adds them to tournament
 		}
 		String[] arr = pname.split("\\s+"); 
@@ -169,7 +169,7 @@ public class ClientTest {
 		otherPlayer.addToDisplay(card1);
 		otherPlayer.addToDisplay(card2);
 		g.addPlayer(otherPlayer);
-		if (!otherPlayer.inTournament()) {
+		if (!otherPlayer.getParticipation()) {
 			otherPlayer.toggleTnmt(); // adds them to tournament
 		}
 		assertTrue(c.cmdDisplay(arr)); // all players' displays (p = empty display, otherPlayer = 2 cards)
@@ -258,7 +258,7 @@ public class ClientTest {
 		
 		Tournament t = new Tournament("purple");
 		g.startTournament(t);
-		if (!p.inTournament()) {
+		if (!p.getParticipation()) {
 			p.toggleTnmt(); // adds them to tournament
 		}
 		assertTrue(c.cmdPlay("purple:3")); // is turn, and in tournament, play the card

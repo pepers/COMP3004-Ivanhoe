@@ -143,9 +143,13 @@ public class Server implements Runnable, Serializable {
 		// Check if there is space
 		if (numClients < maxPlayers) {
 			serverThread = new ServerThread(this, socket);
-			SetName name = ((SetName) serverThread.receive());
+			String name = ((SetName) serverThread.receive()).getName();
+			Player player = new Player("Knight " + serverThread.getID(), serverThread.getID());
+			if(!checkNewName(player, name)){
+				name = name + serverThread.getID();
+			}
+			clients.put(serverThread, new Player(name, serverThread.getID()));
 			serverThread.start();
-			clients.put(serverThread, new Player(name.getName(), serverThread.getID()));
 			numClients++;
 		} else {
 			try {
@@ -269,16 +273,29 @@ public class Server implements Runnable, Serializable {
 		}
 	}
 
+	private boolean checkNewName(Player requestor, String requested){
+		for (Player p : clients.values()){
+			if(!p.equals(requestor)){
+				if(p.getName().equals(requested)){
+					message("There is already a player with that name.", requestor);
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	private boolean evaluate(ActionWrapper action) {
 
 		if (action.object instanceof SetName) {
-			if (!((SetName) action.object).isInit()) {
-				String s = (action.origin.getName() + " changed name to \"" + ((SetName) action.object).getName()
-						+ "\"");
+			String requested = ((SetName) action.object).getName();
+			if(checkNewName(action.origin, requested)){
+				action.origin.setName(requested);
+				String s = (action.origin.getName() + " changed name to \"" + ((SetName) action.object).getName()+ "\"");
 				broadcast(s);
+				return true;
 			}
-			action.origin.setName(((SetName) action.object).getName());
-			return true;
+			return false;
 		}
 		if (action.object instanceof Chat) {
 			String message = ((Chat) action.object).getMessage();
@@ -320,9 +337,8 @@ public class Server implements Runnable, Serializable {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
 				if (p.getScore(gameState.tnmt.getColour()) <= gameState.highScore) {
-					p.inTournament = false;
-					p.getDisplay().clear();
-					p.displayScore = 0;
+					p.setParticipation(false);
+					p.clearDisplay();
 					message("YOU have been ELIMINATED from " + gameState.tnmt.getName() + "!", p);
 					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.tnmt.getName()+ "!", p);
 				} else {
@@ -335,9 +351,8 @@ public class Server implements Runnable, Serializable {
 		if (action.object instanceof Withdraw) {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
-				p.inTournament = false;
-				p.getDisplay().clear();
-				p.displayScore = 0;
+				p.setParticipation(false);
+				p.clearDisplay();
 				message("You withdraw from " + gameState.tnmt.getName() + "!", p);
 				messageExcept(p.getName() + " has withdrew from " + gameState.tnmt.getName() + "!", p);
 				endTurn();
@@ -635,7 +650,7 @@ public class Server implements Runnable, Serializable {
 		}
 		for (Player p : gameState.players) {
 			System.out.println(p.getName() + ":" + p.getId());
-			System.out.println("  HAND:" + p.handSize + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.inTournament + "\n  ");
+			System.out.println("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
 		}
 		return true;
 	}

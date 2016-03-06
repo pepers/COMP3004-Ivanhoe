@@ -15,7 +15,6 @@ public class Client implements Runnable {
 	private ClientInput inputThread = null; 			// thread to input Client commands
 	private boolean stop = false; 						// use to stop the Client
 	private boolean shutDown = false; 					// shutdown() has been called
-	private Action action; 								// client's action
 	private Socket socket = null;						// socket to connect to Server
 	private ObjectOutputStream clientOutputStream;		// send objects to Server
 	private ObjectInputStream clientInputStream; 		// receive objects from Server
@@ -56,7 +55,7 @@ public class Client implements Runnable {
 
 		// get user's name
 		String username = userInput("What is thy name?: ");
-		this.action = new SetName(username, true);
+		//this.action = new SetName(username);
 
 		// initialize states
 		Player p = new Player(username, 0);
@@ -93,7 +92,7 @@ public class Client implements Runnable {
 
 			// attempt to connect to Server
 			if (connect(address, port)) {
-				send(this.action); // send user's name to Server
+				send(new SetName(this.player.getName())); // send user's name to Server
 
 				// start new thread to get Client commands
 				this.inputThread = new ClientInput(this, System.in);
@@ -428,7 +427,7 @@ public class Client implements Runnable {
 	 * if they are not
 	 */
 	public boolean tournamentAction(String cmd) {
-		if (!(this.player.inTournament)) {
+		if (!(this.player.getParticipation())) {
 			System.out.println("Client: can't perform that action while not in a tournament");
 			Trace.getInstance().write(this, this.player.getName() + ": can't use " + cmd + " while not in tournament.");
 			return false;
@@ -500,8 +499,7 @@ public class Client implements Runnable {
 			return false;
 		} else {
 			this.player.isTurn = false;
-			this.action = new EndTurn();
-			send(this.action);
+			send(new EndTurn());
 			return true;
 		}
 	}
@@ -555,8 +553,7 @@ public class Client implements Runnable {
 		} else if (!this.player.isTurn) {
 			if (c.toString().equalsIgnoreCase("ivanhoe")) {
 				// card to be player is the Ivanhoe action card:
-				this.action = new Play(c);
-				send(this.action);
+				send(new Play(c));
 				return true;
 			} else {
 				System.out.println("Client: you may not play that card when it is not your turn");
@@ -581,15 +578,13 @@ public class Client implements Runnable {
 				}
 			}
 		}
-		this.action = new Play(c);
-		send(this.action);
+		send(new Play(c));
 		return true;
 	}
 
 	//player is ready to start game
 	public boolean cmdReady() {
-		this.action = new Ready();
-		send(this.action);
+		send(new Ready());
 		return true;
 	}
 
@@ -602,11 +597,9 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, "can't change name to '" + args + "'. Invalid name.");
 			System.out.println("Client: can't change name to '" + args + "'. Invalid name.");
 			return false;
-
 			// valid name
 		} else {
-			this.action = new SetName(args);
-			send(this.action);
+			send(new SetName(args));
 			return true;
 		}
 	}
@@ -689,8 +682,7 @@ public class Client implements Runnable {
 				return false;
 			}
 		}
-		this.action = new StartTournament(colour, displayCard);
-		send(this.action);
+		send(new StartTournament(colour, displayCard));
 		return true;
 	}
 
@@ -718,9 +710,8 @@ public class Client implements Runnable {
 
 	//withdraw from the current tournament
 	public boolean cmdWithdraw() {
-		this.action = new Withdraw();
-		send(this.action);
-		this.player.inTournament = false;
+		send(new Withdraw());
+		this.player.setParticipation(false);
 		this.player.isTurn = false;
 		return true;
 	}
@@ -736,7 +727,7 @@ public class Client implements Runnable {
 		}
 		for (Player p : g.players) {
 			System.out.println(p.getName() + ":" + p.getId());
-			System.out.println("  HAND:" + p.handSize + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.inTournament + "\n  ");
+			System.out.println("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
 		}
 		return true;
 	}
