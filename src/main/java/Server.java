@@ -225,7 +225,7 @@ public class Server implements Runnable, Serializable {
 			while (i.hasNext()) {
 				ServerThread t = i.next();
 
-				// check if the serverthread lost its client
+				// check if the server thread lost its client
 				if (t == null) {
 					continue;
 				}
@@ -878,5 +878,9 @@ public class Server implements Runnable, Serializable {
 		} catch (IOException e) {
 			System.out.println("Error reading bannedPlayers (IOException)");
 		}
+	}
+	
+	public GameState getGameState(){
+		return gameState;
 	}
 }

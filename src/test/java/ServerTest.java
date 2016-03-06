@@ -28,12 +28,10 @@ public class ServerTest {
 
 	@After
 	public void after() {
-		resetBans();
 		s.shutdown();
 	}
 
 	private void resetBans() {
-		// reset the banlist
 		try {
 			File f = new File("banList.txt");
 			BufferedWriter b = new BufferedWriter(new FileWriter(f));
@@ -119,6 +117,7 @@ public class ServerTest {
 
 	@Test
 	public void TestPardonClient() {
+		resetBans();
 		System.out.println("\nTest: Pardoning a Client");
 		
 		s.ban("127.0.0.1");
@@ -142,5 +141,23 @@ public class ServerTest {
 			e.printStackTrace();
 		}
 		assertEquals(1, s.getConnected());
+		resetBans();
+	}
+	
+	@Test
+	public void TestAutoStart(){
+		System.out.println("\nTest: Game Auto-start");
+		
+		assert(s.getGameState() == null);
+		
+		Client c1 = new Client();
+		c1.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+		c1.cmdSetname(new String[] { "Client1" });
+		
+		Client c2 = new Client();
+		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
+		c2.cmdSetname(new String[] { "Client2" });
+		
+		assert(s.getGameState() != null);
 	}
 }

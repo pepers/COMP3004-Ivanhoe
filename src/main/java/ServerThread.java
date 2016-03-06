@@ -91,7 +91,7 @@ public class ServerThread extends Thread{
 			output.close();
 			socket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Trace.getInstance().exception(this, e);
 		}
 		stop = true;
 	}
