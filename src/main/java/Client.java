@@ -55,7 +55,6 @@ public class Client implements Runnable {
 
 		// get user's name
 		String username = userInput("What is thy name?: ");
-		//this.action = new SetName(username);
 
 		// initialize states
 		Player p = new Player(username, 0);
@@ -92,6 +91,7 @@ public class Client implements Runnable {
 
 			// attempt to connect to Server
 			if (connect(address, port)) {
+				System.out.println("\nType /help for a list of commands!");
 				send(new SetName(this.player.getName())); // send user's name to Server
 				player = (Player) receive();
 				// start new thread to get Client commands

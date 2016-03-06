@@ -115,27 +115,31 @@ public class Player implements Serializable{
 	 * add a card to the player's hand
 	 */
 	public int addToHand(Card c){
-		hand.add(c);
-		handSize++;
+		if (hand.add(c)) {
+			handSize++;
+		}
 		return hand.size();
 	}
 	public int removeFromHand(Card c){
-		hand.remove(c);
-		handSize--;
+		if (hand.remove(c)) {
+			handSize--;
+		}
 		return hand.size();
 	}
 	
 	public int addToDisplay(Card c){
-		display.add(c);
-		DisplayCard d = (DisplayCard) c;
-		displayScore += d.getValue();
+		if (display.add(c)) {
+			DisplayCard d = (DisplayCard) c;
+			displayScore += d.getValue();
+		}
 		return display.size();
 	}
 	
 	public int removeFromDisplay(Card c){
-		display.remove(c);
-		DisplayCard d = (DisplayCard) c;
-		displayScore += d.getValue();
+		if (display.remove(c)) {
+			DisplayCard d = (DisplayCard) c;
+			displayScore -= d.getValue();
+		}
 		return display.size();
 	}
 	
@@ -237,6 +241,18 @@ public class Player implements Serializable{
 				if(((DisplayCard) c).getColour().equals(colour) || colour.equals("none")){
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+	
+	/*
+	 * determines if there are cards in the display of a specific colour
+	 */
+	public boolean hasColourInDisplay (String colour) {
+		for (Card c : display) {
+			if (((DisplayCard) c).getColour().equals(colour)) {
+				return true;
 			}
 		}
 		return false;

@@ -167,22 +167,44 @@ public class GameState implements Serializable{
 	}
 	
 	/* 
-	 * calculate the highscore of all participants in tournament
+	 * determine if a player has the high score
+	 * (their display score is greater than all other display scores)
 	 */
-	private void calcHighScore() {
+	public boolean hasHighScore (Player p) {
 		ArrayList<Player> ps = getTournamentParticipants();
-		if (ps == null) { return; }
-		int high = 0;
-		int score = 0;
-		for (Player p: ps) {
-			score = p.getScore(getTournamentColour());
-			if (score > high) { high = score; }
+		if (ps == null) { return false; }
+		if (ps.remove(p)) { // remove self from temp list of players in tournament
+			int high = 0;
+			int score = 0;
+			for (Player player : ps) {
+				score = player.getScore(getTournamentColour());
+				if (score > high) { high = score; }
+			}
+			if (p.getScore(getTournamentColour()) > high) { return true; } 
 		}
-		this.highScore = high;
+		return false;
 	}
 
+	/* 
+	 * deal with Action Cards' special abilities
+	 */
 	public boolean execute(ActionCard c) {
+		ArrayList<Player> ps;
 		switch(c.toString()){
+			case "Disgrace":
+				ps = getTournamentParticipants();
+				Card s2 = new DisplayCard(2, DisplayCard.Colour.none);
+				Card s3 = new DisplayCard(3, DisplayCard.Colour.none);
+				Card m6 = new DisplayCard(6, DisplayCard.Colour.none);
+				for (Player p: ps) {
+					while (p.hasColourInDisplay("none")) { // player has supporters in display
+						p.removeFromDisplay(s2); // squire:2
+						p.removeFromDisplay(s3); // squire:3
+						p.removeFromDisplay(m6); // maiden:6
+					}
+				}
+				System.out.println("All players remove all their supporters from their Display.");
+				break;
 			case "Drop Weapon":
 				if ((tnmt.getColour().equalsIgnoreCase("red")) ||
 						(tnmt.getColour().equalsIgnoreCase("blue")) ||
@@ -194,7 +216,7 @@ public class GameState implements Serializable{
 				}
 				break;
 			case "Outmaneuver":
-				ArrayList<Player> ps = getTournamentParticipants();
+				ps = getTournamentParticipants();
 				for (Player p: ps) {
 					p.removeLastFromDisplay();
 				}
@@ -206,7 +228,6 @@ public class GameState implements Serializable{
 			default:
 				return false;
 		}	
-		calcHighScore();
 		return true;
 	}
 }

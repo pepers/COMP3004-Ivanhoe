@@ -334,7 +334,7 @@ public class Server implements Runnable, Serializable {
 		if (action.object instanceof EndTurn) {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
-				if (p.getScore(gameState.getTournament().getColour()) <= gameState.getHighScore()) {
+				if (gameState.hasHighScore(p) == false) {
 					p.setParticipation(false);
 					p.clearDisplay();
 					message("YOU have been ELIMINATED from " + gameState.getTournament().getName() + "!", p);
