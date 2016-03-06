@@ -192,7 +192,6 @@ public class ClientTest {
 		p.setTurn();
 		assertTrue(c.cmdEnd()); // is your turn
 		
-		g.endTournament();
 		Card card = new DisplayCard(3, DisplayCard.Colour.purple);
 		p.addToHand(card);
 		p.setTurn();
@@ -335,7 +334,6 @@ public class ClientTest {
 		p.addToHand(card2);
 		assertTrue(c.cmdTournament(args1)); // can start tournament
 		assertTrue(c.cmdTournament(args2));
-		
 		
 		t = new Tournament("purple");
 		g.startTournament(t);

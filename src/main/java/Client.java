@@ -145,7 +145,9 @@ public class Client implements Runnable {
 		}
 
 		// close threads
-		inputThread.shutdown();
+		if (inputThread != null) {
+			inputThread.shutdown();
+		}
 		receiveThread = null;
 
 		Trace.getInstance().write(this, "Client shut down, successfully.");

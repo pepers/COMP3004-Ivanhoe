@@ -41,8 +41,6 @@ public class GameState implements Serializable{
 		numPlayers++;
 	}
 	
-
-	
 	/*
 	 * get a player by their user name
 	 */
@@ -159,8 +157,8 @@ public class GameState implements Serializable{
 	}
 	
 	public void endTournament(){
+		lastColour = tnmt.getColour();
 		tnmt = null;
-		lastColour = "none";
 		highScore = 0;
 		for (Player p:players){
 			p.setParticipation(false);
