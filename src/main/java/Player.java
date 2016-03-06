@@ -257,6 +257,17 @@ public class Player implements Serializable{
 		}
 		return false;
 	}
+	
+	/*
+	 * checks if the display has a specific card
+	 */
+	public boolean displayHasCard (Card c) {
+		if (display.isEmpty()) { return false; }
+		for (Card card : display) {
+			if (card.toString().equals(c.toString())) { return true; }
+		}
+		return false;
+	}
 
 	public ArrayList<Card> getDisplay() {
 		return display;

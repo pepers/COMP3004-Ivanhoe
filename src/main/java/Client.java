@@ -563,6 +563,10 @@ public class Client implements Runnable {
 						|| gameState.getTournament().getColour().equals(((DisplayCard) c).getColour()))) {
 					System.out.println("Client: not a valid color for the current tournament");
 					return false;
+				} else if (c.toString().equals("maiden:6") && player.displayHasCard(c)) {
+					Trace.getInstance().write(this, "Client: you may not have more than one maiden in your Display.");
+					System.out.println("Client: you may not have more than one maiden in your Display.");
+					return false;
 				}
 				// action card
 			} else {

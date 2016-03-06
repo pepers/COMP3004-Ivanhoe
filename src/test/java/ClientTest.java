@@ -242,9 +242,13 @@ public class ClientTest {
 		Card card1 = new DisplayCard(3, DisplayCard.Colour.purple);
 		Card card2 = new ActionCard("Drop Weapon");
 		Card card3 = new ActionCard("ivanhoe");
+		Card card4 = new DisplayCard(2, DisplayCard.Colour.none);
+		Card card5 = new DisplayCard(6, DisplayCard.Colour.none);
 		p.addToHand(card1);
 		p.addToHand(card2);
 		p.addToHand(card3);
+		p.addToHand(card4);
+		p.addToHand(card5);
 		
 		assertFalse(c.cmdPlay("purple:3")); // display card in hand, but not my turn
 		assertFalse(c.cmdPlay("Drop Weapon"));  // action card in hand, but not my turn
@@ -261,7 +265,11 @@ public class ClientTest {
 			p.toggleTnmt(); // adds them to tournament
 		}
 		assertTrue(c.cmdPlay("purple:3")); // is turn, and in tournament, play the card
+		assertTrue(c.cmdPlay("squire:2")); // is turn, and in tournament, play the card
 		assertTrue(c.cmdPlay("Drop Weapon"));  // is turn, and in tournament, play the card
+		
+		p.addToDisplay(card5);
+		assertFalse(c.cmdPlay("maiden:6")); // already have maiden in display
 	}
 	 
 	@Test
