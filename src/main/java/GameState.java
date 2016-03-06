@@ -4,16 +4,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class GameState implements Serializable{
-	
 	private static final long serialVersionUID = 1L;	
-	//Game stuff
-	Deck deck;
-	Tournament tnmt = null;
+	
+	private Deck deck;
+	private Tournament tnmt = null;
 	private String lastColour = "none";
-	ArrayList<Player> players;
-	int turnIndex = 0;
-	int numPlayers;
-	int highScore = 0;
+	private ArrayList<Player> players;
+	private int turnIndex = 0;
+	private int numPlayers;
+	private int highScore = 0;
+	
+	public Tournament getTournament(){return tnmt;}
+	public int getHighScore(){return highScore;}
+	public int getNumPlayers(){return numPlayers;}
+	public ArrayList<Player> getPlayers(){return players;}
+	
+	public void setHighScore(int i){highScore = i;}
+	public void setTurnIndex(int i){turnIndex = i;}
+	public void setNumPlayers(int i){numPlayers = i;}
 	
 	public GameState(){
 		players = new ArrayList<Player>();
@@ -21,6 +29,10 @@ public class GameState implements Serializable{
 		deck.initialize();
 	}
 
+	public Card drawFromDeck(){
+		return deck.draw();
+	}
+	
 	/*
 	 * add a player to the current game
 	 */
@@ -29,9 +41,7 @@ public class GameState implements Serializable{
 		numPlayers++;
 	}
 	
-	public void setTurnIndex(int i){
-		turnIndex = i;
-	}
+
 	
 	/*
 	 * get a player by their user name
@@ -99,10 +109,6 @@ public class GameState implements Serializable{
 		return getPlayer(player.getName()).removeFromHand(card);
 	}
 	
-	
-	public Tournament getTournament(){
-		return tnmt;
-	}
 	public boolean startTournament(Tournament t){
 		if(lastColour.equals(t.getColour())){
 			System.out.println("A purple tournament was just played.");

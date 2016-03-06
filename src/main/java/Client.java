@@ -260,7 +260,7 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			gameState = (GameState) o;
 			//this signals that the game is done
-			if (gameState.numPlayers == 0){
+			if (gameState.getNumPlayers() == 0){
 				this.gameState = null;
 				this.player.reset();
 				return true;
@@ -455,7 +455,7 @@ public class Client implements Runnable {
 			}
 			// show all displays
 		} else if (args.equalsIgnoreCase("-a")) {
-			for (Player p : this.gameState.players) {
+			for (Player p : this.gameState.getPlayers()) {
 				if (!(p.printDisplay(gameState.getTournamentColour()))) {
 					System.out.println("Client: no cards in " + p.getName() + "'s display\n");
 					Trace.getInstance().write(this,
@@ -485,7 +485,7 @@ public class Client implements Runnable {
 		if (!this.player.isTurn) {
 			System.out.println("Client: Its not your turn.");
 			return false;
-		} else if (gameState.tnmt == null && this.player.hasValidDisplayCard("none")) {
+		} else if (gameState.getTournament() == null && this.player.hasValidDisplayCard("none")) {
 			System.out.println("Client: You MUST start a tournament if able.");
 			return false;
 		} else {
@@ -520,8 +520,8 @@ public class Client implements Runnable {
 	//list other players in game
 	public boolean cmdList() {
 		System.out.println("- State    : Player ");
-		for (int i = 0; i < this.gameState.players.size(); i++) {
-			Player p = this.gameState.players.get(i);
+		for (int i = 0; i < this.gameState.getPlayers().size(); i++) {
+			Player p = this.gameState.getPlayers().get(i);
 			String name = p.getName();
 			if (name == this.player.getName()) { // found yourself
 				name += " (you)";
@@ -553,17 +553,17 @@ public class Client implements Runnable {
 			// is player's turn
 		} else {
 			if (c instanceof DisplayCard) {
-				if (gameState.tnmt == null) {
+				if (gameState.getTournament() == null) {
 					System.out.println("Client: no tournament is running, start one with /tournament");
 					return false;
 				} else if (!(((DisplayCard) c).getColour().equals("none")
-						|| gameState.tnmt.getColour().equals(((DisplayCard) c).getColour()))) {
+						|| gameState.getTournament().getColour().equals(((DisplayCard) c).getColour()))) {
 					System.out.println("Client: not a valid color for the current tournament");
 					return false;
 				}
 				// action card
 			} else {
-				if (gameState.tnmt == null) {
+				if (gameState.getTournament() == null) {
 					System.out.println("Client: no tournament is running, start one with /tournament");
 					return false;
 				}
@@ -597,13 +597,13 @@ public class Client implements Runnable {
 
 	//view everyone's tokens
 	public boolean cmdTokens() {
-		if (this.gameState.numPlayers < 1) {
+		if (this.gameState.getNumPlayers() < 1) {
 			System.out.println("Client: there are no players in the game.");
 			return false;
 		} else {
 			System.out.println("Client: listing tokens: ");
 		}
-		for (Player p : this.gameState.players) {
+		for (Player p : this.gameState.getPlayers()) {
 			Trace.getInstance().write(this, "Tokens: " + p.getName() + " : " + p.listTokens());
 			System.out.printf("%-20s: %s\n", p.getName(), p.listTokens());
 		}
@@ -614,7 +614,7 @@ public class Client implements Runnable {
 	public boolean cmdTournament(String[] args) {
 
 		// Check that no tournaments are running
-		if (this.gameState.tnmt != null) {
+		if (this.gameState.getTournament()!= null) {
 			System.out.println("Client: a tournament is already in progress");
 			Trace.getInstance().write(this,
 					this.player.getName() + ": can't use /tournament, a tournament is already in progress.");
@@ -713,10 +713,10 @@ public class Client implements Runnable {
 			return false;
 		}
 		System.out.println("Gamestate::");
-		if (g.tnmt == null) {
+		if (g.getTournament() == null) {
 			System.out.println("No tournament running.");
 		}
-		for (Player p : g.players) {
+		for (Player p : g.getPlayers()) {
 			System.out.println(p.getName() + ":" + p.getId());
 			System.out.println("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
 		}

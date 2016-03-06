@@ -334,13 +334,13 @@ public class Server implements Runnable, Serializable {
 		if (action.object instanceof EndTurn) {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
-				if (p.getScore(gameState.tnmt.getColour()) <= gameState.highScore) {
+				if (p.getScore(gameState.getTournament().getColour()) <= gameState.getHighScore()) {
 					p.setParticipation(false);
 					p.clearDisplay();
-					message("YOU have been ELIMINATED from " + gameState.tnmt.getName() + "!", p);
-					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.tnmt.getName()+ "!", p);
+					message("YOU have been ELIMINATED from " + gameState.getTournament().getName() + "!", p);
+					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.getTournament().getName()+ "!", p);
 				} else {
-					gameState.highScore = p.getScore(gameState.tnmt.getColour());
+					gameState.setHighScore(p.getScore(gameState.getTournament().getColour()));
 				}
 				endTurn();
 			}
@@ -351,8 +351,8 @@ public class Server implements Runnable, Serializable {
 			if (p != null) {
 				p.setParticipation(false);
 				p.clearDisplay();
-				message("You withdraw from " + gameState.tnmt.getName() + "!", p);
-				messageExcept(p.getName() + " has withdrew from " + gameState.tnmt.getName() + "!", p);
+				message("You withdraw from " + gameState.getTournament().getName() + "!", p);
+				messageExcept(p.getName() + " has withdrew from " + gameState.getTournament().getName() + "!", p);
 				endTurn();
 			}
 			return true;
@@ -380,15 +380,15 @@ public class Server implements Runnable, Serializable {
 		ArrayList<Player> a = gameState.getTournamentParticipants();
 		if (a.size() == 1) {
 			Player winner = a.get(0);
-			message("YOU have been VICTORIOUS in " + gameState.tnmt.getName() + "!", winner);
-			messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.tnmt.getName() + "!", winner);
+			message("YOU have been VICTORIOUS in " + gameState.getTournament().getName() + "!", winner);
+			messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.getTournament().getName() + "!", winner);
 			
-			String colour = gameState.tnmt.getColour();
+			String colour = gameState.getTournament().getColour();
 			if(colour.equals("purple")){
 				colour = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
 			}
 			
-			if (winner.giveToken(new Token(colour, gameState.tnmt.getContext()))) {
+			if (winner.giveToken(new Token(colour, gameState.getTournament().getContext()))) {
 				message("You get a " +colour + " token of favour!", winner);
 			} else {
 				message("You already have a " + colour
@@ -396,11 +396,11 @@ public class Server implements Runnable, Serializable {
 			}
 			gameState.endTournament();
 			//check if the game is done
-			if (gameState.numPlayers < 4 && winner.getNumTokens() == 5){
+			if (gameState.getNumPlayers() < 4 && winner.getNumTokens() == 5){
 				broadcast(winner.getName() + " has won the game. Play again soon!");
 				endGame();
 				return true;
-			} else if (gameState.numPlayers >= 4 && winner.getNumTokens() == 4){
+			} else if (gameState.getNumPlayers() >= 4 && winner.getNumTokens() == 4){
 				broadcast(winner.getName() + " has won the game. Play again soon!");
 				endGame();
 				return true;
@@ -408,7 +408,7 @@ public class Server implements Runnable, Serializable {
 		}
 		
 		Player next = gameState.nextTurn();
-		Card drew = gameState.deck.draw();
+		Card drew = gameState.drawFromDeck();
 		gameState.addHand(next, drew);
 		message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
 		messageExcept(next.getName() + " has begun their turn!", next);
@@ -498,16 +498,16 @@ public class Server implements Runnable, Serializable {
 				clients.get(t).ready = 2;
 
 				for (int j = 0; j < 8; j++) {
-					clients.get(t).addToHand(gameState.deck.draw());
+					clients.get(t).addToHand(gameState.drawFromDeck());
 				}
 				gameState.addPlayer(clients.get(t));
 			}
 		}
 
-		int startIndex = (new Random()).nextInt(gameState.numPlayers);
-		Player startPlayer = gameState.players.get(startIndex);
+		int startIndex = (new Random()).nextInt(gameState.getNumPlayers());
+		Player startPlayer = gameState.getPlayers().get(startIndex);
 		startPlayer.isTurn = true;
-		gameState.turnIndex = startIndex;
+		gameState.setTurnIndex(startIndex);
 		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
 		message("You are the starting player. Start a tournament if able.", startPlayer);
 		updateGameStates();
@@ -534,7 +534,7 @@ public class Server implements Runnable, Serializable {
 
 	public boolean endGame() {
 
-		gameState.numPlayers = 0;
+		gameState.setNumPlayers(0);
 		updateGameStates();
 		
 		Iterator<ServerThread> i = clients.keySet().iterator();
@@ -643,10 +643,10 @@ public class Server implements Runnable, Serializable {
 			return false;
 		}
 		System.out.println("Gamestate::");
-		if (gameState.tnmt == null) {
+		if (gameState.getTournament() == null) {
 			System.out.println("No tournament running.");
 		}
-		for (Player p : gameState.players) {
+		for (Player p : gameState.getPlayers()) {
 			System.out.println(p.getName() + ":" + p.getId());
 			System.out.println("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
 		}
@@ -660,13 +660,13 @@ public class Server implements Runnable, Serializable {
 		System.out.println("DISPLAYS:");
 		System.out.println(" ============================================");
 		GameState temp = gameState;
-		for (Player p : gameState.players) {
+		for (Player p : gameState.getPlayers()) {
 			String display = p.getName() + " (" + p.getScore(gameState.getTournamentColour()) + ")";
 			System.out.printf("%-20s", display);
 		}
 		System.out.println();
 		for (int i = 0; i < 10; i++) {
-			for (Player p : temp.players) {
+			for (Player p : temp.getPlayers()) {
 				if (p.getDisplay().size() < i + 1) {
 					System.out.printf("%-20s", "");
 				} else {
@@ -792,7 +792,7 @@ public class Server implements Runnable, Serializable {
 		} else {
 			System.out.println("Listing tokens: ");
 		}
-		for (Player p : this.gameState.players) {
+		for (Player p : this.gameState.getPlayers()) {
 			Trace.getInstance().write(this, "Tokens: " + p.getName() + " : " + p.listTokens());
 			System.out.printf("%-20s: %s\n", p.getName(), p.listTokens());
 		}
