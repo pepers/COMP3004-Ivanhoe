@@ -309,14 +309,60 @@ public class ClientTest {
 	public void cmdTournament() {
 		System.out.println("\n@Test(): cmdTournament()");
 		Trace.getInstance().test(this, "@Test(): /tournament [tournament colour (purple, red, blue, yellow, or green)] [card name]"); 
-		// TODO
+		
+		String[] args1 = new String[1]; // start with one argument (coloured display card)
+		String[] args2 = new String[2]; // start with two arguments (colour, display card)
+		
+		Tournament t = new Tournament("yellow");
+		g.startTournament(t);
+		args1[0] = "purple:3";
+		args2[0] = "red";
+		args2[1] = "red:5";
+		assertFalse(c.cmdTournament(args1)); // can't start, tournament already started
+		assertFalse(c.cmdTournament(args2));
+		
+		g.endTournament();
+		assertFalse(c.cmdTournament(args1)); // can't start, not your turn 
+		assertFalse(c.cmdTournament(args2));
+		
+		p.setTurn();
+		assertFalse(c.cmdTournament(args1)); // can't start, don't have card in hand
+		assertFalse(c.cmdTournament(args2));
+		
+		Card card1 = new DisplayCard(3, DisplayCard.Colour.purple);
+		Card card2 = new DisplayCard(5, DisplayCard.Colour.red);
+		p.addToHand(card1);
+		p.addToHand(card2);
+		assertTrue(c.cmdTournament(args1)); // can start tournament
+		assertTrue(c.cmdTournament(args2));
+		
+		
+		t = new Tournament("purple");
+		g.startTournament(t);
+		g.endTournament();
+		assertFalse(c.cmdTournament(args1)); // can't start purple tournament when last tournament was purple
+		
+		args1[0] = "maiden:6";
+		args2[0] = "blue";
+		args2[1] = "squire:2";
+		Card card3 = new DisplayCard(6, DisplayCard.Colour.none);
+		Card card4 = new DisplayCard(2, DisplayCard.Colour.none);
+		p.addToHand(card3);
+		p.addToHand(card4);
+		assertFalse(c.cmdTournament(args1)); // can't start, colour not specified with colourless card
+		assertTrue(c.cmdTournament(args2)); // can start tournament, colour specified with colourless card
 	}
 	 
 	@Test
 	public void cmdTranslate() {
 		System.out.println("\n@Test(): cmdTranslate()");
 		Trace.getInstance().test(this, "@Test(): /translate [dialect ('none', 'oldEnglish')]"); 
-		//TODO
+		
+		assertFalse(c.cmdTranslate("non-existant language")); // can't translate 
+		
+		assertTrue(c.cmdTranslate("none")); // stop translating
+		
+		assertTrue(c.cmdTranslate("oldEnglish")); // translate to old english
 	}
 	
 	@Test
