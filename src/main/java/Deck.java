@@ -29,6 +29,7 @@ public class Deck implements Serializable{
 		add(new DisplayCard(4, DisplayCard.Colour.red), 6);
 		add(new DisplayCard(5, DisplayCard.Colour.red), 2);
 		
+		//DISPLAY CARDS:
 		//Axe
 		add(new DisplayCard(2, DisplayCard.Colour.blue), 4);
 		add(new DisplayCard(3, DisplayCard.Colour.blue), 4);
@@ -49,6 +50,30 @@ public class Deck implements Serializable{
 		
 		//Maidens
 		add(new DisplayCard(6, DisplayCard.Colour.none), 4);
+		
+		//ACTION CARDS:
+		//Change Colours
+		add(new ActionCard("Unhorse"));
+		add(new ActionCard("Change Weapon"));
+		add(new ActionCard("Drop Weapon"));
+		
+		//Special
+		add(new ActionCard("Shield"));
+		add(new ActionCard("Stunned"));
+		add(new ActionCard("Ivanhoe"));
+		
+		//Affect Displays
+		add(new ActionCard("Break Lance"));
+		add(new ActionCard("Riposte"), 3);
+		add(new ActionCard("Dodge"));
+		add(new ActionCard("Retreat"));
+		add(new ActionCard("Knock Down"), 2);
+		add(new ActionCard("Outmaneuver"));
+		add(new ActionCard("Charge"));
+		add(new ActionCard("Countercharge"));
+		add(new ActionCard("Disgrace"));
+		add(new ActionCard("Adapt"));
+		add(new ActionCard("Outwit"));
 		
 		shuffle();
 		return deck.size();
@@ -90,19 +115,10 @@ public class Deck implements Serializable{
 		}
 		deck = a;
 	}
-
 	
 	//Return the size of the deck
 	public int size() {
 		return deck.size();
-	}
-
-	//Add N purple:3 cards to the deck (TESTING METHOD)
-	public void addDummyCards(int n) {
-		for (int i = 0; i < n; i++){
-			deck.add(new DisplayCard(3, DisplayCard.Colour.purple));
-		}
-		
 	}
 
 	//Look at the top card of the deck

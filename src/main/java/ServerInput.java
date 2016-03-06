@@ -97,7 +97,6 @@ public class ServerInput extends Thread{
 				break;
 			case "/end":
 				if (args.length != 1) { return false; } // no arguments allowed for this command
-				// TODO: return true
 				return false;
 			case "/gamestate":
 				if(!server.printGameState()){ System.out.println("Failed to find gamestate."); }

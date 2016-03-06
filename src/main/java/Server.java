@@ -334,13 +334,15 @@ public class Server implements Runnable, Serializable {
 		if (action.object instanceof EndTurn) {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
-				if (gameState.hasHighScore(p) == false) {
-					p.setParticipation(false);
-					p.clearDisplay();
-					message("YOU have been ELIMINATED from " + gameState.getTournament().getName() + "!", p);
-					messageExcept(p.getName() + " has been ELIMINATED from " + gameState.getTournament().getName()+ "!", p);
-				} else {
-					gameState.setHighScore(p.getScore(gameState.getTournament().getColour()));
+				if (gameState.getTournament() != null) {
+					if (gameState.hasHighScore(p) == false) {
+						p.setParticipation(false);
+						p.clearDisplay();
+						message("YOU have been ELIMINATED from " + gameState.getTournament().getName() + "!", p);
+						messageExcept(p.getName() + " has been ELIMINATED from " + gameState.getTournament().getName()+ "!", p);
+					} else {
+						gameState.setHighScore(p.getScore(gameState.getTournament().getColour()));
+					}
 				}
 				endTurn();
 			}
@@ -508,10 +510,13 @@ public class Server implements Runnable, Serializable {
 			ServerThread t = i.next();
 			if (clients.get(t).ready == 1) {
 				clients.get(t).ready = 2;
-
+				
+				/* TODO: remove after done testing
 				for (int j = 0; j < 8; j++) {
 					clients.get(t).addToHand(gameState.drawFromDeck());
 				}
+				*/
+				
 				gameState.addPlayer(clients.get(t));
 			}
 		}
@@ -520,8 +525,10 @@ public class Server implements Runnable, Serializable {
 		Player startPlayer = gameState.getPlayers().get(startIndex);
 		startPlayer.isTurn = true;
 		gameState.setTurnIndex(startIndex);
+		Card drew = gameState.drawFromDeck();
+		gameState.addHand(startPlayer, drew); 
 		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
-		message("You are the starting player. Start a tournament if able.", startPlayer);
+		message("You are the starting player, and drew a " + drew.toString() + " card. Start a tournament if able.", startPlayer);
 		updateGameStates();
 		return true;
 	}
