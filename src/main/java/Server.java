@@ -308,13 +308,13 @@ public class Server implements Runnable, Serializable {
 
 		if (action.object instanceof StartTournament) {
 			Tournament t = new Tournament(((StartTournament) action.object).getColour());
-			gameState.startTournament(t);
-			
-			Card c = ((StartTournament) action.object).getCard();
-			gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
-			gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
-			broadcast(t.name + " started by " + action.origin.getName() + " (" + t.getColour() + ")");
-			return true;
+			if(gameState.startTournament(t)){		
+				Card c = ((StartTournament) action.object).getCard();
+				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
+				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
+				broadcast(t.name + " started by " + action.origin.getName() + " (" + t.getColour() + ")");
+				return true;
+			}
 		}
 		if (action.object instanceof EndTurn) {
 			Player p = gameState.getPlayer(action.origin.getName());

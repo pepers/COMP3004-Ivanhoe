@@ -9,7 +9,7 @@ public class GameState implements Serializable{
 	//Game stuff
 	Deck deck;
 	Tournament tnmt = null;
-	private String lastColour = null;
+	private String lastColour = "none";
 	ArrayList<Player> players;
 	int turnIndex = 0;
 	int numPlayers;
@@ -103,12 +103,17 @@ public class GameState implements Serializable{
 	public Tournament getTournament(){
 		return tnmt;
 	}
-	public void startTournament(Tournament t){
+	public boolean startTournament(Tournament t){
+		if(lastColour.equals(t.getColour())){
+			System.out.println("A purple tournament was just played.");
+			return false;
+		}
 		tnmt = t;
 		for (Player p : players) {
 			p.inTournament = true;
 		}
 		setLastColour(t.getColour());
+		return true;
 	}
 	/*
 	 * get colour of current tournament
@@ -149,6 +154,7 @@ public class GameState implements Serializable{
 	
 	public void endTournament(){
 		tnmt = null;
+		lastColour = "none";
 		highScore = 0;
 		for (Player p:players){
 			p.inTournament = false;

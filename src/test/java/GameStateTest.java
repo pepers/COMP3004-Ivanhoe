@@ -34,9 +34,18 @@ public class GameStateTest {
 		System.out.println("\nTest: Getting the next turn.");
 		Player currentPlayer = players[0];
 		for (int i = 0; i<10; i++){
-			System.out.println(currentPlayer.getName() + "'s turn...");
 			assertEquals(players[i%players.length].getName(), currentPlayer.getName());
 			currentPlayer = g.nextTurn();
 		}	
+	}
+	
+	@Test
+	public void TestStartTournament(){
+		System.out.println("\nTest: Starting a tournament, restrictions apply.");
+		g.startTournament(new Tournament("purple"));
+		assertEquals("purple", g.getTournament().getColour());
+		g.endTournament();
+		g.startTournament(new Tournament("purple"));
+		assert(g.getTournament() == null);
 	}
 }
