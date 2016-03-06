@@ -559,9 +559,9 @@ public class Server implements Runnable, Serializable {
 		// Stop all the threads
 		stop = true;
 		thread = null;
-		searchThread.stop = true;
+		searchThread.shutdown();
 		searchThread = null;
-		inputThread.stop = true;
+		inputThread.shutdown();
 		inputThread = null;
 
 		// Close the banlist

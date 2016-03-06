@@ -12,19 +12,20 @@ import main.resources.Trace;
 
 public class ServerInput extends Thread{
 
-	Boolean stop = false;					  // use to stop the Server
-	BufferedReader reader; 					  // reader from the user
-	String input;                             // user input
-	Server server;                                 // server class
-	Action action;                      // client's action to take
-	Language language = new Language(Language.Dialect.none, false);
+	private Boolean stop = false;					  // use to stop the Server
+	private BufferedReader reader; 					  // reader from the user
+	private String input;                             // user input
+	private Server server;                                 // server class
+	private Language language;
 	
 	public ServerInput (Server server, InputStream s) {
 		this.server = server;
 		reader = new BufferedReader(new InputStreamReader(s));
+		language = new Language(Language.Dialect.none, false);
 	}
 	
-	public void run () {
+	//Main thread execution
+	public void run(){
 		while(!stop) {
 			try {
 				input = reader.readLine();       // get next line of input
@@ -51,23 +52,20 @@ public class ServerInput extends Thread{
 		}
 	}
 	
-	/*
-	 * returns if a valid command or not
-	 */
+	//returns if a valid command or not
 	public boolean validCmd (String in) {
 		// commands start with slash (/)
 		if (in.charAt(0) != '/') {
 			return false;
 		} 
-		
 		// check existing commands
 		for (Config.ServerCommand cmd: Config.ServerCommand.values()) {
 			if (in.startsWith(cmd.toString(), 1)) { return true; }
 		}
-		
 		return false;
 	}
 	
+	//process the command s
 	public boolean processCmd(String s){
 		// get argument line
 		String[] cmd = s.split("\\s+");                         // array of command + arguments
@@ -175,5 +173,10 @@ public class ServerInput extends Thread{
 				return false;
 		}
 		return true;
+	}
+
+	//Stop this thread
+	public void shutdown() {
+		stop = true;
 	}
 }

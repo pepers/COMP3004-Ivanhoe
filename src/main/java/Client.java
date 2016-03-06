@@ -11,18 +11,18 @@ import main.resources.Trace;
 
 public class Client implements Runnable {
 
-	Thread receiveThread;						// Client thread to receive from Server
-	ClientInput inputThread = null; 			// thread to input Client commands
-	boolean stop = false; 						// use to stop the Client
-	boolean shutDown = false; 					// shutdown() has been called
-	Action action; 								// client's action
-	private Socket socket = null;				// socket to connect to Server
-	ObjectOutputStream clientOutputStream;		// send objects to Server
-	ObjectInputStream clientInputStream; 		// receive objects from Server
-	BufferedReader input = null; 				// to get user input
-	Language language; 							// to translate chat
-	private GameState gameState = null; 		// the local copy of the game state
-	private Player player = null; 				// the local copy of this client's player
+	private Thread receiveThread;						// Client thread to receive from Server
+	private ClientInput inputThread = null; 			// thread to input Client commands
+	private boolean stop = false; 						// use to stop the Client
+	private boolean shutDown = false; 					// shutdown() has been called
+	private Action action; 								// client's action
+	private Socket socket = null;						// socket to connect to Server
+	private ObjectOutputStream clientOutputStream;		// send objects to Server
+	private ObjectInputStream clientInputStream; 		// receive objects from Server
+	private BufferedReader input = null; 				// to get user input
+	private Language language; 							// to translate chat
+	private GameState gameState = null; 				// the local copy of the game state
+	private Player player = null; 						// the local copy of this client's player
 
 	public Player getPlayer(){return player;}
 	
