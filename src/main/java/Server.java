@@ -144,11 +144,14 @@ public class Server implements Runnable, Serializable {
 		if (numClients < maxPlayers) {
 			serverThread = new ServerThread(this, socket);
 			String name = ((SetName) serverThread.receive()).getName();
-			Player player = new Player("Knight " + serverThread.getID(), serverThread.getID());
-			if(!checkNewName(player, name)){
-				name = name + serverThread.getID();
+			Player newPlayer = new Player("Knight " + serverThread.getID(), serverThread.getID());
+			if(!checkNewName(newPlayer, name)){
+				newPlayer.setName(name + serverThread.getID());
+			}else{
+				newPlayer.setName(name);
 			}
-			clients.put(serverThread, new Player(name, serverThread.getID()));
+			clients.put(serverThread, newPlayer);
+			serverThread.send(newPlayer);
 			serverThread.start();
 			numClients++;
 		} else {

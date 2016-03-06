@@ -93,7 +93,7 @@ public class Client implements Runnable {
 			// attempt to connect to Server
 			if (connect(address, port)) {
 				send(new SetName(this.player.getName())); // send user's name to Server
-
+				player = (Player) receive();
 				// start new thread to get Client commands
 				this.inputThread = new ClientInput(this, System.in);
 				this.inputThread.start();
