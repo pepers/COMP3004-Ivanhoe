@@ -83,11 +83,11 @@ public class ServerInput extends Thread{
 				break;
 			case "/display":
 				if (args.length == 0) { // show every player's display
-					for (Player p: server.gameState.players) {
+					for (Player p: server.getGameState().players) {
 						server.printSingleDisplay(p);
 					}
 				} else {
-					Player p = server.gameState.getPlayer(sub);
+					Player p = server.getGameState().getPlayer(sub);
 					if (p == null) { // player doesn't exist
 						return false;
 					} else {

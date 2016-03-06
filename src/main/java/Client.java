@@ -131,13 +131,7 @@ public class Client implements Runnable {
 		System.out.println("\nClient: Shutting down...");
 
 		if (inputThread != null) {
-			if (inputThread.reader != null) {
-				try {
-					inputThread.reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			inputThread.shutdown();
 		}
 
 		// close socket
@@ -151,11 +145,8 @@ public class Client implements Runnable {
 		}
 
 		// close threads
-		if (inputThread != null) {
-			inputThread.stop = true;
-		}
+		inputThread.shutdown();
 		receiveThread = null;
-		inputThread = null;
 
 		Trace.getInstance().write(this, "Client shut down, successfully.");
 		System.out.println("Client: fare thee well!");

@@ -30,40 +30,40 @@ import main.resources.Trace;
 import main.resources.Language.Dialect;
 
 public class Server implements Runnable, Serializable {
-
 	private static final long serialVersionUID = 1L;
-	// Threads
-	Thread thread; // main thread for the server
-	ServerInput inputThread; // thread that handles console input (commands)
-	SearchThread searchThread; // thread that searches for new players
-	GameState gameState;
+	
+	private Thread thread; 									// main thread for the server
+	private ServerInput inputThread; 						// thread that handles console input (commands)
+	private SearchThread searchThread; 						// thread that searches for new players
 
-	ServerSocket serverSocket; // primary network socket
-	int minPlayers = Config.MIN_PLAYERS;
-	int maxPlayers = Config.MAX_PLAYERS;
-	int port; // server port
-	String address = "unknown"; // server address
-	int numClients; // number of clients
-	int numReady; // number of ready player
-	ConcurrentHashMap<ServerThread, Player> clients; // holds the threads mapped
-														// to player objects
+	public ServerSocket serverSocket; 						// primary network socket
+	public int port; 										// server port
+	private String address = "unknown"; 					// server address
+	
+	private int minPlayers = Config.MIN_PLAYERS;			// min players needed
+	private int maxPlayers = Config.MAX_PLAYERS;			// max players allowed
+	private int numClients; 								// number of clients
+	private int numReady; 									// number of ready player
+	private ConcurrentHashMap<ServerThread, Player> clients;// holds the threads mapped to player objects
 
-	boolean stop = false; // stops the main thread
-	public Queue<ActionWrapper> actions; // server actions to operate upon
-	Language language = new Language(Language.Dialect.none, false); // to
-																	// translate
-																	// chat
+	private boolean stop = false; 							// stops the main thread
+	private Queue<ActionWrapper> actions; 					// server actions to operate upon
+	private GameState gameState;							// data on the current game
+	private Language language; 								// to translate chat
 
-	// Banlist
-	File banList;
-	BufferedWriter banWriter;
-	BufferedReader banReader;
+	private File banList;									// location of ban list
+	private BufferedWriter banWriter;						// writer for ban list
+	private BufferedReader banReader;						// reader for ban list
 
+	public GameState getGameState(){return gameState;}
+	public int getConnected() {return numClients;}
+	
 	// Constructor
 	public Server(int port) {
 		this.port = port;
 		clients = new ConcurrentHashMap<ServerThread, Player>();
 		actions = new LinkedList<ActionWrapper>();
+		language = new Language(Language.Dialect.none, false);
 	}
 
 	public static void main(String[] args) {
@@ -73,11 +73,6 @@ public class Server implements Runnable, Serializable {
 			System.out.println("Setup successful.");
 			System.out.println("Listening at " + s.address + ":" + s.port + "...\n");
 		}
-	}
-
-	// Returns the number of players on this server
-	public int getConnected() {
-		return numClients;
 	}
 
 	// Startup routine
@@ -896,9 +891,5 @@ public class Server implements Runnable, Serializable {
 		} catch (IOException e) {
 			System.out.println("Error reading bannedPlayers (IOException)");
 		}
-	}
-	
-	public GameState getGameState(){
-		return gameState;
 	}
 }

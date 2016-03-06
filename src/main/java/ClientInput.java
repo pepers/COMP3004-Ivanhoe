@@ -11,12 +11,12 @@ import main.resources.Trace;
 
 public class ClientInput extends Thread {
 
-	Boolean stop = false; // use to stop the Client
-	BufferedReader reader; // reader from the user
-	String input; // user input
-	Client client; // client class
-	Action action; // client's action to take
-	Language language; // to translate chat
+	private Boolean stop = false; // use to stop the Client
+	private BufferedReader reader; // reader from the user
+	private String input; // user input
+	private Client client; // client class
+	private Action action; // client's action to take
+	private Language language; // to translate chat
 
 	public ClientInput(Client client, InputStream s) {
 		this.client = client;
@@ -77,5 +77,14 @@ public class ClientInput extends Thread {
 		}
 
 		return false;
+	}
+
+	public void shutdown() {
+		stop = true;
+		try {
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
