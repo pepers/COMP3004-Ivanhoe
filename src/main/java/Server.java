@@ -350,8 +350,14 @@ public class Server implements Runnable, Serializable {
 			if (c instanceof DisplayCard) {
 				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
 				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
+				return true;
 			}
-			return true;
+			if (c instanceof ActionCard) {
+				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
+				gameState.execute(((ActionCard) c));
+				return true;
+			}
+			
 		}
 		return false;
 	}
@@ -376,7 +382,7 @@ public class Server implements Runnable, Serializable {
 						+ " token, but you still get the satisfaction of winning.", winner);
 			}
 			gameState.endTournament();
-			//check if the game is done TODO fix
+			//check if the game is done
 			if (gameState.numPlayers < 4 && winner.getNumTokens() == 5){
 				broadcast(winner.getName() + " has won the game. Play again soon!");
 				endGame();

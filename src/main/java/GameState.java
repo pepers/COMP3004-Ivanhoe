@@ -156,4 +156,14 @@ public class GameState implements Serializable{
 			p.getDisplay().clear();
 		}
 	}
+
+	public boolean execute(ActionCard c) {
+		switch(c.toString()){
+			case "Outwit":
+				System.out.println("played an outwit card");
+				return true;
+			default:
+				return false;
+		}
+	}
 }

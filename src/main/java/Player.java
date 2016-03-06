@@ -15,8 +15,12 @@ public class Player implements Serializable{
 	private ArrayList<Card> display;
 	private ArrayList<Card> hand;
 	int ready = 0; 
+	
 	boolean inTournament = false;
 	boolean isTurn = false;
+	boolean isStunned = false;
+	boolean isShielded = false;
+	
 	private ArrayList<Token> tokens = new ArrayList<Token>();  // tokens won for tournament wins
 	private int id;
 	
