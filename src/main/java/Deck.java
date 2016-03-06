@@ -5,16 +5,17 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Deck implements Serializable{
-
 	private static final long serialVersionUID = 1L;
-	private ArrayList<Card> deck;
-	private ArrayList<Card> discard;
+	
+	private ArrayList<Card> deck;		//the primary structure for the deck
+	private ArrayList<Card> discard;	//used cards are added here so we can recreate the deck later
 	
 	public Deck(){
 		deck = new ArrayList<Card>();
 		discard = new ArrayList<Card>();
 	}
 	
+	//Add all the cards to the deck
 	public int initialize(){
 		
 		//Joust
@@ -53,15 +54,20 @@ public class Deck implements Serializable{
 		return deck.size();
 	}
 	
+	//Add a card c to the deck
 	public void add(Card c){
 		deck.add(c);
 	}
 	
+	//Add N cards c to the deck
 	public void add(Card c, int n){
 		for (int i = 0; i<n; i++){
 			add(c);
 		}
 	}
+	
+	//Remove and return the top card of the deck
+	//If the deck is empty, move the discard to the deck
 	public Card draw(){
 		if(deck.size() == 0){
 			deck = discard;
@@ -70,10 +76,12 @@ public class Deck implements Serializable{
 		return deck.remove(0);
 	}
 	
+	//Add a card to the discard pile
 	public void discard(Card c) {
 		discard.add(c);
 	}
 	
+	//Shuffle the deck
 	public void shuffle(){
 		ArrayList<Card> a = new ArrayList<Card>();
 		Random r = new Random();
@@ -83,10 +91,13 @@ public class Deck implements Serializable{
 		deck = a;
 	}
 
+	
+	//Return the size of the deck
 	public int size() {
 		return deck.size();
 	}
 
+	//Add N purple:3 cards to the deck (TESTING METHOD)
 	public void addDummyCards(int n) {
 		for (int i = 0; i < n; i++){
 			deck.add(new DisplayCard(3, DisplayCard.Colour.purple));
@@ -94,6 +105,7 @@ public class Deck implements Serializable{
 		
 	}
 
+	//Look at the top card of the deck
 	public Card peek(){
 		return deck.get(0);
 	}

@@ -16,7 +16,6 @@ public interface Action extends Serializable {
 	}
 }
 
-
 /*
  * chat messages from Client
  */
@@ -27,14 +26,14 @@ class Chat implements Action {
 	
 	public Chat (String message) {
 		this.message = message;
-		//Trace.getInstance().test(this, this.getAction() + ": " + this.message);
+		Trace.getInstance().test(this, this.getAction());
 	}
 	
-	public String getMessage() {
-		return message;
-	}
+	public String getMessage() {return message;}
 }
-
+/*
+ *  intervening chat that is evaluated immediately
+ */
 class Prompt implements Action {
 
 	private static final long serialVersionUID = 1L;
@@ -42,12 +41,10 @@ class Prompt implements Action {
 	
 	public Prompt (String message) {
 		this.message = message;
-		//Trace.getInstance().test(this, this.getAction() + ": " + this.message);
+		Trace.getInstance().test(this, this.getAction());
 	}
 	
-	public String getMessage() {
-		return message;
-	}
+	public String getMessage() {return message;}
 }
 
 /*
@@ -74,10 +71,7 @@ class Play implements Action {
 		Trace.getInstance().test(this, this.getAction());
 	}
 	
-	public Card getCard(){
-		return c;
-	}
-	
+	public Card getCard(){return c;}
 }
 
 class StartTournament implements Action {
@@ -91,13 +85,8 @@ class StartTournament implements Action {
 		Trace.getInstance().test(this, this.getAction());
 	}
 	
-	public Card getCard(){
-		return c;
-	}
-	
-	public String getColour(){
-		return s;
-	}
+	public Card getCard(){return c;}
+	public String getColour(){return s;}
 }
 /*
  * tells when player is ready to start a game
@@ -130,13 +119,8 @@ class SetName implements Action {
 		Trace.getInstance().test(this, "new name: " + this.name);
 	}
 	
-	public boolean isInit(){
-		return init;
-	}
-	
-	public String getName() {
-		return name;
-	}
+	public boolean isInit(){return init;}
+	public String getName() {return name;}
 }
 
 /*
