@@ -168,11 +168,22 @@ public class GameState implements Serializable{
 
 	public boolean execute(ActionCard c) {
 		switch(c.toString()){
+			case "Drop Weapon":
+				if ((tnmt.getColour().equalsIgnoreCase("red")) ||
+						(tnmt.getColour().equalsIgnoreCase("blue")) ||
+						(tnmt.getColour().equalsIgnoreCase("yellow"))) {
+					System.out.println("Tournament colour changed from " + tnmt.getColour() + " to green.");
+					tnmt.setColour("green");
+				} else {
+					System.out.println("Drop Weapon card has no effect.");
+				}
+				break;
 			case "Outwit":
 				System.out.println("played an outwit card");
-				return true;
+				break;
 			default:
 				return false;
 		}
+		return true;
 	}
 }

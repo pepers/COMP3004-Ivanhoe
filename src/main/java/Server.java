@@ -669,8 +669,12 @@ public class Server implements Runnable, Serializable {
 	 * print the displays of all players in game
 	 */
 	public boolean printLargeDisplays() {
-		System.out.println("DISPLAYS:");
-		System.out.println(" ============================================");
+		System.out.println("DISPLAYS: ");
+		if (gameState.getTournament() == null) {
+			System.out.println(" ========================================================== ");
+		} else {
+			System.out.println(" ===== " + gameState.getTournament().getName() + " (" + gameState.getTournamentColour() + ") =====");
+		}
 		GameState temp = gameState;
 		for (Player p : gameState.getPlayers()) {
 			String display = p.getName() + " (" + p.getScore(gameState.getTournamentColour()) + ")";

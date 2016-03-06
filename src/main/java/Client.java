@@ -317,6 +317,7 @@ public class Client implements Runnable {
 		// get argument line
 		String[] cmd = s.split("\\s+"); // array of command + arguments
 		String[] args = Arrays.copyOfRange(cmd, 1, cmd.length); // just arguments
+		String joined = String.join(" ", args);
 		// switch over command
 		switch (cmd[0]) {
 		case "/censor": // toggle the bad word censor
@@ -359,13 +360,13 @@ public class Client implements Runnable {
 			cmdList();
 			break;
 		case "/play":
-			if (args.length != 1) {
+			if (args.length < 1) {
 				return false;
 			} // check number of arguments
 			if (!tournamentAction(cmd[0])) {
 				return false;
 			} // checks if in tournament
-			cmdPlay(args[0]);
+			cmdPlay(joined);
 			break;
 		case "/ready":
 			if (args.length != 0) {

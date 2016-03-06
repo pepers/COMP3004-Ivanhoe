@@ -20,4 +20,7 @@ public class Tournament implements Serializable{
 	public String getColour () {return this.colour;}
 	public String getContext (){return context;}
 	public String getName (){return name;}
+	
+	//setters
+	public void setColour (String colour) {this.colour = colour;}
 }

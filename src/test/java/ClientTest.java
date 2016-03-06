@@ -128,7 +128,7 @@ public class ClientTest {
 		assertFalse(c.processCmd("/hand too many arguments")); // too many arguments
 		assertFalse(c.processCmd("/help too many arguments")); // too many arguments
 		assertFalse(c.processCmd("/list too many arguments")); // too many arguments
-		assertFalse(c.processCmd("/play too many arguments")); // too many arguments
+		assertFalse(c.processCmd("/play")); // too few arguments
 		assertFalse(c.processCmd("/ready too many arguments")); // too many arguments
 		assertFalse(c.processCmd("/setname")); // too few arguments
 		assertFalse(c.processCmd("/shutdown too many arguments")); // too many arguments
@@ -240,20 +240,20 @@ public class ClientTest {
 		
 		// add some cards to hand
 		Card card1 = new DisplayCard(3, DisplayCard.Colour.purple);
-		Card card2 = new ActionCard("Dodge");
+		Card card2 = new ActionCard("Drop Weapon");
 		Card card3 = new ActionCard("ivanhoe");
 		p.addToHand(card1);
 		p.addToHand(card2);
 		p.addToHand(card3);
 		
 		assertFalse(c.cmdPlay("purple:3")); // display card in hand, but not my turn
-		assertFalse(c.cmdPlay("Dodge"));  // action card in hand, but not my turn
+		assertFalse(c.cmdPlay("Drop Weapon"));  // action card in hand, but not my turn
 		
 		assertTrue(c.cmdPlay("ivanhoe")); // can play Ivanhoe when not your turn
 		
 		p.setTurn(); 
 		assertFalse(c.cmdPlay("purple:3")); // is turn, but no tournament running
-		assertFalse(c.cmdPlay("Dodge"));  // is turn, but no tournament running
+		assertFalse(c.cmdPlay("Drop Weapon"));  // is turn, but no tournament running
 		
 		Tournament t = new Tournament("purple");
 		g.startTournament(t);
@@ -261,7 +261,7 @@ public class ClientTest {
 			p.toggleTnmt(); // adds them to tournament
 		}
 		assertTrue(c.cmdPlay("purple:3")); // is turn, and in tournament, play the card
-		assertTrue(c.cmdPlay("Dodge"));  // is turn, and in tournament, play the card
+		assertTrue(c.cmdPlay("Drop Weapon"));  // is turn, and in tournament, play the card
 	}
 	 
 	@Test
