@@ -109,9 +109,4 @@ public class GameStateTest {
 		assertEquals("green", g.getTournamentColour());
 		g.endTournament();
 	}
-	
-	@Test
-	public void TestDropWeapon() {
-		
-	}
 }
