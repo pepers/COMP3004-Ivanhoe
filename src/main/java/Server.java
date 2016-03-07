@@ -105,12 +105,15 @@ public class Server implements Runnable, Serializable {
 		// Setup banlist
 		banList = new File("banList.txt");
 		try {
+			if(!banList.exists()){
+				banList.createNewFile();
+			}
 			banReader = new BufferedReader(new FileReader(banList));
 			banWriter = new BufferedWriter(new FileWriter(banList, true));
 		} catch (FileNotFoundException e) {
-			System.out.println("Error finding to banlist.");
+			System.out.println("Error finding banlist.");
 		} catch (IOException e) {
-			System.out.println("Error finding to banlist.");
+			System.out.println("Error read/writing banlist.");
 		}
 		return true;
 	}
@@ -601,7 +604,7 @@ public class Server implements Runnable, Serializable {
 			banWriter.close();
 			banReader.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+
 		}
 		System.out.println("Shutdown complete. Goodbye!");
 		return true;
