@@ -514,11 +514,9 @@ public class Server implements Runnable, Serializable {
 			if (clients.get(t).ready == 1) {
 				clients.get(t).ready = 2;
 				
-				/* TODO: remove after done testing
 				for (int j = 0; j < 8; j++) {
 					clients.get(t).addToHand(gameState.drawFromDeck());
 				}
-				*/
 				
 				gameState.addPlayer(clients.get(t));
 			}

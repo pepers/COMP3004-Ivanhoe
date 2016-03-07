@@ -24,6 +24,11 @@ public class Client implements Runnable {
 	private Player player = null; 						// the local copy of this client's player
 
 	public Player getPlayer(){return player;}
+	//testing methods
+	public void setGameState(GameState g){
+		gameState = g; 
+		this.player = gameState.getPlayer(this.player.getName());
+	}
 	
 	public Client(){
 		language = new Language(Language.Dialect.none, false);
@@ -267,7 +272,6 @@ public class Client implements Runnable {
 				this.player.reset();
 				return true;
 			}
-			player = gameState.getPlayer(this.player.getName());
 			this.player = gameState.getPlayer(this.player.getName());
 			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
 			return true;

@@ -26,10 +26,20 @@ public class Player implements Serializable{
 	public int ready = 0;
 	
 	public int getHandSize(){return handSize;}
+	public int getDisplayScore(){return displayScore;}
 	public boolean getShielded(){return isShielded;}
 	public boolean getStunned(){return isStunned;}
 	public boolean getParticipation(){return inTournament;}
 	public void setParticipation(boolean b){inTournament = b;}
+	public int hasToken(Token token){
+		int count = 0;
+		for (Token t: tokens){
+			if (t.equals(token)){
+				count++;
+			}
+		}
+		return count;
+	}
 	
 	public Player(String u, int id){
 		username = u;

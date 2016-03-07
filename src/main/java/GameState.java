@@ -17,6 +17,7 @@ public class GameState implements Serializable{
 	public Tournament getTournament(){return tnmt;}
 	public int getHighScore(){return highScore;}
 	public int getNumPlayers(){return numPlayers;}
+	public int getTurnIndex(){return turnIndex;}
 	public ArrayList<Player> getPlayers(){return players;}
 	
 	public void setHighScore(int i){highScore = i;}
@@ -157,7 +158,7 @@ public class GameState implements Serializable{
 	}
 	
 	public void endTournament(){
-		lastColour = tnmt.getColour();
+		lastColour = getTournamentColour();
 		tnmt = null;
 		highScore = 0;
 		for (Player p:players){
@@ -202,14 +203,15 @@ public class GameState implements Serializable{
 						p.removeFromDisplay(s3); // squire:3
 						p.removeFromDisplay(m6); // maiden:6
 					}
+					
 				}
 				System.out.println("All players remove all their supporters from their Display.");
 				break;
 			case "Drop Weapon":
-				if ((tnmt.getColour().equalsIgnoreCase("red")) ||
-						(tnmt.getColour().equalsIgnoreCase("blue")) ||
-						(tnmt.getColour().equalsIgnoreCase("yellow"))) {
-					System.out.println("Tournament colour changed from " + tnmt.getColour() + " to green.");
+				if ((getTournamentColour().equalsIgnoreCase("red")) ||
+						(getTournamentColour().equalsIgnoreCase("blue")) ||
+						(getTournamentColour().equalsIgnoreCase("yellow"))) {
+					System.out.println("Tournament colour changed from " + getTournamentColour() + " to green.");
 					tnmt.setColour("green");
 				} else {
 					System.out.println("Drop Weapon card has no effect.");

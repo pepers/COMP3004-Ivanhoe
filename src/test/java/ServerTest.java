@@ -42,8 +42,8 @@ public class ServerTest {
 	}
 
 	@Test
-	public void TestAddClient() {
-		System.out.println("\nTest: Adding a Client");
+	public void TestClientJoin() {
+		System.out.println("\nTest: Joined Client");
 		Client c = new Client();
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c.cmdSetname(new String[] { "Client" });

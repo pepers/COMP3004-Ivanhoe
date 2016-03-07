@@ -26,7 +26,7 @@ public class ClientTest {
 	}
 	
 	@Before
-	public void setUp() {
+	public void TestSetup() {
 		c = new Client();
 		pnum += 1;
 		String[] arr = {"TEST PLAYER " + pnum};
@@ -39,12 +39,12 @@ public class ClientTest {
 	}
 	
 	@After
-	public void tearDown () {
+	public void TestTearDown () {
 		c.shutdown();
 	}
 	
 	@Test
-	public void connect() {
+	public void TestConnect() {
 		System.out.println("\n@Test(): connect()");
 		Trace.getInstance().test(this, "@Test(): connect to Server");
 		
@@ -65,7 +65,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void process() {
+	public void TestProcess() {
 		System.out.println("\n@Test(): process()");
 		Trace.getInstance().test(this, "@Test(): process received objects");
 		Object o;
@@ -94,7 +94,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void send() {
+	public void TestSend() {
 		System.out.println("\n@Test(): send()");
 		Trace.getInstance().test(this, "@Test(): send to Server");
 		Object o = new Player("TEST PLAYER");
@@ -103,7 +103,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void shutdown() {
+	public void TestShutdown() {
 		System.out.println("\n@Test(): shutdown()");
 		Trace.getInstance().test(this, "@Test(): shutdown Client");
 
@@ -120,7 +120,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void processCmd() {
+	public void TestProcessCmd() {
 		System.out.println("\n@Test(): processCmd()");
 		Trace.getInstance().test(this, "@Test(): processCmd() - # arguments"); 
 		assertFalse(c.processCmd("/censor too many arguments")); // too many arguments
@@ -141,7 +141,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void cmdCensor() {
+	public void TestCensor() {
 		System.out.println("\n@Test(): cmdCensor()");
 		Trace.getInstance().test(this, "@Test(): /censor"); 
 		
@@ -150,7 +150,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void cmdDisplay() {
+	public void TestDisplay() {
 		System.out.println("\n@Test(): cmdDisplay()");
 		Trace.getInstance().test(this, "@Test(): /display [player name ('-a' for all, or leave empty for own display)]");
 		
@@ -183,7 +183,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void cmdEnd() {
+	public void TestEnd() {
 		System.out.println("\n@Test(): cmdEnd()");
 		Trace.getInstance().test(this, "@Test(): /end"); // end turn
 		
@@ -199,7 +199,7 @@ public class ClientTest {
 	}
 	 
 	@Test
-	public void cmdHand() {
+	public void TestHand() {
 		System.out.println("\n@Test(): cmdHand()");
 		Trace.getInstance().test(this, "@Test(): /hand"); 
 		
@@ -215,21 +215,21 @@ public class ClientTest {
 	}
 	 
 	@Test
-	public void cmdHelp() {
+	public void TestHelp() {
 		System.out.println("\n@Test(): cmdHelp()");
 		Trace.getInstance().test(this, "@Test(): /help"); 
 		assertTrue(c.cmdHelp());
 	}
 	 
 	@Test
-	public void cmdList() {
+	public void TestList() {
 		System.out.println("\n@Test(): cmdList()");
 		Trace.getInstance().test(this, "@Test(): /list"); 
 		assertTrue(c.cmdList());
 	}
 	 
 	@Test
-	public void cmdPlay() {
+	public void TestPlay() {
 		System.out.println("\n@Test(): cmdPlay()");
 		Trace.getInstance().test(this, "@Test(): /play [card name]"); 
 		
@@ -273,14 +273,14 @@ public class ClientTest {
 	}
 	 
 	@Test
-	public void cmdReady() {
+	public void TestReady() {
 		System.out.println("\n@Test(): cmdReady()");
 		Trace.getInstance().test(this, "@Test(): /ready"); 
 		assertTrue(c.cmdReady());
 	}
 	 
 	@Test
-	public void cmdSetname() {
+	public void TestSetName() {
 		System.out.println("\n@Test(): cmdSetname()");
 		Trace.getInstance().test(this, "@Test(): /setname [new name (can't already exist, be empty, or start with '-' or '/')]"); 
 		String name = p.getName();
@@ -301,7 +301,7 @@ public class ClientTest {
 	}
 	 
 	@Test
-	public void cmdTokens() {
+	public void TestTokens() {
 		System.out.println("\n@Test(): cmdTokens()");
 		Trace.getInstance().test(this, "@Test(): /tokens");
 		
@@ -313,7 +313,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void cmdTournament() {
+	public void TestStartTournament() {
 		System.out.println("\n@Test(): cmdTournament()");
 		Trace.getInstance().test(this, "@Test(): /tournament [tournament colour (purple, red, blue, yellow, or green)] [card name]"); 
 		
@@ -360,7 +360,7 @@ public class ClientTest {
 	}
 	 
 	@Test
-	public void cmdTranslate() {
+	public void TestTranslate() {
 		System.out.println("\n@Test(): cmdTranslate()");
 		Trace.getInstance().test(this, "@Test(): /translate [dialect ('none', 'oldEnglish')]"); 
 		
@@ -372,7 +372,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void cmdWithdraw() {
+	public void TestWithdraw() {
 		System.out.println("\n@Test(): cmdWithdraw()");
 		Trace.getInstance().test(this, "@Test(): /withdraw"); 
 		assertTrue(c.cmdWithdraw());
