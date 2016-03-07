@@ -26,6 +26,8 @@ public class Player implements Serializable{
 	public int ready = 0;
 	
 	public int getHandSize(){return handSize;}
+	public boolean getShielded(){return isShielded;}
+	public boolean getStunned(){return isStunned;}
 	public boolean getParticipation(){return inTournament;}
 	public void setParticipation(boolean b){inTournament = b;}
 	

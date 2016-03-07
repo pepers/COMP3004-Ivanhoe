@@ -6,14 +6,9 @@ package main.resources;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URL;
 import java.text.*;
 import java.util.Date;
-import java.util.Properties;
 
 public class Trace {
 	private static Trace _instance = null;
@@ -24,7 +19,11 @@ public class Trace {
 	public Trace() {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		URL url = loader.getResource("logs/log4j.properties");
-		PropertyConfigurator.configure(url);
+		if(url == null){
+			PropertyConfigurator.configure("logs/log4j.properties");
+		}else{
+			PropertyConfigurator.configure(url);
+		}
 	}
 	
 	public static Trace getInstance() {
