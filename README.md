@@ -1,6 +1,10 @@
 # COMP3004-Ivanhoe
 group project
 
+Team #13: 
+- Matthew Pepers
+- Khalil van Alphen
+
 ---
 ### Installation / Setup:
 - have the project open in Eclipse
