@@ -12,7 +12,7 @@ public class ImageDownloader {
 	
 	public static void main(String[] args){
 		ImageDownloader d = new ImageDownloader();
-		d.fetchActionCards();
+		d.fetchDisplayCards();
 	}
 	
 	public void fetchCards(String[] names, String path, String folder){
@@ -23,11 +23,12 @@ public class ImageDownloader {
 		for (int i = 0; i < names.length; i++){
 			image = null;
 			try {
+				File f = new File("./res/"+folder+"/" + names[i] + ".png");
+				if(f.exists()){continue;}
+				f.mkdirs();
 				url = new URL(path + ((i==0) ? "":i) + ".jpeg");
 			    image = ImageIO.read(url.openStream());
 			    BufferedImage imageCropped = rotate90(((BufferedImage) image).getSubimage(9, 20, 985, 692));
-			    File f = new File("./res/"+folder+"/" + names[i] + ".png");
-			    f.mkdirs();
 			    ImageIO.write((RenderedImage) imageCropped, "png", f);
 			    System.out.println("  " + names[i] + " - s");
 			    count++;
@@ -58,7 +59,8 @@ public class ImageDownloader {
 				"purple3",
 				"purple4",
 				"purple5",
-				"purple7"
+				"purple7",
+				"cardback"
 		};
 		fetchCards(
 				displayNames,
