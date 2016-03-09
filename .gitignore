@@ -38,3 +38,5 @@ local.properties
 
 # Ivanhoe Specific
 logs/*.out
+
+*.png
