@@ -72,17 +72,17 @@ class Play implements Action {
 
 class StartTournament implements Action {
 	private static final long serialVersionUID = 1L;
-	private Card c;
-	private String s;
+	private Card card;
+	private Colour colour;
 	
-	public StartTournament(String s, Card c) {
-		this.c = c;
-		this.s = s;
+	public StartTournament(Colour colour, Card card) {
+		this.card = card;
+		this.colour = colour;
 		Trace.getInstance().test(this, this.getAction());
 	}
 	
-	public Card getCard(){return c;}
-	public String getColour(){return s;}
+	public Card getCard(){return card;}
+	public Colour getColour(){return colour;}
 }
 /*
  * tells when player is ready to start a game

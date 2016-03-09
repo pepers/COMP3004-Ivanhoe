@@ -5,35 +5,32 @@ public class DisplayCard extends Card{
 	
 	private static final long serialVersionUID = 1L;
 	private int value;      // point value of the card
-	private Colour colour;  // colour of the card
+	private Colour colour;  // colour of the card (none is for squires(2,3) and maidens(6))
 	
-	// possible card colours (none is for squires(2,3) and maidens(6))
-	public enum Colour {none, purple, red, blue, yellow, green}
-	
-	public DisplayCard (int value, DisplayCard.Colour colour) {
+	public DisplayCard (int value, Colour colour) {
 		this.value = value;
 		this.colour = colour;
 	}
 	
+	public Colour getColour() { return this.colour; } // return colour
+	
 	public String toString(){
 		// SQUIRE
-		if ((this.colour.name().equals("none")) && ((this.value == 2) || (this.value == 3))) {
-			return "squire:" + this.value;
+		if ((this.colour.toString().equalsIgnoreCase("None")) && 
+				((this.value == 2) || (this.value == 3))) {
+			return "Squire:" + this.value;
 			
 		// MAIDEN
-		} else if ((this.colour.name().equals("none")) && (this.value == 6)) {
-			return "maiden:" + this.value;
+		} else if ((this.colour.toString().equalsIgnoreCase("None")) 
+				&& (this.value == 6)) {
+			return "Maiden:" + this.value;
 			
 		// COLOUR CARDS
 		} else {
-			return (this.colour.name() + ":" + this.value);
+			return (this.colour.toString() + ":" + this.value);
 		}
 	}
 
-	public String getColour() {
-		return colour.toString();
-	}
-	
 	/*
 	 * get the display value
 	 */

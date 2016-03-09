@@ -17,39 +17,46 @@ public class Deck implements Serializable{
 	
 	//Add all the cards to the deck
 	public int initialize(){
+		// colours for display cards:
+		Colour none = new Colour(Colour.c.NONE);
+		Colour blue = new Colour(Colour.c.BLUE);
+		Colour green = new Colour(Colour.c.GREEN);
+		Colour purple = new Colour(Colour.c.PURPLE);
+		Colour red = new Colour(Colour.c.RED);
+		Colour yellow = new Colour(Colour.c.YELLOW);
 		
 		//Joust
-		add(new DisplayCard(3, DisplayCard.Colour.purple), 4);
-		add(new DisplayCard(4, DisplayCard.Colour.purple), 4);
-		add(new DisplayCard(5, DisplayCard.Colour.purple), 4);
-		add(new DisplayCard(7, DisplayCard.Colour.purple), 2);
+		add(new DisplayCard(3, purple), 4);
+		add(new DisplayCard(4, purple), 4);
+		add(new DisplayCard(5, purple), 4);
+		add(new DisplayCard(7, purple), 2);
 		
 		//Sword
-		add(new DisplayCard(3, DisplayCard.Colour.red), 6);
-		add(new DisplayCard(4, DisplayCard.Colour.red), 6);
-		add(new DisplayCard(5, DisplayCard.Colour.red), 2);
+		add(new DisplayCard(3, red), 6);
+		add(new DisplayCard(4, red), 6);
+		add(new DisplayCard(5, red), 2);
 		
 		//DISPLAY CARDS:
 		//Axe
-		add(new DisplayCard(2, DisplayCard.Colour.blue), 4);
-		add(new DisplayCard(3, DisplayCard.Colour.blue), 4);
-		add(new DisplayCard(4, DisplayCard.Colour.blue), 4);
-		add(new DisplayCard(5, DisplayCard.Colour.blue), 2);
+		add(new DisplayCard(2, blue), 4);
+		add(new DisplayCard(3, blue), 4);
+		add(new DisplayCard(4, blue), 4);
+		add(new DisplayCard(5, blue), 2);
 		
 		//Morningstar
-		add(new DisplayCard(2, DisplayCard.Colour.yellow), 4);
-		add(new DisplayCard(3, DisplayCard.Colour.yellow), 8);
-		add(new DisplayCard(4, DisplayCard.Colour.yellow), 2);
+		add(new DisplayCard(2, yellow), 4);
+		add(new DisplayCard(3, yellow), 8);
+		add(new DisplayCard(4, yellow), 2);
 		
 		//No Weapon
-		add(new DisplayCard(1, DisplayCard.Colour.green), 14);
+		add(new DisplayCard(1, green), 14);
 		
 		//Squires
-		add(new DisplayCard(2, DisplayCard.Colour.none), 8);
-		add(new DisplayCard(3, DisplayCard.Colour.none), 8);
+		add(new DisplayCard(2, none), 8);
+		add(new DisplayCard(3, none), 8);
 		
 		//Maidens
-		add(new DisplayCard(6, DisplayCard.Colour.none), 4);
+		add(new DisplayCard(6, none), 4);
 		
 		//ACTION CARDS:
 		//Change Colours

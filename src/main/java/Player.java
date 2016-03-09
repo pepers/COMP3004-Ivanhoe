@@ -113,12 +113,12 @@ public class Player implements Serializable{
 	}
 	
 	/*
-	 * return the player's display score
+	 * return the player's display score, based on tournament colour
 	 */
-	public int getScore(String type) {
-		if(type.equals("green")){
+	public int getScore(Colour colour) {
+		if (colour.toString().equalsIgnoreCase("Green")) {
 			return this.display.size();
-		}else{
+		} else {
 			return this.displayScore;
 		}
 	}
@@ -224,14 +224,15 @@ public class Player implements Serializable{
 	
 	/*
 	 * prints the player's display
+	 * uses colour of tournament for score
 	 */
-	public boolean printDisplay(String type) {
+	public boolean printDisplay(Colour colour) {
 		if (!(inTournament)) { // not in tournament
 			System.out.println(username + " is not in this tournament.\n");
 			return true;
 		}
 		if (display.isEmpty()) { return false; } // empty display
-		System.out.println(username + "'s Display (" + getScore(type) + "): ");
+		System.out.println(username + "'s Display (" + getScore(colour) + "): ");
 		for (Card c: display) {
 			System.out.println(c.toString());
 		}

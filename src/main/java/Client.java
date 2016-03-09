@@ -456,14 +456,14 @@ public class Client implements Runnable {
 
 		// show own display
 		if (arr.length == 0) {
-			if (!(this.player.printDisplay(gameState.getTournamentColour()))) {
+			if (!(this.player.printDisplay(gameState.getTournament().getColour()))) {
 				System.out.println("Client: no cards in your display");
 				Trace.getInstance().write(this, this.player.getName() + ": No cards in your display to show.");
 			}
 			// show all displays
 		} else if (args.equalsIgnoreCase("-a")) {
 			for (Player p : this.gameState.getPlayers()) {
-				if (!(p.printDisplay(gameState.getTournamentColour()))) {
+				if (!(p.printDisplay(gameState.getTournament().getColour()))) {
 					System.out.println("Client: no cards in " + p.getName() + "'s display\n");
 					Trace.getInstance().write(this,
 							this.player.getName() + ": No cards in " + p.getName() + "'s display.");
@@ -477,7 +477,7 @@ public class Client implements Runnable {
 				System.out.println("Client: " + args + " doesn't exist.  Can't print their Display.");
 				return false;
 			} else {
-				if (!(p.printDisplay(gameState.getTournamentColour()))) {
+				if (!(p.printDisplay(gameState.getTournament().getColour()))) {
 					System.out.println("Client: no cards in " + p.getName() + "'s display\n");
 					Trace.getInstance().write(this,
 							this.player.getName() + ": No cards in " + p.getName() + "'s display.");
@@ -616,7 +616,8 @@ public class Client implements Runnable {
 		}
 		for (Player p : this.gameState.getPlayers()) {
 			Trace.getInstance().write(this, "Tokens: " + p.getName() + " : " + p.listTokens());
-			System.out.printf("%-20s: %s\n", p.getName(), p.listTokens());
+			System.out.println(p.getName() + ": ");
+			System.out.println(p.listTokens());
 		}
 		return true;
 	}
@@ -637,7 +638,7 @@ public class Client implements Runnable {
 			return false;
 		}
 
-		String strCard, colour;
+		String strCard;
 		if (args.length == 2) {
 			strCard = args[1];
 		} else {
@@ -656,26 +657,34 @@ public class Client implements Runnable {
 		}
 		DisplayCard displayCard = (DisplayCard) card;
 		
+		Colour colour;
 		if (args.length == 2) {
-			colour = args[0];
+			try {
+				colour = new Colour(args[0]);
+			} catch (IllegalArgumentException iae) {
+				System.out.println("Client: " + args[0] + " is not a valid tournament colour. Type '/help'.");
+				return false;
+			}
 		}else{
 			colour = displayCard.getColour();
 		}
-		if ((!colour.equals("purple")) && (!colour.equals("red")) && (!colour.equals("blue"))
-				&& (!colour.equals("yellow")) && (!colour.equals("green"))) {
-			System.out.println("Client: " + colour + " is not a valid tournament colour. Type '/help'.");
+		
+		// tournament must be an actual colour, not NONE
+		if (colour.isNone()) {
+			System.out.println("Client: " + colour.toString() + " is not a valid tournament colour. Type '/help'.");
 			return false;
 		}
 			
 		// last tournament was purple (another colour must be chosen)
-		if ((gameState.getLastColour().equals("purple")) && (colour.equals("purple"))) {
+		if ((gameState.getLastColour().toString().equalsIgnoreCase("purple")) && 
+				(colour.equals(Colour.c.PURPLE))) {
 			System.out.println("Client: the last tournament was Jousting (purple). "
 					+ "\n A tournament of a different colour must be started.");
 			return false;
 		}
 
 		// display card is not a squire or maiden
-		if (!displayCard.getColour().equals("none")) {
+		if (!displayCard.getColour().isNone()) {
 			// tournament colour selected doesn't equal display card colour
 			if (!displayCard.getColour().equals(colour)) {
 				System.out.println("Client: " + displayCard.toString()

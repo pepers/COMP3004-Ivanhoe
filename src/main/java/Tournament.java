@@ -6,21 +6,32 @@ import main.resources.MedievalNames;
 public class Tournament implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	private String context;			// Location, festival of tournament
-	private String name;            // Name of Tournament
-	private String colour;    		// Display colour of tournament
+	private String context;	// Location, festival of tournament
+	private String name;    // Name of Tournament
+	private Colour colour;  // Display colour of tournament
 	
-	public Tournament(String colour){
-		context = MedievalNames.genContext();
-		this.name = MedievalNames.genTrinket(context);
-		this.colour = colour;
+	public Tournament(Colour colour){
+		if (colour.toString().equalsIgnoreCase("None")) {
+			throw new IllegalArgumentException("Tournament must have a colour.");
+		} else {
+			context = MedievalNames.genContext();
+			this.name = MedievalNames.genTrinket(context);
+			this.colour = colour;
+		}
 	}
 	
 	//getters
-	public String getColour () {return this.colour;}
+	public Colour getColour () {return this.colour;}
 	public String getContext (){return context;}
 	public String getName (){return name;}
 	
 	//setters
-	public void setColour (String colour) {this.colour = colour;}
+	public boolean setColour (Colour colour) {
+		if (colour.toString().equalsIgnoreCase("None")) {
+			throw new IllegalArgumentException("Can't set Tournament colour to NONE");
+		} else {
+			this.colour = colour;
+			return true;
+		}
+	}
 }

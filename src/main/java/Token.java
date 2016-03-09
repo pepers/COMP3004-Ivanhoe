@@ -5,12 +5,16 @@ import java.io.Serializable;
 public class Token implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String colour;		//one of red, blue, green, yellow, purple
-	private String origin;		//the location or festival the token came from
+	private Colour colour; // red, blue, green, yellow, or purple
+	private String origin; // the location or festival the token came from
 
-	public Token(String colour, String origin) {
-		this.colour = colour;
-		this.origin = origin;
+	public Token(Colour colour, String origin) {
+		if (colour.toString().equalsIgnoreCase("None")) {
+			throw new IllegalArgumentException("Token must have a colour.");
+		} else {
+			this.colour = colour;
+			this.origin = origin;
+		}
 	}
 
 	//Equals: tokens are equal if they are the same color
@@ -26,6 +30,6 @@ public class Token implements Serializable {
 
 	// Returns the colour of the token plus where the player got it
 	public String toString() {
-		return String.valueOf(Character.toUpperCase(colour.charAt(0))) + colour.substring(1) + " token from " + origin;
+		return this.colour.toString() + " token from " + origin;
 	}
 }

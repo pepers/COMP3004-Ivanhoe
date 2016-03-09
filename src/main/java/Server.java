@@ -388,15 +388,16 @@ public class Server implements Runnable, Serializable {
 			message("YOU have been VICTORIOUS in " + gameState.getTournament().getName() + "!", winner);
 			messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.getTournament().getName() + "!", winner);
 			
-			String colour = gameState.getTournament().getColour();
-			if(colour.equals("purple")){
+			Colour colour = gameState.getTournament().getColour();
+			String strCol = colour.toString();
+			if(strCol.equalsIgnoreCase("purple")){
 				while (true) {
-					colour = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
-					if ((colour.equalsIgnoreCase("purple")) ||
-						(colour.equalsIgnoreCase("red")) ||
-						(colour.equalsIgnoreCase("blue")) ||
-						(colour.equalsIgnoreCase("yellow")) ||
-						(colour.equalsIgnoreCase("green"))) {
+					strCol = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
+					if ((strCol.equalsIgnoreCase("purple")) ||
+						(strCol.equalsIgnoreCase("red")) ||
+						(strCol.equalsIgnoreCase("blue")) ||
+						(strCol.equalsIgnoreCase("yellow")) ||
+						(strCol.equalsIgnoreCase("green"))) {
 						break;
 					}
 				}
@@ -529,7 +530,8 @@ public class Server implements Runnable, Serializable {
 		Card drew = gameState.drawFromDeck();
 		gameState.addHand(startPlayer, drew); 
 		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
-		message("You are the starting player, and drew a " + drew.toString() + " card. Start a tournament if able.", startPlayer);
+		message("You are the starting player, and drew a " + drew.toString() + " card.", startPlayer);
+		message("Start a tournament if able.", startPlayer);
 		updateGameStates();
 		return true;
 	}
@@ -681,11 +683,18 @@ public class Server implements Runnable, Serializable {
 		if (gameState.getTournament() == null) {
 			System.out.println(" ========================================================== ");
 		} else {
-			System.out.println(" ===== " + gameState.getTournament().getName() + " (" + gameState.getTournamentColour() + ") =====");
+			System.out.println(" ===== " + gameState.getTournament().getName() + " (" 
+					+ gameState.getTournament().getColour().toString() + ") =====");
 		}
 		GameState temp = gameState;
+		Colour colour;
+		if (gameState.getTournament() == null) {
+			colour = new Colour();
+		} else {
+			colour = gameState.getTournament().getColour();
+		}
 		for (Player p : gameState.getPlayers()) {
-			String display = p.getName() + " (" + p.getScore(gameState.getTournamentColour()) + ")";
+			String display = p.getName() + " (" + p.getScore(colour)	+ ")";
 			System.out.printf("%-20s", display);
 		}
 		System.out.println();
@@ -706,7 +715,7 @@ public class Server implements Runnable, Serializable {
 	 * print one player's display
 	 */
 	public boolean printSingleDisplay(Player p) {
-		if (!(p.printDisplay(""))) {
+		if (!(p.printDisplay(gameState.getTournament().getColour()))) {
 			System.out.println("No cards in " + p.getName() + "'s display\n");
 			Trace.getInstance().write(this, "Server: no cards in " + p.getName() + "'s display.");
 		}
@@ -778,9 +787,9 @@ public class Server implements Runnable, Serializable {
 				}
 				if ((value >= 1) && (value <= 7)) {
 					String strColour = strDC[0];
-					for (DisplayCard.Colour colour : DisplayCard.Colour.values()) {
+					for (Colour.c colour : Colour.c.values()) {
 						if (colour.toString().equalsIgnoreCase(strColour)) {
-							card = new DisplayCard(value, colour);
+							card = new DisplayCard(value, new Colour(colour));
 							p.addToHand(card); // give Display Card
 							Trace.getInstance().write(this,
 									card.toString() + " Display Card given to " + p.getName() + ".");
