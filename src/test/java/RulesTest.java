@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import main.java.Client;
+import main.java.Colour;
 import main.java.DisplayCard;
 import main.java.GameState;
 import main.java.Player;
@@ -57,8 +58,8 @@ public class RulesTest {
 	@Test
 	public void TestEliminated() {
 		System.out.println("\nTest: Elimination from tournament.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, DisplayCard.Colour.blue));
-		s.getGameState().startTournament(new Tournament("blue"));
+		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, new Colour("blue")));
+		s.getGameState().startTournament(new Tournament(new Colour("blue")));
 
 		try {
 			Thread.sleep(200);
@@ -87,8 +88,8 @@ public class RulesTest {
 	@Test
 	public void TestRewards() {
 		System.out.println("\nTest: Token Rewards.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, DisplayCard.Colour.blue));
-		s.getGameState().startTournament(new Tournament("blue"));
+		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, new Colour("blue")));
+		s.getGameState().startTournament(new Tournament(new Colour("blue")));
 
 		try {
 			Thread.sleep(200);
@@ -111,14 +112,14 @@ public class RulesTest {
 			e.printStackTrace();
 		}
 
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).hasToken(new Token("blue", "unknown")));
+		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).hasToken(new Token(new Colour("blue"), "unknown")));
 	}
 
 	@Test
 	public void TestRewardsRestrict() {
 		System.out.println("\nTest: Rewards with restriction.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, DisplayCard.Colour.red));
-		s.getGameState().startTournament(new Tournament("red"));
+		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, new Colour("red")));
+		s.getGameState().startTournament(new Tournament(new Colour("red")));
 
 		try {
 			Thread.sleep(200);
@@ -126,7 +127,7 @@ public class RulesTest {
 			e.printStackTrace();
 		}
 		c1.setGameState(s.getGameState());
-		c1.getPlayer().giveToken(new Token("red", "unknown"));
+		c1.getPlayer().giveToken(new Token(new Colour("red"), "unknown"));
 		c1.cmdPlay("red:1");
 		c1.cmdEnd();
 		try {
@@ -142,14 +143,14 @@ public class RulesTest {
 			e.printStackTrace();
 		}
 
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).hasToken(new Token("red", "unknown")));
+		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).hasToken(new Token(new Colour("red"), "unknown")));
 	}
 
 	@Test
 	public void TestConsTournaments() {
 		System.out.println("\nTest: Multiple tournaments.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, DisplayCard.Colour.red));
-		s.getGameState().startTournament(new Tournament("red"));
+		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, new Colour("red")));
+		s.getGameState().startTournament(new Tournament(new Colour("red")));
 
 		try {
 			Thread.sleep(200);
@@ -172,15 +173,15 @@ public class RulesTest {
 			e.printStackTrace();
 		}
 
-		assertEquals(true, s.getGameState().startTournament(new Tournament("green")));
+		assertEquals(true, s.getGameState().startTournament(new Tournament(new Colour("green"))));
 	}
 
 	@Test
 	public void TestTournamentGreen() {
 		System.out.println("\nTest: Test green tournament.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(2, DisplayCard.Colour.green));
-		s.getGameState().startTournament(new Tournament("green"));
-		assertEquals("green", s.getGameState().getTournamentColour());
+		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(2, new Colour("green")));
+		s.getGameState().startTournament(new Tournament(new Colour("green")));
+		assertEquals("green", s.getGameState().getTournament().getColour());
 
 		try {
 			Thread.sleep(200);
@@ -196,7 +197,7 @@ public class RulesTest {
 			e.printStackTrace();
 		}
 		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().size());
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getScore("green"));
+		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getScore(new Colour("green")));
 
 		c2.setGameState(s.getGameState());
 		c2.cmdEnd();
@@ -210,9 +211,9 @@ public class RulesTest {
 	@Test
 	public void TestTournamentPurple() {
 		System.out.println("\nTest: Test purple tournament.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(2, DisplayCard.Colour.purple));
-		s.getGameState().startTournament(new Tournament("purple"));
-		assertEquals("purple", s.getGameState().getTournamentColour());
+		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(2, new Colour("purple")));
+		s.getGameState().startTournament(new Tournament(new Colour("purple")));
+		assertEquals("purple", s.getGameState().getTournament().getColour());
 
 		try {
 			Thread.sleep(200);
@@ -241,9 +242,9 @@ public class RulesTest {
 	@Test
 	public void TestTournamentYellow() {
 		System.out.println("\nTest: Test yellow tournament.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(3, DisplayCard.Colour.yellow));
-		s.getGameState().startTournament(new Tournament("yellow"));
-		assertEquals("yellow", s.getGameState().getTournamentColour());
+		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(3, new Colour("yellow")));
+		s.getGameState().startTournament(new Tournament(new Colour("yellow")));
+		assertEquals("yellow", s.getGameState().getTournament().getColour());
 
 		try {
 			Thread.sleep(200);

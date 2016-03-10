@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import main.java.ActionCard;
+import main.java.Colour;
 import main.java.DisplayCard;
 import main.java.GameState;
 import main.java.Player;
@@ -27,7 +28,7 @@ public class GameStateTest {
 	@Test
 	public void TestTournamentParticipants() {
 		System.out.println("\nTest: Counting the tournament participants.");
-		g.startTournament(new Tournament("blue"));
+		g.startTournament(new Tournament(new Colour("blue")));
 		assertEquals(4, g.getTournamentParticipants().size());
 	}
 
@@ -44,27 +45,27 @@ public class GameStateTest {
 	@Test
 	public void TestStartTournament() {
 		System.out.println("\nTest: Starting a tournament success.");
-		g.startTournament(new Tournament("red"));
+		g.startTournament(new Tournament(new Colour("red")));
 		assert (g.getTournament() != null);
 	}
 
 	@Test
 	public void TestStartTournamentPurple() {
 		System.out.println("\nTest: Starting a tournament, restrictions apply.");
-		g.startTournament(new Tournament("purple"));
+		g.startTournament(new Tournament(new Colour("purple")));
 		assertEquals("purple", g.getTournament().getColour());
 		g.endTournament();
-		g.startTournament(new Tournament("purple"));
+		g.startTournament(new Tournament(new Colour("purple")));
 		assert (g.getTournament() == null);
 	}
 
 	@Test
 	public void TestDisgrace() {
 		System.out.println("\nTest: Disgrace Action");
-		g.addDisplay(players[0], new DisplayCard(2, DisplayCard.Colour.none));
-		g.addDisplay(players[0], new DisplayCard(3, DisplayCard.Colour.none));
+		g.addDisplay(players[0], new DisplayCard(2, (new Colour("none"))));
+		g.addDisplay(players[0], new DisplayCard(3, (new Colour("none"))));
 		assertEquals(2, g.getPlayer(players[0].getName()).getDisplay().size());
-		g.startTournament(new Tournament("red"));
+		g.startTournament(new Tournament(new Colour("red")));
 
 		g.execute(new ActionCard("Disgrace"));
 		assertEquals(0, g.getPlayer(players[0].getName()).getDisplay().size());
@@ -73,39 +74,39 @@ public class GameStateTest {
 	@Test
 	public void TestOutmaneuver() {
 		System.out.println("\nTest: Outmaneuver Action");
-		g.addDisplay(players[0], new DisplayCard(2, DisplayCard.Colour.red));
-		g.addDisplay(players[0], new DisplayCard(1, DisplayCard.Colour.blue));
-		g.addDisplay(players[1], new DisplayCard(1, DisplayCard.Colour.green));
-		g.addDisplay(players[2], new DisplayCard(1, DisplayCard.Colour.red));
-		g.addDisplay(players[2], new DisplayCard(4, DisplayCard.Colour.red));
+		g.addDisplay(players[0], new DisplayCard(2, new Colour("red")));
+		g.addDisplay(players[0], new DisplayCard(1, new Colour("blue")));
+		g.addDisplay(players[1], new DisplayCard(1, new Colour("green")));
+		g.addDisplay(players[2], new DisplayCard(1, new Colour("red")));
+		g.addDisplay(players[2], new DisplayCard(4, new Colour("red")));
 
-		g.startTournament(new Tournament("red"));
+		g.startTournament(new Tournament(new Colour("red")));
 
 		g.execute(new ActionCard("Outmaneuver"));
 		assertEquals(1, g.getPlayer(players[0].getName()).getDisplay().size());
 		assertEquals(0, g.getPlayer(players[1].getName()).getDisplay().size());
 		assertEquals(1, g.getPlayer(players[2].getName()).getDisplay().size());
 
-		assertEquals(new DisplayCard(2, DisplayCard.Colour.red), g.getPlayer(players[0].getName()).getDisplay().get(0));
-		assertEquals(new DisplayCard(1, DisplayCard.Colour.red), g.getPlayer(players[2].getName()).getDisplay().get(0));
+		assertEquals(new DisplayCard(2, new Colour("red")), g.getPlayer(players[0].getName()).getDisplay().get(0));
+		assertEquals(new DisplayCard(1, new Colour("red")), g.getPlayer(players[2].getName()).getDisplay().get(0));
 	}
 
 	@Test
 	public void TestDropWeapon() {
 		System.out.println("\nTest: Drop Weapon Action");
-		g.startTournament(new Tournament("red"));
+		g.startTournament(new Tournament(new Colour("red")));
 		g.execute(new ActionCard("Drop Weapon"));
-		assertEquals("green", g.getTournamentColour());
+		assertEquals("green", g.getTournament().getColour());
 		g.endTournament();
 		
-		g.startTournament(new Tournament("blue"));
+		g.startTournament(new Tournament(new Colour("blue")));
 		g.execute(new ActionCard("Drop Weapon"));
-		assertEquals("green", g.getTournamentColour());
+		assertEquals("green", g.getTournament().getColour());
 		g.endTournament();
 		
-		g.startTournament(new Tournament("yellow"));
+		g.startTournament(new Tournament(new Colour("yellow")));
 		g.execute(new ActionCard("Drop Weapon"));
-		assertEquals("green", g.getTournamentColour());
+		assertEquals("green", g.getTournament().getColour());
 		g.endTournament();
 	}
 }
