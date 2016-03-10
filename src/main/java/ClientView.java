@@ -1,5 +1,6 @@
 package main.java;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -46,17 +47,17 @@ public class ClientView extends JFrame {
 	private Color dark_sand = new Color(133, 113, 72);
 	
 	public ClientView() {
-		this.setSize(1200, 600);
+		this.setSize(1240, 655);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		parent = new JPanel(new MigLayout(
-				"fill",
-				"[][][][][][]",
-				"[][][][][]"));
+				"",
+				"5[200!]5[200!]5[200!]5[200!]5[200!]5[200!]5",
+				"5[120!]5[120!]5[120!]5[120!]5[120!]5"));
 		parent.setBackground(dark_sand);
 		
-		header = new ImagePanel("./res/cobblestone.png");
+		header = new ImagePanel("./res/cobblestone.png", ImagePanel.FILL);
 		header.setToolTipText("header");
 		parent.add(header, "cell 0 0 4 1, grow");
 
@@ -65,7 +66,7 @@ public class ClientView extends JFrame {
 		title.setToolTipText("title");
 		parent.add(title, "cell 4 0 2 1, grow");
 		
-		arena = new ImagePanel("./res/sand.png");
+		arena = new ImagePanel("./res/sand.png", ImagePanel.FILL);
 		arena.setToolTipText("arena");
 		parent.add(arena, "cell 0 1 4 3, grow");
 		
@@ -79,12 +80,31 @@ public class ClientView extends JFrame {
 		
 		console = new ImagePanel("./res/cloth2.png", ImagePanel.TILE);
 		console.setToolTipText("console");
+		console.setLayout(new BorderLayout());
+
+		JTextArea textArea = new JTextArea();
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
+		textArea.setSize(console.getSize());
+		textArea.setOpaque(false);
+		textArea.setForeground(Color.white);
+		JScrollPane areaScrollPane = new JScrollPane(textArea);
+		areaScrollPane.setSize(console.getSize());
+		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		areaScrollPane.setOpaque(false);
+		areaScrollPane.getViewport().setOpaque(false);
+		console.add(areaScrollPane, BorderLayout.CENTER);
 		parent.add(console, "cell 0 4 4 1, grow");
 		
 		this.getContentPane().add(parent);
 		this.setVisible(true);
 	}
+
+	public void writeConsole(String s){
+		((JTextArea)((JScrollPane) console.getComponent(0)).getComponent(0)).append("\n" + s);
+	}
 	
+	/*
 	//Hand visual structure
 	class CardPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
@@ -154,16 +174,18 @@ public class ClientView extends JFrame {
 		}
 
 	}
-	
+	*/
 	class ImagePanel extends JPanel{
 		private static final long serialVersionUID = 1L;
 		public static final int TILE = 2;
 		public static final int STRETCH = 1;
-
+		public static final int FILL = 3;
+		
 		Image img;	
 		int mode = 0;
 		
 		public ImagePanel(String i){
+			
 			try {
 				img = ImageIO.read(new File(i));
 			} catch (IOException e) {
@@ -191,6 +213,9 @@ public class ClientView extends JFrame {
 						g.drawImage(img, i, 0, null);
 						i += img.getWidth(null);
 					}
+					break;
+				case FILL:
+					g.drawImage(img, 0, 0, this.getWidth(), img.getHeight(null) * (this.getWidth()/img.getWidth(null)), null);
 					break;
 				default:
 					int x = (this.getWidth() - img.getWidth(null)) / 2;
