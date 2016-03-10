@@ -2,9 +2,12 @@ package main.java;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.*;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -23,19 +26,7 @@ public class ClientView extends JFrame {
 	public static void main(String[] args) {
 		ClientView c = new ClientView();
 		ArrayList<Card> a = new ArrayList<Card>();
-		/*
-		Deck d = new Deck();
-		d.initialize();
-		while (true){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			a.add(d.draw());
-			c.hand.update(a);
-		}
-		*/
+		c.writeConsole("Hello");
 	}
 	
 	
@@ -88,12 +79,26 @@ public class ClientView extends JFrame {
 		textArea.setSize(console.getSize());
 		textArea.setOpaque(false);
 		textArea.setForeground(Color.white);
+		textArea.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+		textArea.setEditable(false);
 		JScrollPane areaScrollPane = new JScrollPane(textArea);
-		areaScrollPane.setSize(console.getSize());
 		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setOpaque(false);
 		areaScrollPane.getViewport().setOpaque(false);
+		areaScrollPane.setAutoscrolls(true);
 		console.add(areaScrollPane, BorderLayout.CENTER);
+		
+		JTextField input = new JTextField();
+		input.addActionListener(new ActionListener() {
+		      public void actionPerformed(ActionEvent e) {
+		    	  writeConsole("hello");
+		    	  JScrollBar v =  ((JScrollPane) console.getComponent(0)).getVerticalScrollBar();
+		    	  v.setValue(v.getMaximum());
+		 }});
+		input.setOpaque(false);
+		input.setForeground(Color.white);
+		input.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+		console.add(input, BorderLayout.SOUTH);
 		parent.add(console, "cell 0 4 4 1, grow");
 		
 		this.getContentPane().add(parent);
@@ -101,7 +106,7 @@ public class ClientView extends JFrame {
 	}
 
 	public void writeConsole(String s){
-		((JTextArea)((JScrollPane) console.getComponent(0)).getComponent(0)).append("\n" + s);
+		((JTextArea)((JScrollPane) console.getComponent(0)).getViewport().getView()).append(" " + s + "\n");
 	}
 	
 	/*
