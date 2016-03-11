@@ -11,7 +11,7 @@ public class Tournament implements Serializable{
 	private Colour colour;  // Display colour of tournament
 	
 	public Tournament(Colour colour){
-		if (colour.toString().equalsIgnoreCase("None")) {
+		if (colour.equals(new Colour(Colour.c.NONE))) {
 			throw new IllegalArgumentException("Tournament must have a colour.");
 		} else {
 			context = MedievalNames.genContext();
@@ -27,7 +27,7 @@ public class Tournament implements Serializable{
 	
 	//setters
 	public boolean setColour (Colour colour) {
-		if (colour.toString().equalsIgnoreCase("None")) {
+		if (colour.equals(new Colour(Colour.c.NONE))) {
 			throw new IllegalArgumentException("Can't set Tournament colour to NONE");
 		} else {
 			this.colour = colour;
