@@ -183,6 +183,23 @@ public class GameState implements Serializable{
 					System.out.println("All Display Cards of the value " + lowest + " were removed.");
 				}
 				break;
+			case "Countercharge":
+				int highest = 0;
+				ps = getTournamentParticipants();
+				for (Player p : ps) {
+					if (p.getDisplay().highestValue() > highest) {
+						highest = p.getDisplay().highestValue();
+					}
+				}
+				if (highest == 0) {
+					System.out.println("No cards in Displays, the highest valued cards were not removed.");
+				} else {
+					for (Player p : ps) {
+						p.getDisplay().removeValue(highest);
+					}
+					System.out.println("All Display Cards of the value " + highest + " were removed.");
+				}
+				break;
 			case "Disgrace":
 				ps = getTournamentParticipants();
 				DisplayCard s2 = new DisplayCard(2, new Colour(Colour.c.NONE));

@@ -93,6 +93,36 @@ public class GameStateTest {
 		assertEquals(1, g.getPlayer(players[2].getName()).getDisplay().size());
 		assertEquals(0, g.getPlayer(players[3].getName()).getDisplay().size());
 	}
+	
+	@Test
+	public void TestCountercharge() {
+		System.out.println("\nTest: Countercharge Action");
+		g.addDisplay(players[0], new DisplayCard(2, none));
+		g.addDisplay(players[0], new DisplayCard(3, none));
+		assertEquals(2, g.getPlayer(players[0].getName()).getDisplay().size());
+
+		g.addDisplay(players[1], new DisplayCard(3, blue));
+		g.addDisplay(players[1], new DisplayCard(4, blue));
+		g.addDisplay(players[1], new DisplayCard(5, blue));
+		assertEquals(3, g.getPlayer(players[1].getName()).getDisplay().size());
+
+		g.addDisplay(players[2], new DisplayCard(5, blue));
+		g.addDisplay(players[2], new DisplayCard(2, none));
+		g.addDisplay(players[2], new DisplayCard(2, blue));
+		assertEquals(3, g.getPlayer(players[2].getName()).getDisplay().size());
+		
+		g.addDisplay(players[3], new DisplayCard(2, blue));
+		assertEquals(1, g.getPlayer(players[3].getName()).getDisplay().size());
+		
+		g.startTournament(new Tournament(blue));
+		g.execute(new ActionCard("Countercharge"));
+		
+		assertEquals(2, g.getPlayer(players[0].getName()).getDisplay().size());
+		assertEquals(2, g.getPlayer(players[1].getName()).getDisplay().size());
+		assertEquals(2, g.getPlayer(players[2].getName()).getDisplay().size());
+		assertEquals(1, g.getPlayer(players[3].getName()).getDisplay().size());
+	}
+
 
 	@Test
 	public void TestDisgrace() {

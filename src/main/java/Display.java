@@ -116,6 +116,21 @@ public class Display implements Serializable {
 	}
 	
 	/*
+	 * get highest value in cards
+	 * (0 if empty)
+	 */
+	public int highestValue() {
+		int highest = 0;
+		if (this.display.isEmpty()) { return highest; }
+		for (DisplayCard c : display) {
+			if (c.getValue() > highest) {
+				highest = c.getValue();
+			}
+		}
+		return highest;
+	}
+	
+	/*
 	 * checks if the display has a specific card
 	 */
 	public boolean hasCard (DisplayCard c) {
