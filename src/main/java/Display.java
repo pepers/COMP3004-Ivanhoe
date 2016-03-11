@@ -46,6 +46,7 @@ public class Display implements Serializable {
 	public boolean remove (DisplayCard c) {
 		if (this.display.remove(c)) {
 			this.score -= c.getValue();
+			GameState.getDeck().discard(c);
 			return true;
 		} else {
 			return false;
@@ -62,6 +63,7 @@ public class Display implements Serializable {
 		    if (card.getValue() == value) {
 		        iterator.remove();
 		        this.score -= card.getValue();
+		        GameState.getDeck().discard(card);
 		    }
 		}
 		return true;
@@ -75,6 +77,7 @@ public class Display implements Serializable {
 			DisplayCard d = (DisplayCard) this.display.get(this.display.size()-1);
 			if (this.display.remove(this.display.size()-1) != null) {
 				this.score -= d.getValue();
+				GameState.getDeck().discard(d);
 				return true;
 			}
 		}

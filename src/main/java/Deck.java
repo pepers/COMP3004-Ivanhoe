@@ -130,6 +130,11 @@ public class Deck implements Serializable{
 	public int size() {
 		return deck.size();
 	}
+	
+	//Return the size of the discard stack
+	public int discardSize() {
+		return discard.size();
+	}
 
 	//Look at the top card of the deck
 	public Card peek(){

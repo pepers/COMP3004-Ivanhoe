@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class GameState implements Serializable{
 	private static final long serialVersionUID = 1L;	
 	
-	private Deck deck;
+	private static Deck deck;
 	private Tournament tnmt = null;
 	private Colour lastColour = new Colour(); // initialized as NONE
 	private ArrayList<Player> players;
@@ -14,6 +14,7 @@ public class GameState implements Serializable{
 	private int numPlayers;
 	private int highScore = 0;
 	
+	public static Deck getDeck() {return deck;}
 	public Tournament getTournament(){return tnmt;}
 	public int getHighScore(){return highScore;}
 	public int getNumPlayers(){return numPlayers;}
@@ -239,6 +240,7 @@ public class GameState implements Serializable{
 			default:
 				return false;
 		}	
+		deck.discard(c);
 		return true;
 	}
 }
