@@ -24,7 +24,7 @@ import net.miginfocom.swing.MigLayout;
 public class ClientView extends JFrame {
 	//TODO remove main method
 	public static void main(String[] args) {
-		ClientView c = new ClientView();
+		ClientView c = new ClientView(new Client());
 		ArrayList<Card> a = new ArrayList<Card>();
 		c.writeConsole("Hello");
 	}
@@ -33,11 +33,12 @@ public class ClientView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private HashMap<Card, BufferedImage> images;
 	private JPanel parent, header, title, arena, context, console, hand;
-
+	private Client client;
 	private Color sand = new Color(235, 210, 165);
 	private Color dark_sand = new Color(133, 113, 72);
 	
-	public ClientView() {
+	public ClientView(Client c) {
+		client = c;
 		this.setSize(1240, 655);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -91,7 +92,8 @@ public class ClientView extends JFrame {
 		JTextField input = new JTextField();
 		input.addActionListener(new ActionListener() {
 		      public void actionPerformed(ActionEvent e) {
-		    	  writeConsole("hello");
+		    	  String s = input.getText();
+		    	  client.processCmd(s);
 		    	  JScrollBar v =  ((JScrollPane) console.getComponent(0)).getVerticalScrollBar();
 		    	  v.setValue(v.getMaximum());
 		 }});

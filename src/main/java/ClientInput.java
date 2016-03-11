@@ -30,34 +30,38 @@ public class ClientInput extends Thread {
 		while (!this.stop) {
 			try {
 				while (this.reader.ready()) {
-					this.input = this.reader.readLine(); // get next line of input
-					if (this.input.length() > 0) {
-						if (validCmd(this.input)) { // process valid commands
-							if (client.processCmd(this.input)) {
-								Trace.getInstance().write(this,
-										client.getPlayer().getName() + ": command processed: " + this.input);
-							} else {
-								Trace.getInstance().write(this,
-										client.getPlayer().getName() + ": invalid command: " + this.input);
-								System.out.println("Client: invalid command, try typing '/help' for more info.");
-							}
-						} else if (this.input.charAt(0) == '/') { // process invalid commands
-							System.out.println("Client: invalid command, try typing '/help' for more info.");
-							Trace.getInstance().write(this,
-									client.getPlayer().getName() + ": invalid command: " + this.input);
-						} else { // process chat
-							String translated = language.translate(this.input);
-							this.action = new Chat(translated);
-							client.send(this.action);
-							Trace.getInstance().write(this,
-									client.getPlayer().getName() + ": " + "chat sent: " + this.input);
-						}
-					}
+					this.input = this.reader.readLine(); // get next line of
+					processInput(this.input);										// input
 				}
 			} catch (IOException e) {
 				break;
 			}
 		}
+	}
+
+	public boolean processInput(String input) {
+		if (input.length() > 0) {
+			if (validCmd(input)) { // process valid commands
+				if (client.processCmd(input)) {
+					Trace.getInstance().write(this,
+							client.getPlayer().getName() + ": command processed: " + input);
+				} else {
+					Trace.getInstance().write(this,
+							client.getPlayer().getName() + ": invalid command: " + input);
+					System.out.println("Client: invalid command, try typing '/help' for more info.");
+				}
+			} else if (input.charAt(0) == '/') { // process invalid
+														// commands
+				System.out.println("Client: invalid command, try typing '/help' for more info.");
+				Trace.getInstance().write(this, client.getPlayer().getName() + ": invalid command: " + input);
+			} else { // process chat
+				String translated = language.translate(input);
+				this.action = new Chat(translated);
+				client.send(this.action);
+				Trace.getInstance().write(this, client.getPlayer().getName() + ": " + "chat sent: " + input);
+			}
+		}
+		return true;
 	}
 
 	/*
