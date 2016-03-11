@@ -15,6 +15,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -72,6 +73,9 @@ public class ClientView extends JFrame {
 		textArea.setForeground(Color.white);
 		textArea.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 		textArea.setEditable(false);
+		textArea.setFocusable(false);
+		DefaultCaret caret = ((DefaultCaret) textArea.getCaret());
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		JScrollPane areaScrollPane = new JScrollPane(textArea);
 		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setOpaque(false);
@@ -109,9 +113,8 @@ public class ClientView extends JFrame {
 				style = null;
 			}
 			
-			doc.insertString(doc.getLength(), (" " + s + "\n"), style);
-			JScrollBar v = ((JScrollPane) console.getComponent(0)).getVerticalScrollBar();
-			v.setValue(v.getMaximum());
+			doc.insertString(doc.getLength(), ("\n " + s), style);
+			pane.selectAll();
 		} catch (BadLocationException exc) {
 			exc.printStackTrace();
 		}

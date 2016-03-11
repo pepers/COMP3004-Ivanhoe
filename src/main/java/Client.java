@@ -326,6 +326,9 @@ public class Client implements Runnable {
 	}
 
 	public boolean processInput(String input) {
+		if (input.length() == 0){
+			return false;
+		}
 		if (validCmd(input)) { // process valid commands
 			processCmd(input);
 			Trace.getInstance().write(this, getPlayer().getName() + ": command processed: " + input);

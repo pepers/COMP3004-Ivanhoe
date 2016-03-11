@@ -21,8 +21,8 @@ public class ClientInput extends Thread {
 		while (!this.stop) {
 			try {
 				while (this.reader.ready()) {
-					this.input = this.reader.readLine(); // get next line of
-					client.processInput(this.input);										// input
+					this.input = this.reader.readLine(); // get next line of input
+					client.processInput(this.input);									
 				}
 			} catch (IOException e) {
 				break;
