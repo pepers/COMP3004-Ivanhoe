@@ -102,6 +102,9 @@ public class Deck implements Serializable{
 	//If the deck is empty, move the discard to the deck
 	public Card draw(){
 		if(deck.size() == 0){
+			if(discard.size() == 0){
+				return null;
+			}
 			deck = discard;
 			shuffle();
 		}
