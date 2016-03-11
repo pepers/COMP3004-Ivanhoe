@@ -12,9 +12,8 @@ public class Player implements Serializable{
 	
 	private String username;
 	private int handSize = 0;
-	private int displayScore = 0;
-	private ArrayList<Card> display;
 	private ArrayList<Card> hand;
+	private Display display = new Display();
 	
 	private boolean inTournament = false;
 	private boolean isStunned = false;
@@ -25,11 +24,15 @@ public class Player implements Serializable{
 	public boolean isTurn = false;
 	public int ready = 0;
 	
-	public int getHandSize(){return handSize;}
-	public int getDisplayScore(){return displayScore;}
-	public boolean getShielded(){return isShielded;}
-	public boolean getStunned(){return isStunned;}
-	public boolean getParticipation(){return inTournament;}
+	public int getHandSize(){return this.handSize;}
+	public boolean getShielded(){return this.isShielded;}
+	public boolean getStunned(){return this.isStunned;}
+	public boolean getParticipation(){return this.inTournament;}
+	public ArrayList<Card> getHand () {	return this.hand; }
+	public int getId() { return this.id;	}
+	public String getName() { return this.username; }
+	public Display getDisplay() { return this.display; }
+
 	public void setParticipation(boolean b){inTournament = b;}
 	public int hasToken(Token token){
 		int count = 0;
@@ -43,7 +46,6 @@ public class Player implements Serializable{
 	
 	public Player(String u, int id){
 		username = u;
-		display = new ArrayList<Card>();
 		hand = new ArrayList<Card>();
 		tokens = new ArrayList<Token>();
 		this.id = id;
@@ -51,25 +53,18 @@ public class Player implements Serializable{
 	
 	public Player(String u){
 		username = u;
-		display = new ArrayList<Card>();
 		hand = new ArrayList<Card>();
 		tokens = new ArrayList<Token>();
 	}
 
-	public void clearDisplay(){
-		display.clear();
-		displayScore = 0;
-	}
-	
 	public void reset(){
-		display = new ArrayList<Card>();
 		hand = new ArrayList<Card>();
 		tokens = new ArrayList<Token>();
 		handSize = 0;
-		displayScore = 0;
 		inTournament = false;
 		isTurn = false;
 		ready = 0;
+		display.clear();
 	}
 	
 	/*
@@ -113,17 +108,6 @@ public class Player implements Serializable{
 	}
 	
 	/*
-	 * return the player's display score, based on tournament colour
-	 */
-	public int getScore(Colour colour) {
-		if (colour.toString().equalsIgnoreCase("Green")) {
-			return this.display.size();
-		} else {
-			return this.displayScore;
-		}
-	}
-	
-	/*
 	 * add a card to the player's hand
 	 */
 	public int addToHand(Card c){
@@ -132,38 +116,15 @@ public class Player implements Serializable{
 		}
 		return hand.size();
 	}
+	
+	/*
+	 * remove card from player's hand
+	 */
 	public int removeFromHand(Card c){
 		if (hand.remove(c)) {
 			handSize--;
 		}
 		return hand.size();
-	}
-	
-	public int addToDisplay(Card c){
-		if (display.add(c)) {
-			DisplayCard d = (DisplayCard) c;
-			displayScore += d.getValue();
-		}
-		return display.size();
-	}
-	
-	public int removeFromDisplay(Card c){
-		if (display.remove(c)) {
-			DisplayCard d = (DisplayCard) c;
-			displayScore -= d.getValue();
-		}
-		return display.size();
-	}
-	
-	/*
-	 * remove the last played card on the display
-	 */
-	public void removeLastFromDisplay() {
-		if (display.size() > 0) {
-			DisplayCard d = (DisplayCard) display.get(display.size()-1);
-			display.remove(display.size()-1);
-			displayScore -= d.getValue();
-		}
 	}
 	
 	/*
@@ -216,74 +177,19 @@ public class Player implements Serializable{
 	}
 	
 	/*
-	 * returns cards in hand
+	 * checks if there is at least one card of a specific colour, or 
+	 * supporter card in hand
 	 */
-	public ArrayList<Card> getHand () {
-		return hand;
-	}
-	
-	/*
-	 * prints the player's display
-	 * uses colour of tournament for score
-	 */
-	public boolean printDisplay(Colour colour) {
-		if (!(inTournament)) { // not in tournament
-			System.out.println(username + " is not in this tournament.\n");
-			return true;
-		}
-		if (display.isEmpty()) { return false; } // empty display
-		System.out.println(username + "'s Display (" + getScore(colour) + "): ");
-		for (Card c: display) {
-			System.out.println(c.toString());
-		}
-		System.out.println("");
-		return true;
-	}
-
-	public int getId() {
-		return id;
-	}
-	
-	public String getName() {
-		return username;
-	}
-
-	public boolean hasValidDisplayCard(String colour) {
+	public boolean hasValidDisplayCard(Colour colour) {
 		for (Card c : hand){
 			if (c instanceof DisplayCard){
-				if(((DisplayCard) c).getColour().equals(colour) || colour.equals("none")){
+				if(((DisplayCard) c).getColour().equals(colour) || 
+						colour.equals(Colour.c.NONE)){
 					return true;
 				}
 			}
 		}
 		return false;
-	}
-	
-	/*
-	 * determines if there are cards in the display of a specific colour
-	 */
-	public boolean hasColourInDisplay (String colour) {
-		for (Card c : display) {
-			if (((DisplayCard) c).getColour().equals(colour)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/*
-	 * checks if the display has a specific card
-	 */
-	public boolean displayHasCard (Card c) {
-		if (display.isEmpty()) { return false; }
-		for (Card card : display) {
-			if (card.toString().equals(c.toString())) { return true; }
-		}
-		return false;
-	}
-
-	public ArrayList<Card> getDisplay() {
-		return display;
 	}
 	
 	@Override

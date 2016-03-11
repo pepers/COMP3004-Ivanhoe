@@ -197,7 +197,7 @@ public class RulesTest {
 			e.printStackTrace();
 		}
 		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().size());
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getScore(new Colour("green")));
+		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().score(new Colour(Colour.c.GREEN)));
 
 		c2.setGameState(s.getGameState());
 		c2.cmdEnd();

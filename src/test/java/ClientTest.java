@@ -170,10 +170,10 @@ public class ClientTest {
 		String all = "-a";
 		arr = all.split("\\s+");
 		Player otherPlayer = new Player("Other Player");
-		Card card1 = new DisplayCard(3, red);
-		Card card2 = new DisplayCard(6, none);
-		otherPlayer.addToDisplay(card1);
-		otherPlayer.addToDisplay(card2);
+		DisplayCard card1 = new DisplayCard(3, red);
+		DisplayCard card2 = new DisplayCard(6, none);
+		otherPlayer.getDisplay().add(card1);
+		otherPlayer.getDisplay().add(card2);
 		g.addPlayer(otherPlayer);
 		if (!otherPlayer.getParticipation()) {
 			otherPlayer.toggleTnmt(); // adds them to tournament
@@ -245,11 +245,11 @@ public class ClientTest {
 		assertFalse(c.cmdPlay("Dodge"));  // real action card, but not in hand
 		
 		// add some cards to hand
-		Card card1 = new DisplayCard(3, purple);
-		Card card2 = new ActionCard("Drop Weapon");
-		Card card3 = new ActionCard("ivanhoe");
-		Card card4 = new DisplayCard(2, none);
-		Card card5 = new DisplayCard(6, none);
+		DisplayCard card1 = new DisplayCard(3, purple);
+		ActionCard card2 = new ActionCard("Drop Weapon");
+		ActionCard card3 = new ActionCard("ivanhoe");
+		DisplayCard card4 = new DisplayCard(2, none);
+		DisplayCard card5 = new DisplayCard(6, none);
 		p.addToHand(card1);
 		p.addToHand(card2);
 		p.addToHand(card3);
@@ -274,7 +274,7 @@ public class ClientTest {
 		assertTrue(c.cmdPlay("squire:2")); // is turn, and in tournament, play the card
 		assertTrue(c.cmdPlay("Drop Weapon"));  // is turn, and in tournament, play the card
 		
-		p.addToDisplay(card5);
+		p.getDisplay().add(card5);
 		assertFalse(c.cmdPlay("maiden:6")); // already have maiden in display
 	}
 	 

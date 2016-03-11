@@ -327,7 +327,7 @@ public class Server implements Runnable, Serializable {
 		if (action.object instanceof StartTournament) {
 			Tournament t = new Tournament(((StartTournament) action.object).getColour());
 			if(gameState.startTournament(t)){		
-				Card c = ((StartTournament) action.object).getCard();
+				DisplayCard c = (DisplayCard) ((StartTournament) action.object).getCard();
 				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
 				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
 				broadcast(t.getName() + " started by " + action.origin.getName() + " (" + t.getColour() + ")");
@@ -340,11 +340,11 @@ public class Server implements Runnable, Serializable {
 				if (gameState.getTournament() != null) {
 					if (gameState.hasHighScore(p) == false) {
 						p.setParticipation(false);
-						p.clearDisplay();
+						p.getDisplay().clear();;
 						message("YOU have been ELIMINATED from " + gameState.getTournament().getName() + "!", p);
 						messageExcept(p.getName() + " has been ELIMINATED from " + gameState.getTournament().getName()+ "!", p);
 					} else {
-						gameState.setHighScore(p.getScore(gameState.getTournament().getColour()));
+						gameState.setHighScore(p.getDisplay().score(gameState.getTournament().getColour()));
 					}
 				}
 				endTurn();
@@ -355,7 +355,7 @@ public class Server implements Runnable, Serializable {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
 				p.setParticipation(false);
-				p.clearDisplay();
+				p.getDisplay().clear();
 				message("You withdraw from " + gameState.getTournament().getName() + "!", p);
 				messageExcept(p.getName() + " has withdrew from " + gameState.getTournament().getName() + "!", p);
 				endTurn();
@@ -366,7 +366,7 @@ public class Server implements Runnable, Serializable {
 			Card c = ((Play) action.object).getCard();
 			broadcast(action.origin.getName() + " plays a " + c.toString());
 			if (c instanceof DisplayCard) {
-				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), c);
+				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), (DisplayCard) c);
 				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
 				return true;
 			}
@@ -694,7 +694,7 @@ public class Server implements Runnable, Serializable {
 			colour = gameState.getTournament().getColour();
 		}
 		for (Player p : gameState.getPlayers()) {
-			String display = p.getName() + " (" + p.getScore(colour)	+ ")";
+			String display = p.getName() + " (" + p.getDisplay().score(colour)	+ ")";
 			System.out.printf("%-20s", display);
 		}
 		System.out.println();
@@ -715,7 +715,7 @@ public class Server implements Runnable, Serializable {
 	 * print one player's display
 	 */
 	public boolean printSingleDisplay(Player p) {
-		if (!(p.printDisplay(gameState.getTournament().getColour()))) {
+		if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
 			System.out.println("No cards in " + p.getName() + "'s display\n");
 			Trace.getInstance().write(this, "Server: no cards in " + p.getName() + "'s display.");
 		}

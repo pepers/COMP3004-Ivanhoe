@@ -456,14 +456,14 @@ public class Client implements Runnable {
 
 		// show own display
 		if (arr.length == 0) {
-			if (!(this.player.printDisplay(gameState.getTournament().getColour()))) {
+			if (!(this.player.getDisplay().print(gameState.getTournament().getColour()))) {
 				System.out.println("Client: no cards in your display");
 				Trace.getInstance().write(this, this.player.getName() + ": No cards in your display to show.");
 			}
 			// show all displays
 		} else if (args.equalsIgnoreCase("-a")) {
 			for (Player p : this.gameState.getPlayers()) {
-				if (!(p.printDisplay(gameState.getTournament().getColour()))) {
+				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
 					System.out.println("Client: no cards in " + p.getName() + "'s display\n");
 					Trace.getInstance().write(this,
 							this.player.getName() + ": No cards in " + p.getName() + "'s display.");
@@ -477,7 +477,7 @@ public class Client implements Runnable {
 				System.out.println("Client: " + args + " doesn't exist.  Can't print their Display.");
 				return false;
 			} else {
-				if (!(p.printDisplay(gameState.getTournament().getColour()))) {
+				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
 					System.out.println("Client: no cards in " + p.getName() + "'s display\n");
 					Trace.getInstance().write(this,
 							this.player.getName() + ": No cards in " + p.getName() + "'s display.");
@@ -492,7 +492,7 @@ public class Client implements Runnable {
 		if (!this.player.isTurn) {
 			System.out.println("Client: Its not your turn.");
 			return false;
-		} else if (gameState.getTournament() == null && this.player.hasValidDisplayCard("none")) {
+		} else if (gameState.getTournament() == null && this.player.hasValidDisplayCard(new Colour(Colour.c.NONE))) {
 			System.out.println("Client: You MUST start a tournament if able.");
 			return false;
 		} else {
@@ -567,7 +567,7 @@ public class Client implements Runnable {
 						|| gameState.getTournament().getColour().equals(((DisplayCard) c).getColour()))) {
 					System.out.println("Client: not a valid color for the current tournament");
 					return false;
-				} else if (c.toString().equals("maiden:6") && player.displayHasCard(c)) {
+				} else if (c.toString().equals("maiden:6") && player.getDisplay().hasCard((DisplayCard) c)) {
 					Trace.getInstance().write(this, "Client: you may not have more than one maiden in your Display.");
 					System.out.println("Client: you may not have more than one maiden in your Display.");
 					return false;

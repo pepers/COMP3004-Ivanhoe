@@ -94,12 +94,12 @@ public class GameState implements Serializable{
 		return players.get(turnIndex);
 	}
 
-	public int addDisplay(Player player, Card card) {
-		return getPlayer(player.getName()).addToDisplay(card);
+	public boolean addDisplay(Player player, DisplayCard card) {
+		return getPlayer(player.getName()).getDisplay().add(card);
 	}
-	
-	public int removeDisplay(Player player, Card card) {
-		return getPlayer(player.getName()).removeFromDisplay(card);
+
+	public boolean removeDisplay(Player player, DisplayCard card) {
+		return getPlayer(player.getName()).getDisplay().remove(card);
 	}
 	
 	public int addHand(Player player, Card card) {
@@ -137,7 +137,7 @@ public class GameState implements Serializable{
 		highScore = 0;
 		for (Player p:players){
 			p.setParticipation(false);
-			p.clearDisplay();
+			p.getDisplay().clear();
 		}
 	}
 	
@@ -152,10 +152,10 @@ public class GameState implements Serializable{
 			int high = 0;
 			int score = 0;
 			for (Player player : ps) {
-				score = player.getScore(getTournament().getColour());
+				score = player.getDisplay().score(getTournament().getColour());
 				if (score > high) { high = score; }
 			}
-			if (p.getScore(getTournament().getColour()) > high) { return true; } 
+			if (p.getDisplay().score(getTournament().getColour()) > high) { return true; } 
 		}
 		return false;
 	}
@@ -168,14 +168,14 @@ public class GameState implements Serializable{
 		switch(c.toString()){
 			case "Disgrace":
 				ps = getTournamentParticipants();
-				Card s2 = new DisplayCard(2, new Colour(Colour.c.NONE));
-				Card s3 = new DisplayCard(3, new Colour(Colour.c.NONE));
-				Card m6 = new DisplayCard(6, new Colour(Colour.c.NONE));
+				DisplayCard s2 = new DisplayCard(2, new Colour(Colour.c.NONE));
+				DisplayCard s3 = new DisplayCard(3, new Colour(Colour.c.NONE));
+				DisplayCard m6 = new DisplayCard(6, new Colour(Colour.c.NONE));
 				for (Player p: ps) {
-					while (p.hasColourInDisplay("none")) { // player has supporters in display
-						p.removeFromDisplay(s2); // squire:2
-						p.removeFromDisplay(s3); // squire:3
-						p.removeFromDisplay(m6); // maiden:6
+					while (p.getDisplay().hasColour(new Colour(Colour.c.NONE))) { // player has supporters in display
+						p.getDisplay().remove(s2); // squire:2
+						p.getDisplay().remove(s3); // squire:3
+						p.getDisplay().remove(m6); // maiden:6
 					}
 					
 				}
@@ -195,7 +195,7 @@ public class GameState implements Serializable{
 			case "Outmaneuver":
 				ps = getTournamentParticipants();
 				for (Player p: ps) {
-					p.removeLastFromDisplay();
+					p.getDisplay().removeLast();
 				}
 				System.out.println("All players remove the last card played on their Display.");
 				break;
