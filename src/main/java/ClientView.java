@@ -92,7 +92,7 @@ public class ClientView extends JFrame {
 		JTextField input = new JTextField();
 		input.addActionListener(new ActionListener() {
 		      public void actionPerformed(ActionEvent e) {
-		    	  client.inputThread.processInput(input.getText());
+		    	  client.processInput(input.getText());
 		    	  JScrollBar v =  ((JScrollPane) console.getComponent(0)).getVerticalScrollBar();
 		    	  v.setValue(v.getMaximum());
 		 }});

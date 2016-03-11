@@ -318,6 +318,49 @@ public class Client implements Runnable {
 		}
 	}
 
+	public boolean processInput(String input) {
+		if (input.length() > 0) {
+			if (validCmd(input)) { // process valid commands
+				if (processCmd(input)) {
+					Trace.getInstance().write(this,
+							getPlayer().getName() + ": command processed: " + input);
+				} else {
+					Trace.getInstance().write(this,
+							getPlayer().getName() + ": invalid command: " + input);
+					output("Client: invalid command, try typing '/help' for more info.");
+				}
+			} else if (input.charAt(0) == '/') { // process invalid
+														// commands
+				output("Client: invalid command, try typing '/help' for more info.");
+				Trace.getInstance().write(this, getPlayer().getName() + ": invalid command: " + input);
+			} else { // process chat
+				String translated = language.translate(input);
+				send(new Chat(translated));
+				Trace.getInstance().write(this, getPlayer().getName() + ": " + "chat sent: " + input);
+			}
+		}
+		return true;
+	}
+	
+	/*
+	 * returns if a valid command or not
+	 */
+	public boolean validCmd(String in) {
+		// commands start with slash (/)
+		if (in.charAt(0) != '/') {
+			return false;
+		}
+
+		// check existing commands
+		for (Config.ClientCommand cmd : Config.ClientCommand.values()) {
+			if (in.startsWith(cmd.toString(), 1)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
 	//deals with commands received from inputThread
 	public boolean processCmd(String s) {
 		// get argument line
