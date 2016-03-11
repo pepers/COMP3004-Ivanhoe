@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Display implements Serializable {
 	
@@ -50,6 +51,21 @@ public class Display implements Serializable {
 			return false;
 		}
 	}
+	
+	/*
+	 * remove cards with a certain value
+	 */
+	public boolean removeValue (int value) {
+		if (this.display.isEmpty()) { return false; }
+		for (Iterator<DisplayCard> iterator = this.display.iterator(); iterator.hasNext();) {
+		    DisplayCard card = iterator.next();
+		    if (card.getValue() == value) {
+		        iterator.remove();
+		        this.score -= card.getValue();
+		    }
+		}
+		return true;
+	}
 
 	/*
 	 * remove the last played card on the display
@@ -84,6 +100,21 @@ public class Display implements Serializable {
 		this.score = 0;
 	}
 
+	/*
+	 * get lowest value in cards
+	 * (99 if empty)
+	 */
+	public int lowestValue() {
+		int lowest = 99;
+		if (this.display.isEmpty()) { return lowest; }
+		for (DisplayCard c : display) {
+			if (c.getValue() < lowest) {
+				lowest = c.getValue();
+			}
+		}
+		return lowest;
+	}
+	
 	/*
 	 * checks if the display has a specific card
 	 */
