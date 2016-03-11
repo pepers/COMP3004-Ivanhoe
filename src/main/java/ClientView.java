@@ -55,24 +55,20 @@ public class ClientView extends JFrame {
 
 	public ClientView(Client c) {
 		client = c;
-		int gs = (Toolkit.getDefaultToolkit().getScreenResolution()/150) + 1;// gui scale
-		
-		
-		this.setSize(1240 * gs, 675 * gs);
-		//this.setResizable(false);
+		this.setResizable(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+		this.setSize(1240, 675);
 		parent = new JPanel(new MigLayout(
-				"", 
-				"5[200]5[200]5[200]5[200]5[200]5[200]5",
-				"5[120]5[120]5[120]5[120]5[120]20"));
+				"fill", 
+				"5[:200:]5[:200:]5[:200:]5[:200:]5[:200:]5[:200:]5",
+				"5[:120:]5[:120:]5[:120:]5[:120:]5[:120:]20"));
 		parent.setBackground(dark_sand);
 
 		header = new ImagePanel("./res/cobblestone.png", ImagePanel.TILE);
 		header.setToolTipText("header");
 		parent.add(header, "cell 0 0 4 1, grow");
 
-		title = new ImagePanel("./res/title.png");
+		title = new ImagePanel("./res/title.png", ImagePanel.CENTER_SCALE);
 		title.setBackground(sand);
 		title.setToolTipText("title");
 		parent.add(title, "cell 4 0 2 1, grow");
@@ -219,9 +215,10 @@ public class ClientView extends JFrame {
 
 	class ImagePanel extends JPanel {
 		private static final long serialVersionUID = 1L;
-		public static final int TILE = 2;
 		public static final int STRETCH = 1;
+		public static final int TILE = 2;
 		public static final int FILL = 3;
+		public static final int CENTER_SCALE = 4;
 
 		Image img;
 		int mode = 0;
@@ -261,10 +258,15 @@ public class ClientView extends JFrame {
 				double d = img.getHeight(null) * ((double)this.getWidth() / img.getWidth(null));
 				g.drawImage(img, 0, 0, this.getWidth(), (int) d, null);
 				break;
+			case CENTER_SCALE:
+				double r = (double)this.getHeight()/img.getHeight(null);
+				double x = (this.getWidth() - img.getWidth(null) * r) / 2;
+				g.drawImage(img, (int)x, 0, 
+						(int)(img.getWidth(null) * r), 
+						(int)(img.getHeight(null) * r), null);
+				break;
 			default:
-				int x = (this.getWidth() - img.getWidth(null)) / 2;
-				int y = (this.getHeight() - img.getHeight(null)) / 2;
-				g.drawImage(img, x, y, null);
+				g.drawImage(img, (this.getWidth() - img.getWidth(null)) / 2, (this.getHeight() - img.getHeight(null)) / 2, null);
 				break;
 			}
 		}
