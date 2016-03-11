@@ -11,43 +11,46 @@ import main.resources.Trace;
 
 public class Client implements Runnable {
 
-	private Thread receiveThread;						// Client thread to receive from Server
-	public ClientInput inputThread = null; 			// thread to input Client commands
-	private boolean stop = false; 						// use to stop the Client
-	private boolean shutDown = false; 					// shutdown() has been called
-	private Socket socket = null;						// socket to connect to Server
-	private ObjectOutputStream clientOutputStream;		// send objects to Server
-	private ObjectInputStream clientInputStream; 		// receive objects from Server
-	private BufferedReader input = null; 				// to get user input
-	private Language language; 							// to translate chat
-	private GameState gameState = null; 				// the local copy of the game state
-	private Player player = null; 						// the local copy of this client's player
+	private Thread receiveThread; // Client thread to receive from Server
+	public ClientInput inputThread = null; // thread to input Client commands
+	private boolean stop = false; // use to stop the Client
+	private boolean shutDown = false; // shutdown() has been called
+	private Socket socket = null; // socket to connect to Server
+	private ObjectOutputStream clientOutputStream; // send objects to Server
+	private ObjectInputStream clientInputStream; // receive objects from Server
+	private BufferedReader input = null; // to get user input
+	private Language language; // to translate chat
+	private GameState gameState = null; // the local copy of the game state
+	private Player player = null; // the local copy of this client's player
 	private ClientView view = null;
-	
-	public Player getPlayer(){return player;}
-	//testing methods
-	public void setGameState(GameState g){
-		gameState = g; 
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	// testing methods
+	public void setGameState(GameState g) {
+		gameState = g;
 		this.player = gameState.getPlayer(this.player.getName());
 	}
-	
-	public Client(){
+
+	public Client() {
 		language = new Language(Language.Dialect.none, false);
 	}
-	
+
 	public static void main(String args[]) {
 		Client client = new Client(); // client object
 		client.startUp();
 	}
 
-	//initialize the player and game states
+	// initialize the player and game states
 	public void initialize(Player p, GameState g) {
 		g.addPlayer(p);
 		this.player = p;
 		this.gameState = g;
 	}
 
-	//initial Client startup activities
+	// initial Client startup activities
 	public void startUp() {
 
 		// welcome message
@@ -97,8 +100,8 @@ public class Client implements Runnable {
 
 			// attempt to connect to Server
 			if (connect(address, port)) {
-				System.out.println("\nType /help for a list of commands!");
-				send(new SetName(this.player.getName())); // send user's name to Server
+				send(new SetName(this.player.getName())); // send user's name to
+															// Server
 				player = (Player) receive();
 				// start new thread to get Client commands
 				this.inputThread = new ClientInput(this, System.in);
@@ -109,6 +112,7 @@ public class Client implements Runnable {
 				this.receiveThread.start();
 
 				view = new ClientView(this);
+				output("\nType /help for a list of commands!");
 				break;
 			} else {
 				System.out.println("There are no tournaments at that location! \n");
@@ -130,12 +134,12 @@ public class Client implements Runnable {
 
 	}
 
-	//shut down Client
+	// shut down Client
 	public boolean shutdown() {
 		this.shutDown = true;
 		this.stop = true;
 		Trace.getInstance().write(this, "Client shutting down...");
-		System.out.println("\nClient: Shutting down...");
+		output("\nClient: Shutting down...");
 
 		if (inputThread != null) {
 			inputThread.shutdown();
@@ -162,7 +166,7 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//continue receiving from Server
+	// continue receiving from Server
 	public void run() {
 		// while Client is running, keep connection with Server
 		while (!this.stop) {
@@ -176,7 +180,7 @@ public class Client implements Runnable {
 		}
 	}
 
-	//get user input from console
+	// get user input from console
 	public String userInput(String message) {
 		this.input = new BufferedReader(new InputStreamReader(System.in));
 		output(message);
@@ -191,7 +195,7 @@ public class Client implements Runnable {
 		return strInput;
 	}
 
-	//connect to Server
+	// connect to Server
 	public Boolean connect(String IPAddress, int port) {
 		try {
 			Trace.getInstance().write(this, "attempting to connect to server...");
@@ -217,7 +221,7 @@ public class Client implements Runnable {
 		return false;
 	}
 
-	//send object to Server
+	// send object to Server
 	public Boolean send(Object o) {
 		try {
 			this.clientOutputStream.writeObject(o);
@@ -229,7 +233,7 @@ public class Client implements Runnable {
 		return false;
 	}
 
-	//receive object from Server
+	// receive object from Server
 	public Object receive() {
 		// will return this null object if error reading from stream
 		Object received = null;
@@ -268,8 +272,8 @@ public class Client implements Runnable {
 		} else if (o instanceof GameState) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			gameState = (GameState) o;
-			//this signals that the game is done
-			if (gameState.getNumPlayers() == 0){
+			// this signals that the game is done
+			if (gameState.getNumPlayers() == 0) {
 				this.gameState = null;
 				this.player.reset();
 				return true;
@@ -300,7 +304,10 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received: "
 					+ ((Chat) o).getMessage());
 			String message = ((Chat) o).getMessage();
-			output(this.language.translate(message));
+			message = this.language.translate(message);
+			System.out.println(message);
+			if (view != null)
+				view.writeConsole(message, 1);
 			return true;
 			// Prompt
 		} else if (o instanceof Prompt) {
@@ -319,29 +326,20 @@ public class Client implements Runnable {
 	}
 
 	public boolean processInput(String input) {
-		if (input.length() > 0) {
-			if (validCmd(input)) { // process valid commands
-				if (processCmd(input)) {
-					Trace.getInstance().write(this,
-							getPlayer().getName() + ": command processed: " + input);
-				} else {
-					Trace.getInstance().write(this,
-							getPlayer().getName() + ": invalid command: " + input);
-					output("Client: invalid command, try typing '/help' for more info.");
-				}
-			} else if (input.charAt(0) == '/') { // process invalid
-														// commands
-				output("Client: invalid command, try typing '/help' for more info.");
-				Trace.getInstance().write(this, getPlayer().getName() + ": invalid command: " + input);
-			} else { // process chat
-				String translated = language.translate(input);
-				send(new Chat(translated));
-				Trace.getInstance().write(this, getPlayer().getName() + ": " + "chat sent: " + input);
-			}
+		if (validCmd(input)) { // process valid commands
+			processCmd(input);
+			Trace.getInstance().write(this, getPlayer().getName() + ": command processed: " + input);
+		} else if (input.charAt(0) == '/') { // process invalid commands
+			output("Client: invalid command, try typing '/help' for more info.");
+			Trace.getInstance().write(this, getPlayer().getName() + ": invalid command: " + input);
+		} else { // process chat
+			String translated = language.translate(input);
+			send(new Chat(translated));
+			Trace.getInstance().write(this, getPlayer().getName() + ": " + "chat sent: " + input);
 		}
 		return true;
 	}
-	
+
 	/*
 	 * returns if a valid command or not
 	 */
@@ -360,12 +358,13 @@ public class Client implements Runnable {
 
 		return false;
 	}
-	
-	//deals with commands received from inputThread
+
+	// deals with commands received from inputThread
 	public boolean processCmd(String s) {
 		// get argument line
 		String[] cmd = s.split("\\s+"); // array of command + arguments
-		String[] args = Arrays.copyOfRange(cmd, 1, cmd.length); // just arguments
+		String[] args = Arrays.copyOfRange(cmd, 1, cmd.length); // just
+																// arguments
 		String joined = String.join(" ", args);
 		// switch over command
 		switch (cmd[0]) {
@@ -478,7 +477,7 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//toggle censoring of bad words
+	// toggle censoring of bad words
 	public boolean cmdCensor() {
 		Dialect dialect = this.language.getDialect();
 		boolean censor = !this.language.isCensored(); // toggle censor
@@ -495,7 +494,7 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//print out displays
+	// print out displays
 	public boolean cmdDisplay(String[] arr) {
 		String args = String.join(" ", arr); // join arguments into one string
 
@@ -532,7 +531,7 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//end your turn
+	// end your turn
 	public boolean cmdEnd() {
 		if (!this.player.isTurn) {
 			output("Client: Its not your turn.");
@@ -546,8 +545,8 @@ public class Client implements Runnable {
 			return true;
 		}
 	}
-	
-	//show cards in hand
+
+	// show cards in hand
 	public boolean cmdHand() {
 		if (this.player.getHand().isEmpty()) {
 			output("Client: You have no cards in your hand.");
@@ -560,7 +559,7 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//list possible commands and their corresponding syntax
+	// list possible commands and their corresponding syntax
 	public boolean cmdHelp() {
 		output("Client: list of possible commands: ");
 		for (Config.ClientCommand helpCmd : Config.ClientCommand.values()) {
@@ -569,7 +568,7 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//list other players in game
+	// list other players in game
 	public boolean cmdList() {
 		output("- State    : Player ");
 		for (int i = 0; i < this.gameState.getPlayers().size(); i++) {
@@ -578,19 +577,18 @@ public class Client implements Runnable {
 			if (name == this.player.getName()) { // found yourself
 				name += " (you)";
 			}
-			System.out.printf("%-10s : %s\n", p.getReadyState(), name);
+			output(String.format("%-10s : %s\n", p.getReadyState(), name));
 		}
 		return true;
 	}
 
- 	//play a card
+	// play a card
 	public boolean cmdPlay(String card) {
 		Card c = this.player.getCard(card); // get the card the user asked for
 
 		// card doesn't exist in hand
 		if (c == null) {
-			output(
-					"Client: you don't have the card: " + card + "\n\t Type '/hand' to view the cards in your hand.");
+			output("Client: you don't have the card: " + card + "\n\t Type '/hand' to view the cards in your hand.");
 			return false;
 			// not the player's turn
 		} else if (!this.player.isTurn) {
@@ -629,16 +627,16 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//player is ready to start game
+	// player is ready to start game
 	public boolean cmdReady() {
 		send(new Ready());
 		return true;
 	}
 
-	//player changes their name
+	// player changes their name
 	public boolean cmdSetname(String[] arr) {
 		String args = String.join(" ", arr); // join arguments into one string
-		
+
 		// check for invalid names
 		if ((args.equals("")) || (args.startsWith("-") || (args.startsWith("/")))) {
 			Trace.getInstance().write(this, "can't change name to '" + args + "'. Invalid name.");
@@ -651,7 +649,7 @@ public class Client implements Runnable {
 		}
 	}
 
-	//view everyone's tokens
+	// view everyone's tokens
 	public boolean cmdTokens() {
 		if (this.gameState.getNumPlayers() < 1) {
 			output("Client: there are no players in the game.");
@@ -667,11 +665,11 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//start a tournament
+	// start a tournament
 	public boolean cmdTournament(String[] args) {
 
 		// Check that no tournaments are running
-		if (this.gameState.getTournament()!= null) {
+		if (this.gameState.getTournament() != null) {
 			output("Client: a tournament is already in progress");
 			Trace.getInstance().write(this,
 					this.player.getName() + ": can't use /tournament, a tournament is already in progress.");
@@ -689,11 +687,11 @@ public class Client implements Runnable {
 		} else {
 			strCard = args[0];
 		}
-		
-		Card card = this.player.getCard(strCard); // get card to start tournament with
-		if (card == null){
-			output("Client: you don't have the card: " + strCard
-			+ "\n\t Type '/hand' to view the cards in your hand.");
+
+		Card card = this.player.getCard(strCard); // get card to start
+													// tournament with
+		if (card == null) {
+			output("Client: you don't have the card: " + strCard + "\n\t Type '/hand' to view the cards in your hand.");
 			return false;
 		}
 		if (!(card instanceof DisplayCard)) {
@@ -701,7 +699,7 @@ public class Client implements Runnable {
 			return false;
 		}
 		DisplayCard displayCard = (DisplayCard) card;
-		
+
 		Colour colour;
 		if (args.length == 2) {
 			try {
@@ -710,19 +708,18 @@ public class Client implements Runnable {
 				output("Client: " + args[0] + " is not a valid tournament colour. Type '/help'.");
 				return false;
 			}
-		}else{
+		} else {
 			colour = displayCard.getColour();
 		}
-		
+
 		// tournament must be an actual colour, not NONE
 		if (colour.isNone()) {
 			output("Client: " + colour.toString() + " is not a valid tournament colour. Type '/help'.");
 			return false;
 		}
-			
+
 		// last tournament was purple (another colour must be chosen)
-		if ((gameState.getLastColour().toString().equalsIgnoreCase("purple")) && 
-				(colour.equals(Colour.c.PURPLE))) {
+		if ((gameState.getLastColour().toString().equalsIgnoreCase("purple")) && (colour.equals(Colour.c.PURPLE))) {
 			output("Client: the last tournament was Jousting (purple). "
 					+ "\n A tournament of a different colour must be started.");
 			return false;
@@ -742,7 +739,7 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//change the language to translate chat messages with
+	// change the language to translate chat messages with
 	public boolean cmdTranslate(String d) {
 		boolean censor = this.language.isCensored();
 		// no translating
@@ -764,7 +761,7 @@ public class Client implements Runnable {
 		return false;
 	}
 
-	//withdraw from the current tournament
+	// withdraw from the current tournament
 	public boolean cmdWithdraw() {
 		send(new Withdraw());
 		this.player.setParticipation(false);
@@ -772,7 +769,7 @@ public class Client implements Runnable {
 		return true;
 	}
 
-	//print a modicum of gamestate
+	// print a modicum of gamestate
 	public boolean cmdGameState(GameState g) {
 		if (g == null) {
 			return false;
@@ -787,10 +784,11 @@ public class Client implements Runnable {
 		}
 		return true;
 	}
-	
-	private boolean output(String s){
+
+	private boolean output(String s) {
 		System.out.println(s);
-		if (view != null)view.writeConsole(s);
+		if (view != null)
+			view.writeConsole(s, 0);
 		return true;
 	}
 }
