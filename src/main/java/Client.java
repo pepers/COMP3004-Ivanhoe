@@ -12,7 +12,7 @@ import main.resources.Trace;
 public class Client implements Runnable {
 
 	private Thread receiveThread;						// Client thread to receive from Server
-	private ClientInput inputThread = null; 			// thread to input Client commands
+	public ClientInput inputThread = null; 			// thread to input Client commands
 	private boolean stop = false; 						// use to stop the Client
 	private boolean shutDown = false; 					// shutdown() has been called
 	private Socket socket = null;						// socket to connect to Server
@@ -22,7 +22,8 @@ public class Client implements Runnable {
 	private Language language; 							// to translate chat
 	private GameState gameState = null; 				// the local copy of the game state
 	private Player player = null; 						// the local copy of this client's player
-
+	private ClientView view = null;
+	
 	public Player getPlayer(){return player;}
 	//testing methods
 	public void setGameState(GameState g){
@@ -107,6 +108,7 @@ public class Client implements Runnable {
 				this.receiveThread = new Thread(this);
 				this.receiveThread.start();
 
+				view = new ClientView(this);
 				break;
 			} else {
 				System.out.println("There are no tournaments at that location! \n");
@@ -177,7 +179,7 @@ public class Client implements Runnable {
 	//get user input from console
 	public String userInput(String message) {
 		this.input = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println(message);
+		output(message);
 		String strInput = "";
 		try {
 			strInput = this.input.readLine();
@@ -280,7 +282,7 @@ public class Client implements Runnable {
 		} else if (o instanceof ActionCard) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player.addToHand((ActionCard) o);
-			System.out.println("Client: " + o.toString() + " added to hand");
+			output("Client: " + o.toString() + " added to hand");
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.toString() + " added to hand");
 			return true;
 
@@ -288,7 +290,7 @@ public class Client implements Runnable {
 		} else if (o instanceof DisplayCard) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player.addToHand((DisplayCard) o);
-			System.out.println("Client: " + o.toString() + " added to hand");
+			output("Client: " + o.toString() + " added to hand");
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.toString() + " added to hand");
 			return true;
 
@@ -298,7 +300,7 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received: "
 					+ ((Chat) o).getMessage());
 			String message = ((Chat) o).getMessage();
-			System.out.println(this.language.translate(message));
+			output(this.language.translate(message));
 			return true;
 			// Prompt
 		} else if (o instanceof Prompt) {
@@ -426,7 +428,7 @@ public class Client implements Runnable {
 	 */
 	public boolean tournamentAction(String cmd) {
 		if (!(this.player.getParticipation())) {
-			System.out.println("Client: can't perform that action while not in a tournament");
+			output("Client: can't perform that action while not in a tournament");
 			Trace.getInstance().write(this, this.player.getName() + ": can't use " + cmd + " while not in tournament.");
 			return false;
 		}
@@ -440,11 +442,11 @@ public class Client implements Runnable {
 		this.language = new Language(dialect, censor);
 		// censored
 		if (censor) {
-			System.out.println("Client: now censoring bad language.");
+			output("Client: now censoring bad language.");
 			Trace.getInstance().write(this, "Client: now censoring bad language.");
 			// not censored
 		} else {
-			System.out.println("Client: no longer censoring bad language.");
+			output("Client: no longer censoring bad language.");
 			Trace.getInstance().write(this, "Client: no longer censoring bad language.");
 		}
 		return true;
@@ -457,14 +459,14 @@ public class Client implements Runnable {
 		// show own display
 		if (arr.length == 0) {
 			if (!(this.player.getDisplay().print(gameState.getTournament().getColour()))) {
-				System.out.println("Client: no cards in your display");
+				output("Client: no cards in your display");
 				Trace.getInstance().write(this, this.player.getName() + ": No cards in your display to show.");
 			}
 			// show all displays
 		} else if (args.equalsIgnoreCase("-a")) {
 			for (Player p : this.gameState.getPlayers()) {
 				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
-					System.out.println("Client: no cards in " + p.getName() + "'s display\n");
+					output("Client: no cards in " + p.getName() + "'s display\n");
 					Trace.getInstance().write(this,
 							this.player.getName() + ": No cards in " + p.getName() + "'s display.");
 				}
@@ -474,11 +476,11 @@ public class Client implements Runnable {
 			Player p = this.gameState.getPlayer(args);
 			if (p == null) { // player doesn't exist
 				Trace.getInstance().write(this, args + " doesn't exist.  Can't print their Display.");
-				System.out.println("Client: " + args + " doesn't exist.  Can't print their Display.");
+				output("Client: " + args + " doesn't exist.  Can't print their Display.");
 				return false;
 			} else {
 				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
-					System.out.println("Client: no cards in " + p.getName() + "'s display\n");
+					output("Client: no cards in " + p.getName() + "'s display\n");
 					Trace.getInstance().write(this,
 							this.player.getName() + ": No cards in " + p.getName() + "'s display.");
 				}
@@ -490,10 +492,10 @@ public class Client implements Runnable {
 	//end your turn
 	public boolean cmdEnd() {
 		if (!this.player.isTurn) {
-			System.out.println("Client: Its not your turn.");
+			output("Client: Its not your turn.");
 			return false;
 		} else if (gameState.getTournament() == null && this.player.hasValidDisplayCard(new Colour(Colour.c.NONE))) {
-			System.out.println("Client: You MUST start a tournament if able.");
+			output("Client: You MUST start a tournament if able.");
 			return false;
 		} else {
 			this.player.isTurn = false;
@@ -505,11 +507,11 @@ public class Client implements Runnable {
 	//show cards in hand
 	public boolean cmdHand() {
 		if (this.player.getHand().isEmpty()) {
-			System.out.println("Client: You have no cards in your hand.");
+			output("Client: You have no cards in your hand.");
 		} else {
-			System.out.println("Client: You have the following cards in your hand: ");
+			output("Client: You have the following cards in your hand: ");
 			for (Card card : this.player.getHand()) {
-				System.out.println("\t- " + card.toString());
+				output("\t- " + card.toString());
 			}
 		}
 		return true;
@@ -517,16 +519,16 @@ public class Client implements Runnable {
 
 	//list possible commands and their corresponding syntax
 	public boolean cmdHelp() {
-		System.out.println("Client: list of possible commands: ");
+		output("Client: list of possible commands: ");
 		for (Config.ClientCommand helpCmd : Config.ClientCommand.values()) {
-			System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
+			output("\t/" + helpCmd + helpCmd.getSyntax());
 		}
 		return true;
 	}
 
 	//list other players in game
 	public boolean cmdList() {
-		System.out.println("- State    : Player ");
+		output("- State    : Player ");
 		for (int i = 0; i < this.gameState.getPlayers().size(); i++) {
 			Player p = this.gameState.getPlayers().get(i);
 			String name = p.getName();
@@ -544,7 +546,7 @@ public class Client implements Runnable {
 
 		// card doesn't exist in hand
 		if (c == null) {
-			System.out.println(
+			output(
 					"Client: you don't have the card: " + card + "\n\t Type '/hand' to view the cards in your hand.");
 			return false;
 			// not the player's turn
@@ -554,28 +556,28 @@ public class Client implements Runnable {
 				send(new Play(c));
 				return true;
 			} else {
-				System.out.println("Client: you may not play that card when it is not your turn");
+				output("Client: you may not play that card when it is not your turn");
 				return false;
 			}
 			// is player's turn
 		} else {
 			if (c instanceof DisplayCard) {
 				if (gameState.getTournament() == null) {
-					System.out.println("Client: no tournament is running, start one with /tournament");
+					output("Client: no tournament is running, start one with /tournament");
 					return false;
 				} else if (!(((DisplayCard) c).getColour().equals("none")
 						|| gameState.getTournament().getColour().equals(((DisplayCard) c).getColour()))) {
-					System.out.println("Client: not a valid color for the current tournament");
+					output("Client: not a valid color for the current tournament");
 					return false;
 				} else if (c.toString().equals("maiden:6") && player.getDisplay().hasCard((DisplayCard) c)) {
 					Trace.getInstance().write(this, "Client: you may not have more than one maiden in your Display.");
-					System.out.println("Client: you may not have more than one maiden in your Display.");
+					output("Client: you may not have more than one maiden in your Display.");
 					return false;
 				}
 				// action card
 			} else {
 				if (gameState.getTournament() == null) {
-					System.out.println("Client: no tournament is running, start one with /tournament");
+					output("Client: no tournament is running, start one with /tournament");
 					return false;
 				}
 			}
@@ -597,7 +599,7 @@ public class Client implements Runnable {
 		// check for invalid names
 		if ((args.equals("")) || (args.startsWith("-") || (args.startsWith("/")))) {
 			Trace.getInstance().write(this, "can't change name to '" + args + "'. Invalid name.");
-			System.out.println("Client: can't change name to '" + args + "'. Invalid name.");
+			output("Client: can't change name to '" + args + "'. Invalid name.");
 			return false;
 			// valid name
 		} else {
@@ -609,15 +611,15 @@ public class Client implements Runnable {
 	//view everyone's tokens
 	public boolean cmdTokens() {
 		if (this.gameState.getNumPlayers() < 1) {
-			System.out.println("Client: there are no players in the game.");
+			output("Client: there are no players in the game.");
 			return false;
 		} else {
-			System.out.println("Client: listing tokens: ");
+			output("Client: listing tokens: ");
 		}
 		for (Player p : this.gameState.getPlayers()) {
 			Trace.getInstance().write(this, "Tokens: " + p.getName() + " : " + p.listTokens());
-			System.out.println(p.getName() + ": ");
-			System.out.println(p.listTokens());
+			output(p.getName() + ": ");
+			output(p.listTokens());
 		}
 		return true;
 	}
@@ -627,14 +629,14 @@ public class Client implements Runnable {
 
 		// Check that no tournaments are running
 		if (this.gameState.getTournament()!= null) {
-			System.out.println("Client: a tournament is already in progress");
+			output("Client: a tournament is already in progress");
 			Trace.getInstance().write(this,
 					this.player.getName() + ": can't use /tournament, a tournament is already in progress.");
 			return false;
 		}
 		// Check if its their turn
 		if (!(this.player.isTurn)) {
-			System.out.println("Client: you may not start a tournament when it is not your turn");
+			output("Client: you may not start a tournament when it is not your turn");
 			return false;
 		}
 
@@ -647,12 +649,12 @@ public class Client implements Runnable {
 		
 		Card card = this.player.getCard(strCard); // get card to start tournament with
 		if (card == null){
-			System.out.println("Client: you don't have the card: " + strCard
+			output("Client: you don't have the card: " + strCard
 			+ "\n\t Type '/hand' to view the cards in your hand.");
 			return false;
 		}
 		if (!(card instanceof DisplayCard)) {
-			System.out.println("Client: " + card.toString() + " is not a display card.");
+			output("Client: " + card.toString() + " is not a display card.");
 			return false;
 		}
 		DisplayCard displayCard = (DisplayCard) card;
@@ -662,7 +664,7 @@ public class Client implements Runnable {
 			try {
 				colour = new Colour(args[0]);
 			} catch (IllegalArgumentException iae) {
-				System.out.println("Client: " + args[0] + " is not a valid tournament colour. Type '/help'.");
+				output("Client: " + args[0] + " is not a valid tournament colour. Type '/help'.");
 				return false;
 			}
 		}else{
@@ -671,14 +673,14 @@ public class Client implements Runnable {
 		
 		// tournament must be an actual colour, not NONE
 		if (colour.isNone()) {
-			System.out.println("Client: " + colour.toString() + " is not a valid tournament colour. Type '/help'.");
+			output("Client: " + colour.toString() + " is not a valid tournament colour. Type '/help'.");
 			return false;
 		}
 			
 		// last tournament was purple (another colour must be chosen)
 		if ((gameState.getLastColour().toString().equalsIgnoreCase("purple")) && 
 				(colour.equals(Colour.c.PURPLE))) {
-			System.out.println("Client: the last tournament was Jousting (purple). "
+			output("Client: the last tournament was Jousting (purple). "
 					+ "\n A tournament of a different colour must be started.");
 			return false;
 		}
@@ -687,7 +689,7 @@ public class Client implements Runnable {
 		if (!displayCard.getColour().isNone()) {
 			// tournament colour selected doesn't equal display card colour
 			if (!displayCard.getColour().equals(colour)) {
-				System.out.println("Client: " + displayCard.toString()
+				output("Client: " + displayCard.toString()
 						+ " does not match the colour of the tournament you are trying to start. "
 						+ "\n\t Type '/hand' to view the cards in your hand.");
 				return false;
@@ -704,7 +706,7 @@ public class Client implements Runnable {
 		if (Language.Dialect.none.toString().equals(d)) {
 			this.language = new Language(Language.Dialect.none, censor);
 			Trace.getInstance().write(this, "Client: no longer translating chat messages");
-			System.out.println("Client: no longer translating chat messages");
+			output("Client: no longer translating chat messages");
 			return true;
 		}
 		// translating
@@ -712,7 +714,7 @@ public class Client implements Runnable {
 			if (dialect.toString().equals(d)) {
 				this.language = new Language(dialect, censor);
 				Trace.getInstance().write(this, "Client: translating chat to " + this.language.getDialect().toString());
-				System.out.println("Client: translating chat to " + this.language.getDialect().toString());
+				output("Client: translating chat to " + this.language.getDialect().toString());
 				return true;
 			}
 		}
@@ -732,14 +734,20 @@ public class Client implements Runnable {
 		if (g == null) {
 			return false;
 		}
-		System.out.println("Gamestate::");
+		output("Gamestate::");
 		if (g.getTournament() == null) {
-			System.out.println("No tournament running.");
+			output("No tournament running.");
 		}
 		for (Player p : g.getPlayers()) {
-			System.out.println(p.getName() + ":" + p.getId());
-			System.out.println("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
+			output(p.getName() + ":" + p.getId());
+			output("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
 		}
+		return true;
+	}
+	
+	private boolean output(String s){
+		System.out.println(s);
+		if (view != null)view.writeConsole(s);
 		return true;
 	}
 }
