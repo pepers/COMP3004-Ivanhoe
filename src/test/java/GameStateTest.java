@@ -122,8 +122,7 @@ public class GameStateTest {
 		assertEquals(2, g.getPlayer(players[2].getName()).getDisplay().size());
 		assertEquals(1, g.getPlayer(players[3].getName()).getDisplay().size());
 	}
-
-
+	
 	@Test
 	public void TestDisgrace() {
 		System.out.println("\nTest: Disgrace Action");

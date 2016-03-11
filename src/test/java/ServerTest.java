@@ -59,8 +59,8 @@ public class ServerTest {
 		g.addPlayer(p);
 		Tournament t = new Tournament(new Colour(Colour.c.BLUE));
 		g.startTournament(t);
-		System.out.println("Deck Size: " + g.getDeck().size());
-		System.out.println("Discard Size: " + g.getDeck().discardSize());
+		System.out.println("Deck Size: " + GameState.getDeck().size());
+		System.out.println("Discard Size: " + GameState.getDeck().discardSize());
 		System.out.println("Display Size: " + p.getDisplay().size());
 		for (int i=0; i<200; i++) {
 			Card card = g.drawFromDeck();
@@ -69,13 +69,13 @@ public class ServerTest {
 			} else if (card instanceof DisplayCard) {
 				g.addDisplay(p, (DisplayCard) card); 
 			}
-			System.out.println("Deck Size: " + g.getDeck().size());
-			System.out.println("Discard Size: " + g.getDeck().discardSize());
+			System.out.println("Deck Size: " + GameState.getDeck().size());
+			System.out.println("Discard Size: " + GameState.getDeck().discardSize());
 			System.out.println("Display Size: " + p.getDisplay().size());
 		}
 		
 	}
-
+	
 	@Test
 	public void TestClientJoin() {
 		System.out.println("\nTest: Joined Client");

@@ -240,7 +240,6 @@ public class GameState implements Serializable{
 			default:
 				return false;
 		}	
-		deck.discard(c);
 		return true;
 	}
 }

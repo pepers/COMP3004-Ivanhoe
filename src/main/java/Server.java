@@ -46,6 +46,9 @@ public class Server implements Runnable, Serializable {
 	private int numReady; 									// number of ready player
 	private ConcurrentHashMap<ServerThread, Player> clients;// holds the threads mapped to player objects
 
+	private long time = System.currentTimeMillis();         // time at last Action Card
+	private ActionCard blockedAction = null;                // last Action Card, waiting to be executed
+	
 	private boolean stop = false; 							// stops the main thread
 	private Queue<ActionWrapper> actions; 					// server actions to operate upon
 	private GameState gameState;							// data on the current game
@@ -263,7 +266,16 @@ public class Server implements Runnable, Serializable {
 			if ((numReady == numClients) && (numReady >= minPlayers)) {
 				startGame();
 			}
-
+			
+			// have action waiting?
+			if (blockedAction != null) {
+				// it has been longer than 2 sec
+				if ((System.currentTimeMillis() - time) > 2000) { 
+					gameState.execute(blockedAction);
+					blockedAction = null;
+				}
+			}
+			
 			if (!actions.isEmpty()) {
 				ActionWrapper a = actions.poll();
 				evaluate(a);
@@ -364,18 +376,37 @@ public class Server implements Runnable, Serializable {
 		}
 		if (action.object instanceof Play) {
 			Card c = ((Play) action.object).getCard();
-			broadcast(action.origin.getName() + " plays a " + c.toString());
 			if (c instanceof DisplayCard) {
+				broadcast(action.origin.getName() + " plays a " + c.toString());
 				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), (DisplayCard) c);
 				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
 				return true;
 			}
 			if (c instanceof ActionCard) {
-				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
-				gameState.execute(((ActionCard) c));
-				return true;
+				if (c.toString().equalsIgnoreCase("Ivanhoe")) {
+					if (blockedAction != null) {
+						broadcast(action.origin.getName() + " blocks a " + blockedAction.toString() + " card with Ivanhoe!");
+						System.out.println(action.origin.getName() + " blocks a " + blockedAction.toString() + " card with Ivanhoe!");
+					} else {
+						broadcast(action.origin.getName() + " plays a useless Ivanhoe.");
+						System.out.println(action.origin.getName() + " plays a useless Ivanhoe.");
+					}
+					gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
+					GameState.getDeck().discard(c);
+					blockedAction = null;
+					return true;
+				} else if (blockedAction != null) {
+					broadcast(action.origin.getName() + " is playing a " + c.toString());
+					gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
+					GameState.getDeck().discard(c);
+					this.time = System.currentTimeMillis();
+					blockedAction = (ActionCard) c;
+					return true;
+				} else {
+					messageExcept("Your Action Card cooldown is " + (System.currentTimeMillis() - time)/1000 + " seconds.", gameState.getPlayer(action.origin.getName()));
+					return false;
+				}
 			}
-			
 		}
 		return false;
 	}
