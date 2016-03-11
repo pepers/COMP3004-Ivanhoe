@@ -55,12 +55,10 @@ public class ClientView extends JFrame {
 
 	public ClientView(Client c) {
 		client = c;
+		int gs = (Toolkit.getDefaultToolkit().getScreenResolution()/150) + 1;// gui scale
 		
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-		System.out.println(screenSize + " : " + dpi);
 		
-		this.setSize(1240, 675);
+		this.setSize(1240 * gs, 675 * gs);
 		//this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
