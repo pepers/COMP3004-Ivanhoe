@@ -2,10 +2,12 @@ package main.java;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
@@ -22,26 +24,26 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-
 import main.resources.Trace;
 import net.miginfocom.swing.MigLayout;
 
 public class ClientView extends JFrame {
 
 	//TODO remove main
-	
 	public static void main(String args[]) throws InterruptedException{
 		new ClientView(null);
 		
 		Deck d = new Deck();
 		d.initialize();
 		
+		/*
 		while(true){
 			Thread.sleep(1000);
 			ArrayList<Card> a = new ArrayList<Card>();
 			a.add(d.draw());
 			hand.update(a);
 		}
+		*/
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -53,17 +55,22 @@ public class ClientView extends JFrame {
 
 	public ClientView(Client c) {
 		client = c;
-		this.setSize(1240, 655);
-		this.setResizable(false);
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+		System.out.println(screenSize + " : " + dpi);
+		
+		this.setSize(1240, 675);
+		//this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		parent = new JPanel(new MigLayout(
 				"", 
-				"5[200!]5[200!]5[200!]5[200!]5[200!]5[200!]5",
-				"5[120!]5[120!]5[120!]5[120!]5[120!]5"));
+				"5[200]5[200]5[200]5[200]5[200]5[200]5",
+				"5[120]5[120]5[120]5[120]5[120]20"));
 		parent.setBackground(dark_sand);
 
-		header = new ImagePanel("./res/cobblestone.png", ImagePanel.FILL);
+		header = new ImagePanel("./res/cobblestone.png", ImagePanel.TILE);
 		header.setToolTipText("header");
 		parent.add(header, "cell 0 0 4 1, grow");
 
@@ -72,7 +79,7 @@ public class ClientView extends JFrame {
 		title.setToolTipText("title");
 		parent.add(title, "cell 4 0 2 1, grow");
 
-		arena = new ImagePanel("./res/sand.png", ImagePanel.FILL);
+		arena = new ImagePanel("./res/sand.png", ImagePanel.TILE);
 		arena.setToolTipText("arena");
 		parent.add(arena, "cell 0 1 4 3, grow");
 
@@ -253,8 +260,8 @@ public class ClientView extends JFrame {
 				}
 				break;
 			case FILL:
-				g.drawImage(img, 0, 0, this.getWidth(), img.getHeight(null) * (this.getWidth() / img.getWidth(null)),
-						null);
+				double d = img.getHeight(null) * ((double)this.getWidth() / img.getWidth(null));
+				g.drawImage(img, 0, 0, this.getWidth(), (int) d, null);
 				break;
 			default:
 				int x = (this.getWidth() - img.getWidth(null)) / 2;
