@@ -74,4 +74,8 @@ public class ActionCard extends Card {
 	public String toToolTip() {
 		return "<html><p width=\"180\">" +this.name + "<BR/><BR/>" + this.description+"</p></html>";
 	}
+	
+	public String getDescription(){
+		return description;
+	}
 }

@@ -12,7 +12,9 @@ public class DisplayCard extends Card{
 		this.colour = colour;
 	}
 	
-	public Colour getColour() { return this.colour; } // return colour
+	public Colour getColour() { 
+		return this.colour; 
+	}
 	
 	@Override
 	public String toString(){

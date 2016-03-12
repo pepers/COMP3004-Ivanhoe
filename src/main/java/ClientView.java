@@ -6,7 +6,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,6 +49,7 @@ public class ClientView extends JFrame {
 		
 	}
 
+	private static Image cardback;
 	private static final long serialVersionUID = 1L;
 	private JPanel parent, header, title, arena, context, console;
 	static CardPanel hand;
@@ -55,12 +58,20 @@ public class ClientView extends JFrame {
 	private Color dark_sand = new Color(133, 113, 72);
 
 	public ClientView(Client c) {
+		
+		try {
+			cardback = ImageIO.read(new File("./res/displaycards/cardback.png"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 		client = c;
 		this.setResizable(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(1240, 675);
-		parent = new JPanel(new MigLayout("fill", "5[:200:]5[:200:]5[:200:]5[:200:]5[:200:]5[:200:]5",
-				"5[:120:]5[:120:]5[:120:]5[:120:]5[:120:]20"));
+		this.setSize(1255, 685);
+		parent = new JPanel(new MigLayout("fill", 
+				"5[200::]5[200::]5[200::]5[200::]5[200::]5[200::]5",
+				"5[120::]5[120::]5[120::]5[120::]5[120::]20"));
 		parent.setBackground(dark_sand);
 
 		header = new ImagePanel("./res/cobblestone.png", ImagePanel.TILE);
@@ -78,6 +89,21 @@ public class ClientView extends JFrame {
 
 		context = new ImagePanel("./res/wood1.png", ImagePanel.TILE);
 		context.setToolTipText("context");
+		context.setLayout(new MigLayout("fill", "5[200::]5[200::]5", "5[]5"));
+		
+		ImagePanel cardContext = new ImagePanel("./res/displaycards/cardback.png", ImagePanel.CENTER_SCALE);
+		cardContext.setOpaque(false);
+		cardContext.setLayout(new MigLayout("", "5[200::]5", "5[120::][120::]5"));
+		
+		TransparentTextArea cardDescription = new TransparentTextArea();
+		cardDescription.setEditable(false);
+		cardDescription.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		cardDescription.setLineWrap(true);
+		cardDescription.setWrapStyleWord(true);
+		cardDescription.setVisible(false);
+		cardContext.add(cardDescription, "cell 0 1, grow");
+		
+		context.add(cardContext, "cell 1 0, grow");
 		parent.add(context, "cell 4 1 2 2, grow");
 
 		hand = new CardPanel("./res/wood2.png", ImagePanel.TILE);
@@ -147,6 +173,7 @@ public class ClientView extends JFrame {
 		public static final int TILE = 2;
 		public static final int FILL = 3;
 		public static final int CENTER_SCALE = 4;
+		public static final int CENTER = 5;
 
 		Image img;
 		int mode = 0;
@@ -193,9 +220,12 @@ public class ClientView extends JFrame {
 				double x = (this.getWidth() - img.getWidth(null) * r) / 2;
 				g.drawImage(img, (int) x, 0, (int) (img.getWidth(null) * r), (int) (img.getHeight(null) * r), null);
 				break;
-			default:
+			case CENTER:
 				g.drawImage(img, (this.getWidth() - img.getWidth(null)) / 2,
 						(this.getHeight() - img.getHeight(null)) / 2, null);
+				break;
+			default:
+				g.drawImage(img, 0, 0, null);
 				break;
 			}
 		}
@@ -256,15 +286,15 @@ public class ClientView extends JFrame {
 		
 		private Card card;
 		private BufferedImage img;
-
+		boolean mouseOver = false;
+		
 		public CardView(Card c, BufferedImage i) {
 			card = c;
 			img = i;
 			
 			this.setSize(new Dimension(100, 142));
-			this.setOpaque(false);
+			this.setOpaque(true);
 			this.setVisible(true);
-			this.setToolTipText(c.toToolTip());
 			
 			addMouseListener(new MouseAdapter() {
 				@Override
@@ -277,18 +307,31 @@ public class ClientView extends JFrame {
 				}
 				@Override
 				public void mouseExited(MouseEvent e) {
-
+					ImagePanel i = ((ImagePanel)((ImagePanel)context).getComponent(0));
+					i.setImage(cardback);
+					mouseOver = false;
+					((JTextArea)i.getComponent(0)).setText("");
+					((JTextArea)i.getComponent(0)).setVisible(false);
+					context.repaint();
+					repaint();
 				}
 				@Override
 				public void mouseEntered(MouseEvent e) {
-
+					ImagePanel i = ((ImagePanel)((ImagePanel)context).getComponent(0));
+					i.setImage(img);
+					mouseOver = true;
+					if(c instanceof ActionCard){
+						((JTextArea)i.getComponent(0)).setText(((ActionCard)c).getDescription());
+						((JTextArea)i.getComponent(0)).setVisible(true);
+					}
+					context.repaint();
+					repaint();
 				}
 			});
 			addMouseMotionListener(new MouseMotionAdapter() {
 				@Override
 				public void mouseMoved(MouseEvent e) {
-					((ImagePanel)context).setImage(img);
-					context.repaint();
+					
 				}
 			});
 			
@@ -298,6 +341,10 @@ public class ClientView extends JFrame {
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.drawImage(img,0,0, 100, 142, null);
+			if(mouseOver){
+				g.setColor(new Color(0, 0, 0, 70));
+				g.fillRect(0, 0, 100, 142);
+			}
 		}
 
 		@Override
@@ -305,4 +352,25 @@ public class ClientView extends JFrame {
 		    return new Dimension(100, 142);
 		}
 	}
+	
+	public class TransparentTextArea extends JTextArea {
+		private static final long serialVersionUID = 1L;
+
+		public TransparentTextArea() {
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            g.setColor(new Color(255, 255, 255, 128));
+            Insets insets = getInsets();
+            int x = insets.left;
+            int y = insets.top;
+            int width = getWidth() - (insets.left + insets.right);
+            int height = getHeight() - (insets.top + insets.bottom);
+            g.fillRect(x, y, width, height);
+            super.paintComponent(g);
+        }
+
+    }
 }
