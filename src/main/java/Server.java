@@ -395,7 +395,7 @@ public class Server implements Runnable, Serializable {
 					GameState.getDeck().discard(c);
 					blockedAction = null;
 					return true;
-				} else if (blockedAction != null) {
+				} else if (blockedAction == null) {
 					broadcast(action.origin.getName() + " is playing a " + c.toString());
 					gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
 					GameState.getDeck().discard(c);
@@ -798,6 +798,7 @@ public class Server implements Runnable, Serializable {
 				p.addToHand(card); // give Action Card
 				Trace.getInstance().write(this, card.toString() + " Action Card given to " + p.getName() + ".");
 				System.out.println(card.toString() + " Action Card given to " + p.getName() + ".");
+				message("The King has shown you favour, and given you a " + card.toString() + " card!", p);
 				return true;
 			} else {
 				String[] strDC = strCard.split(":");
@@ -825,6 +826,7 @@ public class Server implements Runnable, Serializable {
 							Trace.getInstance().write(this,
 									card.toString() + " Display Card given to " + p.getName() + ".");
 							System.out.println(card.toString() + " Display Card given to " + p.getName() + ".");
+							message("The King has shown you favour, and given you a " + card.toString() + " card!", p);
 							return true;
 						}
 					}
