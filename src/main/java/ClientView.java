@@ -3,15 +3,16 @@ package main.java;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,28 +25,28 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
 import main.resources.Trace;
 import net.miginfocom.swing.MigLayout;
 
 public class ClientView extends JFrame {
 
-	//TODO remove main
-	public static void main(String args[]) throws InterruptedException{
+	// TODO remove main
+	public static void main(String args[]) throws InterruptedException {
 		new ClientView(null);
+	
 		
 		Deck d = new Deck();
 		d.initialize();
+		ArrayList<Card> a = new ArrayList<Card>();
 		
-		/*
-		while(true){
-			Thread.sleep(1000);
-			ArrayList<Card> a = new ArrayList<Card>();
+		while(a.size()<7){
 			a.add(d.draw());
 			hand.update(a);
 		}
-		*/
+		
 	}
-	
+
 	private static final long serialVersionUID = 1L;
 	private JPanel parent, header, title, arena, context, console;
 	static CardPanel hand;
@@ -58,9 +59,7 @@ public class ClientView extends JFrame {
 		this.setResizable(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(1240, 675);
-		parent = new JPanel(new MigLayout(
-				"fill", 
-				"5[:200:]5[:200:]5[:200:]5[:200:]5[:200:]5[:200:]5",
+		parent = new JPanel(new MigLayout("fill", "5[:200:]5[:200:]5[:200:]5[:200:]5[:200:]5[:200:]5",
 				"5[:120:]5[:120:]5[:120:]5[:120:]5[:120:]20"));
 		parent.setBackground(dark_sand);
 
@@ -77,11 +76,11 @@ public class ClientView extends JFrame {
 		arena.setToolTipText("arena");
 		parent.add(arena, "cell 0 1 4 3, grow");
 
-		context = new ImagePanel("./res/wood1.png");
+		context = new ImagePanel("./res/wood1.png", ImagePanel.TILE);
 		context.setToolTipText("context");
 		parent.add(context, "cell 4 1 2 2, grow");
 
-		hand = new CardPanel("./res/wood2.png");
+		hand = new CardPanel("./res/wood2.png", ImagePanel.TILE);
 		hand.setToolTipText("hand");
 		parent.add(hand, "cell 4 3 2 2, grow");
 
@@ -108,7 +107,8 @@ public class ClientView extends JFrame {
 		JTextField input = new JTextField();
 		input.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(client != null)client.processInput(input.getText());
+				if (client != null)
+					client.processInput(input.getText());
 				input.setText("");
 			}
 		});
@@ -141,78 +141,6 @@ public class ClientView extends JFrame {
 		}
 	}
 
-	// Hand visual structure
-	class CardPanel extends ImagePanel {
-		private static final long serialVersionUID = 1L;
-		private HashMap<Card, BufferedImage> images;
-		private ArrayList<Card> cards;
-
-		public CardPanel(String s) {
-			super(s);
-			cards = new ArrayList<Card>();
-			images = new HashMap<Card, BufferedImage>();
-		}
-
-		public void update(ArrayList<Card> newCards) {
-			cards.addAll(newCards);
-			try {
-				for (Card c : cards) {
-					if (images.containsKey(c)) {
-						continue;
-					}
-					if (c instanceof DisplayCard) {
-						String[] subs = c.toString().toLowerCase().split(":");
-						String name = String.join("", subs);
-						Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
-						images.put(c, ImageIO.read(new File("./res/displaycards/" + name + ".png")));
-					} else if (c instanceof ActionCard) {
-						String[] subs = c.toString().toLowerCase().split(" ");
-						String name = String.join("", subs);
-						Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
-						images.put(c, ImageIO.read(new File("./res/actioncards/" + name + ".png")));
-					}
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-			this.repaint();
-		}
-
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
-
-			for (int i = 0; i < cards.size(); i++) {
-				BufferedImage image = images.get(cards.get(i));
-				if (image != null) {
-					Trace.getInstance().write(this, "Drawing " + cards.get(i).toString());
-					g.drawImage(changeSize(image, 100, 142), (i%7 * 50) + 5, 5 + (142 * (i/7)), null);
-				}
-			}
-		}
-
-		public BufferedImage changeSize(BufferedImage img, int newW, int newH) {
-			Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-			BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2d = dimg.createGraphics();
-			g2d.drawImage(tmp, 0, 0, null);
-			g2d.dispose();
-			return dimg;
-		}
-
-		public BufferedImage scale(BufferedImage img, double percent) {
-			int w = img.getWidth();
-			int h = img.getHeight();
-			BufferedImage after = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-			AffineTransform at = new AffineTransform();
-			at.scale(percent, percent);
-			AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-			after = scaleOp.filter(img, after);
-			return after;
-		}
-
-	}
-
 	class ImagePanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		public static final int STRETCH = 1;
@@ -230,7 +158,6 @@ public class ClientView extends JFrame {
 				e.printStackTrace();
 			}
 		}
-
 		public ImagePanel(String i, int mode) {
 			try {
 				img = ImageIO.read(new File(i));
@@ -240,6 +167,9 @@ public class ClientView extends JFrame {
 			this.mode = mode;
 		}
 
+		public void setImage(Image i){
+			img = i;
+		}
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
@@ -255,20 +185,124 @@ public class ClientView extends JFrame {
 				}
 				break;
 			case FILL:
-				double d = img.getHeight(null) * ((double)this.getWidth() / img.getWidth(null));
+				double d = img.getHeight(null) * ((double) this.getWidth() / img.getWidth(null));
 				g.drawImage(img, 0, 0, this.getWidth(), (int) d, null);
 				break;
 			case CENTER_SCALE:
-				double r = (double)this.getHeight()/img.getHeight(null);
+				double r = (double) this.getHeight() / img.getHeight(null);
 				double x = (this.getWidth() - img.getWidth(null) * r) / 2;
-				g.drawImage(img, (int)x, 0, 
-						(int)(img.getWidth(null) * r), 
-						(int)(img.getHeight(null) * r), null);
+				g.drawImage(img, (int) x, 0, (int) (img.getWidth(null) * r), (int) (img.getHeight(null) * r), null);
 				break;
 			default:
-				g.drawImage(img, (this.getWidth() - img.getWidth(null)) / 2, (this.getHeight() - img.getHeight(null)) / 2, null);
+				g.drawImage(img, (this.getWidth() - img.getWidth(null)) / 2,
+						(this.getHeight() - img.getHeight(null)) / 2, null);
 				break;
 			}
+		}
+	}
+
+	// Hand visual structure
+	class CardPanel extends ImagePanel {
+		private static final long serialVersionUID = 1L;
+		private HashMap<Card, BufferedImage> images;
+		private ArrayList<Card> hand;
+		
+		public CardPanel(String s) {
+			super(s);
+			this.setLayout(new FlowLayout());
+			hand = new ArrayList<Card>();
+			images = new HashMap<Card, BufferedImage>();	
+		}
+		public CardPanel(String s, int mode) {
+			super(s, mode);
+			this.setLayout(new FlowLayout());
+			hand = new ArrayList<Card>();
+			images = new HashMap<Card, BufferedImage>();	
+		}
+		
+		public void update(ArrayList<Card> newHand) {
+			hand = newHand;
+			this.removeAll();
+			for (Card c : hand){
+				try{
+					if (images.containsKey(c)) {
+						Trace.getInstance().write(this, "already have " + c.toString());
+					} else {
+						if (c instanceof DisplayCard) {
+							String[] subs = c.toString().toLowerCase().split(":");
+							String name = String.join("", subs);
+							Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
+							images.put(c, ImageIO.read(new File("./res/displaycards/" + name + ".png")));
+						} else if (c instanceof ActionCard) {
+							String[] subs = c.toString().toLowerCase().split(" ");
+							String name = String.join("", subs);
+							Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
+							images.put(c, ImageIO.read(new File("./res/actioncards/" + name + ".png")));
+						}
+					}
+				}catch(IOException e){
+					e.printStackTrace();
+				}
+				CardView view = new CardView(c, images.get(c));
+				this.add(view);
+			}
+			this.validate();
+			this.repaint();
+		}
+	}
+
+	class CardView extends JPanel {
+		private static final long serialVersionUID = 1L;
+		
+		private Card card;
+		private BufferedImage img;
+
+		public CardView(Card c, BufferedImage i) {
+			card = c;
+			img = i;
+			
+			this.setSize(new Dimension(100, 142));
+			this.setOpaque(false);
+			this.setVisible(true);
+			this.setToolTipText(c.toToolTip());
+			
+			addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					System.out.println(card.toString() + " pressed");
+				}
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					System.out.println(card.toString() + " released");
+				}
+				@Override
+				public void mouseExited(MouseEvent e) {
+
+				}
+				@Override
+				public void mouseEntered(MouseEvent e) {
+
+				}
+			});
+			addMouseMotionListener(new MouseMotionAdapter() {
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					((ImagePanel)context).setImage(img);
+					context.repaint();
+				}
+			});
+			
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.drawImage(img,0,0, 100, 142, null);
+		}
+
+		@Override
+		public Dimension getPreferredSize(){
+		    return new Dimension(100, 142);
 		}
 	}
 }

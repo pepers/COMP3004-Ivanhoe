@@ -14,6 +14,7 @@ public class DisplayCard extends Card{
 	
 	public Colour getColour() { return this.colour; } // return colour
 	
+	@Override
 	public String toString(){
 		// SQUIRE
 		if ((this.colour.toString().equalsIgnoreCase("None")) && 
@@ -42,5 +43,10 @@ public class DisplayCard extends Card{
 	public boolean equals(Object o) {
 		Card c = (Card) o;
 		return c.toString().equals(this.toString());
+	}
+	
+	@Override
+	public String toToolTip(){
+		return toString();
 	}
 }
