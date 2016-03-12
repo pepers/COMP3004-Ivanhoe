@@ -4,7 +4,7 @@ group project
 ### Table of Contents:
 1. [Authors](README.md#authors)     
 2. [Major Releases](README.md#major-releases)
-3. [Installation/Setup](README.md#installation-setup)
+3. [Installation/Setup](README.md#installation--setup)
 4. [Running](README.md#running)
 
 ---
