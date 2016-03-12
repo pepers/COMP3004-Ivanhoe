@@ -1,17 +1,22 @@
 # COMP3004-Ivanhoe
-group project
+group project for COMP3004 (Object-Oriented Software Engineering)
 
 ### Table of Contents:
 1. [Authors](README.md#authors)     
-2. [Major Releases](README.md#major-releases)
-3. [Installation/Setup](README.md#installation--setup)
-4. [Running](README.md#running)
+2. [About](README.md#about)
+3. [Major Releases](README.md#major-releases)
+4. [Installation/Setup](README.md#installation--setup)
+5. [Running](README.md#running)
 
 ---
 ### Authors:
 Team #13: 
 - Matthew Pepers
 - Khalil van Alphen
+
+---
+### About:
+Ivanhoe is a card game by Reiner Knizia.  The rules and faq for the game can be found at [/doc/rules/](https://github.com/pepers/COMP3004-Ivanhoe/tree/master/doc/rules).  This Java project attempts to faithfully recreate the original game as a digital computer game, in which you can connect to other players over a network.
 
 ---
 ### Major Releases:
