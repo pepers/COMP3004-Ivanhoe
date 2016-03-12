@@ -271,8 +271,11 @@ public class Server implements Runnable, Serializable {
 			if (blockedAction != null) {
 				// it has been longer than 2 sec
 				if ((System.currentTimeMillis() - time) > 2000) { 
-					gameState.execute(blockedAction);
-					blockedAction = null;
+					if (gameState != null) {
+						gameState.execute(blockedAction);
+						blockedAction = null;
+						updateGameStates();
+					}
 				}
 			}
 			

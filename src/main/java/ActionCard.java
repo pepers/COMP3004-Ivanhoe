@@ -58,6 +58,13 @@ public class ActionCard extends Card {
 		}
 	}
 	
+	/* 
+	 * get description of the card's game rules
+	 */
+	public String getDescription(){
+		return description;
+	}
+	
 	/*
 	 * return name of action card
 	 * returns null if invalid action card
@@ -66,6 +73,7 @@ public class ActionCard extends Card {
 	public String toString() {
 		return this.name;
 	}
+	
 	/*
 	 * return tooltip of action card
 	 * returns null if invalid action card
@@ -75,7 +83,10 @@ public class ActionCard extends Card {
 		return "<html><p width=\"180\">" +this.name + "<BR/><BR/>" + this.description+"</p></html>";
 	}
 	
-	public String getDescription(){
-		return description;
+	@Override
+	public boolean equals(Object o) {
+		Card c = (Card) o;
+		return c.toString().equals(this.toString());
 	}
+	
 }
