@@ -11,8 +11,8 @@ group project for COMP3004 (Object-Oriented Software Engineering)
 ---
 ### Authors:
 Team #13: 
-- Matthew Pepers
-- Khalil van Alphen
+- [Matthew Pepers](https://github.com/pepers)
+- [Khalil van Alphen](https://github.com/kanguilla)
 
 ---
 ### About:
