@@ -118,6 +118,18 @@ public class Player implements Serializable{
 	}
 	
 	/*
+	 * add a card to the player's display
+	 */
+	public int addToDisplay(Card c){
+		if(c instanceof DisplayCard){
+			display.add((DisplayCard)c);
+		}else{
+			return -1;
+		}
+		return display.size();
+	}
+	
+	/*
 	 * remove card from player's hand
 	 */
 	public int removeFromHand(Card c){

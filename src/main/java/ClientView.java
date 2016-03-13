@@ -1,15 +1,16 @@
 package main.java;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -20,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -37,22 +40,32 @@ public class ClientView extends JFrame {
 	public static void main(String args[]) throws InterruptedException {
 		new ClientView(null);
 	
-		
 		Deck d = new Deck();
 		d.initialize();
-		ArrayList<Card> a = new ArrayList<Card>();
+		ArrayList<Card> cards = new ArrayList<Card>();
+		ArrayList<Player> players = new ArrayList<Player>();
+		players.add(new Player("khalil"));
 		
-		while(a.size()<7){
-			a.add(d.draw());
-			hand.update(a);
+		
+		arena.update(players);
+		while(cards.size()<7){
+			cards.add(d.draw());
+			hand.update(cards);
+		}
+		while(players.get(0).getDisplay().size() < 6){
+			Thread.sleep(1000);
+			players.get(0).addToDisplay(d.draw());
+			players.add(new Player("p#"));
+			arena.update(players);
 		}
 		
 	}
 
 	private static Image cardback;
 	private static final long serialVersionUID = 1L;
-	private JPanel parent, header, title, arena, context, console;
-	static CardPanel hand;
+	private static JPanel parent, header, title, context, console;
+	private static CardPanel hand;
+	private static DisplayPanel arena;
 	private Client client;
 	private Color sand = new Color(235, 210, 165);
 	private Color dark_sand = new Color(133, 113, 72);
@@ -83,8 +96,9 @@ public class ClientView extends JFrame {
 		title.setToolTipText("title");
 		parent.add(title, "cell 4 0 2 1, grow");
 
-		arena = new ImagePanel("./res/sand.png", ImagePanel.TILE);
+		arena = new DisplayPanel("./res/sand.png", ImagePanel.TILE);
 		arena.setToolTipText("arena");
+		arena.setLayout(new GridLayout(1,0));
 		parent.add(arena, "cell 0 1 4 3, grow");
 
 		context = new ImagePanel("./res/wood1.png", ImagePanel.TILE);
@@ -340,10 +354,12 @@ public class ClientView extends JFrame {
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			g.drawImage(img,0,0, 100, 142, null);
+			Graphics2D g2 = (Graphics2D) g;
+			g2.drawImage(img,0,0, 100, 142, null);
 			if(mouseOver){
-				g.setColor(new Color(0, 0, 0, 70));
-				g.fillRect(0, 0, 100, 142);
+				g2.setColor(new Color(0, 0, 0, 70));
+				g2.setStroke(new BasicStroke(40));
+				g2.drawRect(0, 0, 100, 142);
 			}
 		}
 
@@ -373,4 +389,59 @@ public class ClientView extends JFrame {
         }
 
     }
+	
+	public class DisplayPanel extends ImagePanel{
+		private static final long serialVersionUID = 1L;
+
+		public DisplayPanel(String path, int i){
+			super(path, i);
+		}
+		
+		public void update(ArrayList<Player> a){
+			this.removeAll();
+			for (Player p : a){
+				addDisplay(p);
+			}
+			this.validate();
+			this.repaint();
+		}
+		
+		public void addDisplay(Player p){
+			add(new DisplayView(p));
+		}
+	}
+	
+	public class DisplayView extends JPanel{
+		private static final long serialVersionUID = 1L;
+		
+		Player player;
+		Display display;
+		JTextArea text;
+		
+		public DisplayView(Player p){
+			Random r = new Random();
+			setBackground(new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
+			text = new JTextArea();
+			text.setOpaque(false);
+			text.setForeground(Color.white);
+			this.add(text);
+			update(p);
+		}
+		
+		public void update(Player p){
+			player = p;
+			display = p.getDisplay();
+			setSize(100, (display.size() * 30) + 100);
+			text.append(p.getName() + "\n");
+			for (Card c : display.elements()){
+				text.append(c.toString() + "\n");
+			}
+		}
+		
+		@Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            
+        }
+	}
 }

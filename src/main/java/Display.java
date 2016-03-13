@@ -15,6 +15,13 @@ public class Display implements Serializable {
 	}
 	
 	/*
+	 * get elements
+	 */
+	public ArrayList<DisplayCard> elements() {
+		return display;
+	}
+	
+	/*
 	 * get the number of cards in the display
 	 */
 	public int size() {
