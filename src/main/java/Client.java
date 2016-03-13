@@ -111,7 +111,7 @@ public class Client implements Runnable {
 				this.receiveThread = new Thread(this);
 				this.receiveThread.start();
 
-				//view = new ClientView(this);
+				view = new ClientView(this);
 				output("\nType /help for a list of commands!");
 				break;
 			} else {
@@ -174,6 +174,9 @@ public class Client implements Runnable {
 			if (o != null) { // process object if it can be used
 				process(o);
 			}
+			//TODO: remove gui testing
+			view.hand.update(gameState.getPlayer(player).getHand());
+			view.arena.update(gameState.getPlayers());
 		}
 		if (!this.shutDown) {
 			shutdown();

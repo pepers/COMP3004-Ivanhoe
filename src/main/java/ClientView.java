@@ -40,6 +40,7 @@ public class ClientView extends JFrame {
 	public static void main(String args[]) throws InterruptedException {
 		new ClientView(null);
 	
+		/*
 		Deck d = new Deck();
 		d.initialize();
 		ArrayList<Card> cards = new ArrayList<Card>();
@@ -58,14 +59,15 @@ public class ClientView extends JFrame {
 			players.add(new Player("p#"));
 			arena.update(players);
 		}
+		*/
 		
 	}
 
 	private static Image cardback;
 	private static final long serialVersionUID = 1L;
-	private static JPanel parent, header, title, context, console;
-	private static CardPanel hand;
-	private static DisplayPanel arena;
+	private JPanel parent, header, title, controls, console;
+	public CardPanel hand;
+	public DisplayPanel arena;
 	private Client client;
 	private Color sand = new Color(235, 210, 165);
 	private Color dark_sand = new Color(133, 113, 72);
@@ -101,14 +103,13 @@ public class ClientView extends JFrame {
 		arena.setLayout(new GridLayout(1,0));
 		parent.add(arena, "cell 0 1 4 3, grow");
 
-		context = new ImagePanel("./res/wood1.png", ImagePanel.TILE);
-		context.setToolTipText("context");
-		context.setLayout(new MigLayout("fill", "5[200::]5[200::]5", "5[]5"));
+		controls = new ImagePanel("./res/wood1.png", ImagePanel.TILE);
+		controls.setToolTipText("context");
+		controls.setLayout(new MigLayout("fill", "5[200::]5[200::]5", "5[]5"));
 		
 		ImagePanel cardContext = new ImagePanel("./res/displaycards/cardback.png", ImagePanel.CENTER_SCALE);
 		cardContext.setOpaque(false);
 		cardContext.setLayout(new MigLayout("", "5[200::]5", "5[120::][120::]5"));
-		
 		TransparentTextArea cardDescription = new TransparentTextArea();
 		cardDescription.setEditable(false);
 		cardDescription.setFont(new Font("Book Antiqua", Font.BOLD, 14));
@@ -117,8 +118,25 @@ public class ClientView extends JFrame {
 		cardDescription.setVisible(false);
 		cardContext.add(cardDescription, "cell 0 1, grow");
 		
-		context.add(cardContext, "cell 1 0, grow");
-		parent.add(context, "cell 4 1 2 2, grow");
+		ImagePanel buttons = new ImagePanel("./res/scroll.png", ImagePanel.CENTER_SCALE);
+		buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
+		buttons.setOpaque(false);
+		
+		JButton endTurn = new JButton();
+		endTurn.setText("End Turn");
+		endTurn.setAlignmentX(CENTER_ALIGNMENT);
+		endTurn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                if(client != null)client.cmdEnd();
+            }
+        });      
+		
+		buttons.add(Box.createRigidArea(new Dimension(0, 40)));
+		buttons.add(endTurn);
+		
+		controls.add(buttons, "cell 0 0, grow");
+		controls.add(cardContext, "cell 1 0, grow");
+		parent.add(controls, "cell 4 1 2 2, grow");
 
 		hand = new CardPanel("./res/wood2.png", ImagePanel.TILE);
 		hand.setToolTipText("hand");
@@ -313,32 +331,32 @@ public class ClientView extends JFrame {
 			addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					System.out.println(card.toString() + " pressed");
+					//System.out.println(card.toString() + " pressed");
 				}
 				@Override
 				public void mouseReleased(MouseEvent e) {
-					System.out.println(card.toString() + " released");
+					if(client != null)client.cmdPlay(c.toString());
 				}
 				@Override
 				public void mouseExited(MouseEvent e) {
-					ImagePanel i = ((ImagePanel)((ImagePanel)context).getComponent(0));
+					ImagePanel i = ((ImagePanel)((ImagePanel)controls).getComponent(1));
 					i.setImage(cardback);
 					mouseOver = false;
 					((JTextArea)i.getComponent(0)).setText("");
 					((JTextArea)i.getComponent(0)).setVisible(false);
-					context.repaint();
+					controls.repaint();
 					repaint();
 				}
 				@Override
 				public void mouseEntered(MouseEvent e) {
-					ImagePanel i = ((ImagePanel)((ImagePanel)context).getComponent(0));
+					ImagePanel i = ((ImagePanel)((ImagePanel)controls).getComponent(1));
 					i.setImage(img);
 					mouseOver = true;
 					if(c instanceof ActionCard){
 						((JTextArea)i.getComponent(0)).setText(((ActionCard)c).getDescription());
 						((JTextArea)i.getComponent(0)).setVisible(true);
 					}
-					context.repaint();
+					controls.repaint();
 					repaint();
 				}
 			});
