@@ -71,7 +71,8 @@ public class ClientView extends JFrame {
 	private Client client;
 	private Color sand = new Color(235, 210, 165);
 	private Color dark_sand = new Color(133, 113, 72);
-
+	private HashMap<Card, BufferedImage> images;
+	
 	public ClientView(Client c) {
 		
 		try {
@@ -199,6 +200,30 @@ public class ClientView extends JFrame {
 		}
 	}
 
+	public BufferedImage getImage(Card c){
+		try{
+			if (images.containsKey(c)) {
+				Trace.getInstance().write(this, "already have " + c.toString());
+			} else {
+				if (c instanceof DisplayCard) {
+					String[] subs = c.toString().toLowerCase().split(":");
+					String name = String.join("", subs);
+					Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
+					images.put(c, ImageIO.read(new File("./res/displaycards/" + name + ".png")));
+				} else if (c instanceof ActionCard) {
+					String[] subs = c.toString().toLowerCase().split(" ");
+					String name = String.join("", subs);
+					Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
+					images.put(c, ImageIO.read(new File("./res/actioncards/" + name + ".png")));
+				}
+			}
+		}catch(IOException e){
+			e.printStackTrace();
+			return null;
+		}
+		return images.get(c);
+	}
+	
 	class ImagePanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		public static final int STRETCH = 1;
@@ -266,7 +291,6 @@ public class ClientView extends JFrame {
 	// Hand visual structure
 	class CardPanel extends ImagePanel {
 		private static final long serialVersionUID = 1L;
-		private HashMap<Card, BufferedImage> images;
 		private ArrayList<Card> hand;
 		
 		public CardPanel(String s) {
@@ -286,26 +310,8 @@ public class ClientView extends JFrame {
 			hand = newHand;
 			this.removeAll();
 			for (Card c : hand){
-				try{
-					if (images.containsKey(c)) {
-						Trace.getInstance().write(this, "already have " + c.toString());
-					} else {
-						if (c instanceof DisplayCard) {
-							String[] subs = c.toString().toLowerCase().split(":");
-							String name = String.join("", subs);
-							Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
-							images.put(c, ImageIO.read(new File("./res/displaycards/" + name + ".png")));
-						} else if (c instanceof ActionCard) {
-							String[] subs = c.toString().toLowerCase().split(" ");
-							String name = String.join("", subs);
-							Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
-							images.put(c, ImageIO.read(new File("./res/actioncards/" + name + ".png")));
-						}
-					}
-				}catch(IOException e){
-					e.printStackTrace();
-				}
-				CardView view = new CardView(c, images.get(c));
+				BufferedImage img = getImage(c);
+				CardView view = new CardView(c, img);
 				this.add(view);
 			}
 			this.validate();
@@ -319,12 +325,13 @@ public class ClientView extends JFrame {
 		private Card card;
 		private BufferedImage img;
 		boolean mouseOver = false;
+		private int w = 75;
+		private int h = 106;
 		
 		public CardView(Card c, BufferedImage i) {
 			card = c;
 			img = i;
-			
-			this.setSize(new Dimension(100, 142));
+			this.setSize(w, h);
 			this.setOpaque(true);
 			this.setVisible(true);
 			
@@ -385,17 +392,17 @@ public class ClientView extends JFrame {
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
-			g2.drawImage(img,0,0, 100, 142, null);
+			g2.drawImage(img,0,0, w, h, null);
 			if(mouseOver){
 				g2.setColor(new Color(0, 0, 0, 70));
-				g2.setStroke(new BasicStroke(40));
-				g2.drawRect(0, 0, 100, 142);
+				g2.setStroke(new BasicStroke(w/2));
+				g2.drawRect(0, 0, w, h);
 			}
 		}
 
 		@Override
 		public Dimension getPreferredSize(){
-		    return new Dimension(100, 142);
+		    return new Dimension(w, h);
 		}
 	}
 	
@@ -446,32 +453,42 @@ public class ClientView extends JFrame {
 		
 		Player player;
 		Display display;
-		JTextArea text;
 		
-		public DisplayView(Player p){
-			Random r = new Random();
-			setBackground(new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
-			text = new JTextArea();
-			text.setOpaque(false);
-			text.setForeground(Color.white);
-			this.add(text);
+		public DisplayView(Player p){		
+			display = new Display();
+			setOpaque(false);
 			update(p);
 		}
 		
 		public void update(Player p){
 			player = p;
 			display = p.getDisplay();
-			setSize(100, (display.size() * 30) + 100);
-			text.append(p.getName() + "\n");
-			for (Card c : display.elements()){
-				text.append(c.toString() + "\n");
-			}
 		}
 		
 		@Override
         protected void paintComponent(Graphics g) {
+			Tournament tournament = client.getGameState().getTournament();
+			
             super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+            int xm = this.getWidth()/2;
             
+            //Draw a crude banner
+            g2.setColor(sand);
+            if(tournament != null){
+            	g2.fillRect(xm-50, 0, 100, 100 + 15 * display.score(tournament.getColour()));
+            }else{
+            	g2.fillRect(xm-50, 0, 100, 100);
+            }
+            
+            g2.setColor(Color.white);
+            g2.drawString(player.getName(), xm - player.getName().length()*3, 12);
+            int i = 1;
+            for (Card c : display.elements()){
+            	BufferedImage img = getImage(c);
+            	i++;
+            	g2.drawImage(img, xm-37, 20 * i, 75, 106, null);
+			}
         }
 	}
 }
