@@ -33,6 +33,10 @@ public class Client implements Runnable {
 		gameState = g;
 		this.player = gameState.getPlayer(this.player.getName());
 	}
+	
+	public GameState getGameState() {
+		return gameState;
+	}
 
 	public Client() {
 		language = new Language(Language.Dialect.none, false);
@@ -670,7 +674,7 @@ public class Client implements Runnable {
 		}
 		return true;
 	}
-
+	
 	// start a tournament
 	public boolean cmdTournament(String[] args) {
 

@@ -335,7 +335,19 @@ public class ClientView extends JFrame {
 				}
 				@Override
 				public void mouseReleased(MouseEvent e) {
-					if(client != null)client.cmdPlay(c.toString());
+					if (client != null) {
+						if (card instanceof DisplayCard) {
+							DisplayCard selected =(DisplayCard)card;
+							if (client.getGameState().getTournament() == null) {
+								client.cmdTournament(new String[]{selected.getColour().toString(), selected.toString()});
+							} else {
+								client.cmdPlay(selected.toString());
+							}
+						}else{
+							ActionCard selected =(ActionCard)card;
+							
+						}
+					}
 				}
 				@Override
 				public void mouseExited(MouseEvent e) {
@@ -353,7 +365,7 @@ public class ClientView extends JFrame {
 					i.setImage(img);
 					mouseOver = true;
 					if(c instanceof ActionCard){
-						((JTextArea)i.getComponent(0)).setText(((ActionCard)c).getDescription());
+						((JTextArea)i.getComponent(0)).setText(((ActionCard)card).getDescription());
 						((JTextArea)i.getComponent(0)).setVisible(true);
 					}
 					controls.repaint();
