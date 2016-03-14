@@ -1,5 +1,6 @@
 package main.java;
 
+
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -340,18 +342,29 @@ public class ClientView extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					//System.out.println(card.toString() + " pressed");
 				}
+				
+				//Clicking on a card (to play)
 				@Override
 				public void mouseReleased(MouseEvent e) {
+		
 					if (client != null) {
 						if (card instanceof DisplayCard) {
 							DisplayCard selected =(DisplayCard)card;
 							if (client.getGameState().getTournament() == null) {
-								client.cmdTournament(new String[]{selected.getColour().toString(), selected.toString()});
+								//Auto start a tournament
+								if(selected.getColour().equals("none")){
+									SelectionMenu menu = new SelectionMenu(0, selected);
+								    menu.show(e.getComponent(), e.getX(), e.getY());
+								}else{
+									client.cmdTournament(new String[]{selected.getColour().toString(), selected.toString()});
+								}
+							
 							} else {
 								client.cmdPlay(selected.toString());
 							}
 						}else{
 							ActionCard selected =(ActionCard)card;
+							
 							client.cmdPlay(selected.toString());
 						}
 					}
@@ -404,6 +417,62 @@ public class ClientView extends JFrame {
 		public Dimension getPreferredSize(){
 		    return new Dimension(w, h);
 		}
+	}
+	
+	class SelectionMenu extends JPopupMenu {
+		private static final long serialVersionUID = 1L;
+		static final int COLOURS = 0;
+		
+	    public SelectionMenu(int type, Card card){
+    		setBackground(dark_sand);
+	    	switch(type){
+	    	case 0:
+	    		JLabel title = new JLabel("Pick a color");
+	    		add(title);
+	    		
+	    		MouseListener mouseListener = (new MouseAdapter() {
+					//Clicking on a color (to play)
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						client.cmdTournament(new String[]{((JMenuItem) e.getComponent()).getText().toLowerCase(), ((DisplayCard) card).toString()});
+					}
+				}); 
+	    		
+	    		JMenuItem red = new JMenuItem("Red");
+	    		red.setBackground(new Color(194, 73, 49));
+	    		red.setForeground(Color.white);
+	    		red.addMouseListener(mouseListener);
+	    		add(red);
+	    		
+	    		
+	    		JMenuItem blue = new JMenuItem("Blue");
+	    		blue.setBackground(new Color(79, 131, 176));
+	    		blue.setForeground(Color.white);
+	    		blue.addMouseListener(mouseListener);
+		        add(blue);
+		        
+		        JMenuItem yellow = new JMenuItem("Yellow");
+		        yellow.setBackground(new Color(230, 197, 67));
+		        yellow.setForeground(Color.white);
+		        yellow.addMouseListener(mouseListener);
+		        add(yellow);
+		        
+		        JMenuItem green = new JMenuItem("Green");
+		        green.setBackground(new Color(94, 171, 90));
+		        green.setForeground(Color.white);
+		        green.addMouseListener(mouseListener);
+		        add(green);
+		        
+		        JMenuItem purple = new JMenuItem("Purple");
+		        purple.setBackground(new Color(153, 99, 156));
+		        purple.setForeground(Color.white);
+		        purple.addMouseListener(mouseListener);
+		        add(purple);
+		        
+		        
+	    	}
+	    	
+	    }
 	}
 	
 	public class TransparentTextArea extends JTextArea {
