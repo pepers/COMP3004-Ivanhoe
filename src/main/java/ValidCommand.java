@@ -1,6 +1,5 @@
 package main.java;
 
-import main.resources.Trace;
 
 /*
  * Chain-of-Responsibility Design Pattern
@@ -26,8 +25,7 @@ class NotZeroArguments extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
 		if (command.getArgs().length != 0) {
-			command.output("Client: invalid number of arguments. Type /help");
-			Trace.getInstance().write(this, command.getPlayer().getName() + ": Invalid number of arguments.");
+			command.setMessage("invalid number of arguments. Type /help");
 			command.notValid();
 		} else if (successor != null) {
         	successor.isValid(command);
@@ -42,8 +40,7 @@ class LessThanOneArgument extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
 		if (command.getArgs().length < 1) {
-			command.output("Client: invalid number of arguments. Type /help");
-			Trace.getInstance().write(this, command.getPlayer().getName() + ": Invalid number of arguments.");
+			command.setMessage("invalid number of arguments. Type /help");
 			command.notValid();
 		} else if (successor != null) {
         	successor.isValid(command);
@@ -58,8 +55,7 @@ class NoArguments extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
 		if (command.getArgs().length == 0) {
-			command.output("Client: invalid number of arguments. Type /help");
-			Trace.getInstance().write(this, command.getPlayer().getName() + ": Invalid number of arguments.");
+			command.setMessage("invalid number of arguments. Type /help");
 			command.notValid();
 		} else if (successor != null) {
         	successor.isValid(command);
@@ -74,8 +70,7 @@ class NotOneArgument extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
 		if (command.getArgs().length != 1) {
-			command.output("Client: invalid number of arguments. Type /help");
-			Trace.getInstance().write(this, command.getPlayer().getName() + ": Invalid number of arguments.");
+			command.setMessage("invalid number of arguments. Type /help");
 			command.notValid();
 		} else if (successor != null) {
         	successor.isValid(command);
@@ -90,8 +85,7 @@ class NotOneOrTwoArguments extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
 		if (!((command.getArgs().length == 1) || (command.getArgs().length == 2))) {
-			command.output("Client: invalid number of arguments. Type /help");
-			Trace.getInstance().write(this, command.getPlayer().getName() + ": Invalid number of arguments.");
+			command.setMessage("invalid number of arguments. Type /help");
 			command.notValid();
 		} else if (successor != null) {
         	successor.isValid(command);
@@ -106,8 +100,7 @@ class NotInTournament extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
 		if (!command.inTournament()) {
-			command.output("Client: can't perform that action while not in a tournament");
-			Trace.getInstance().write(this, command.getPlayer().getName() + ": can't use /" + command.getCmd() + " while not in tournament.");
+			command.setMessage("can't perform that action while not in a tournament");
 			command.notValid();
 		} else if (successor != null) {
         	successor.isValid(command);

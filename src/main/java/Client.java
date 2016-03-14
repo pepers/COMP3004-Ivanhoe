@@ -2,7 +2,6 @@ package main.java;
 
 import java.io.*;
 import java.net.*;
-import java.util.Arrays;
 
 import main.resources.Config;
 import main.resources.Language;
@@ -143,7 +142,6 @@ public class Client implements Runnable {
 	public boolean shutdown() {
 		this.shutDown = true;
 		this.stop = true;
-		Trace.getInstance().write(this, "Client shutting down...");
 		output("\nClient: Shutting down...");
 
 		if (inputThread != null) {
@@ -295,7 +293,6 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player.addToHand((ActionCard) o);
 			output("Client: " + o.toString() + " added to hand");
-			Trace.getInstance().write(this, this.player.getName() + ": " + o.toString() + " added to hand");
 			return true;
 
 			// DisplayCard
@@ -303,7 +300,6 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player.addToHand((DisplayCard) o);
 			output("Client: " + o.toString() + " added to hand");
-			Trace.getInstance().write(this, this.player.getName() + ": " + o.toString() + " added to hand");
 			return true;
 
 			/* ACTIONS: */
@@ -342,7 +338,6 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, getPlayer().getName() + ": command processed: " + input);
 		} else if (input.charAt(0) == '/') { // process invalid commands
 			output("Client: invalid command, try typing '/help' for more info.");
-			Trace.getInstance().write(this, getPlayer().getName() + ": invalid command: " + input);
 		} else { // process chat
 			String translated = language.translate(input);
 			send(new Chat(translated));
@@ -372,7 +367,7 @@ public class Client implements Runnable {
 
 	// deals with commands received from inputThread
 	public boolean processCmd(String s) {
-		Command cmd = new Command(s, this.player, this.view);
+		Command cmd = new Command(s, this.player);
 		ValidCommand args;
 		ValidCommand tournament;
 		
@@ -381,7 +376,10 @@ public class Client implements Runnable {
 		case "censor": // toggle the bad word censor
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdCensor();
 			break;
 		case "display": // look at display cards
@@ -390,31 +388,46 @@ public class Client implements Runnable {
 		case "end": // end turn
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdEnd();
 			break;
 		case "gamestate": // show gamestate
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdGameState(gameState);
 			break;
 		case "hand": // look at cards in hand
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdHand();
 			break;
 		case "help":
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdHelp();
 			break;
 		case "list":
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdList();
 			break;
 		case "play":
@@ -422,49 +435,73 @@ public class Client implements Runnable {
 			tournament = new NotInTournament();
 			args.setSuccessor(tournament);
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdPlay(String.join(" ", cmd.getArgs()));
 			break;
 		case "ready":
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdReady();
 			break;
 		case "setname":
 			args = new NoArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdSetname(cmd.getArgs());
 			break;
 		case "shutdown":
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			shutdown();
 			break;
 		case "tokens":
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdTokens();
 			break;
 		case "tournament":
 			args = new NotOneOrTwoArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdTournament(cmd.getArgs());
 			break;
 		case "translate":
 			args = new NotOneArgument();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdTranslate(cmd.getArgs()[0]);
 			break;
 		case "withdraw":
 			args = new NotZeroArguments();
 			args.isValid(cmd);
-			if (!cmd.isValid()) { return false; } 
+			if (!cmd.isValid()) { 
+				output("Client: " + cmd.getMessage());
+				return false;
+			} 
 			cmdWithdraw();
 			break;
 		default:
@@ -481,11 +518,9 @@ public class Client implements Runnable {
 		// censored
 		if (censor) {
 			output("Client: now censoring bad language.");
-			Trace.getInstance().write(this, "Client: now censoring bad language.");
-			// not censored
+		// not censored
 		} else {
 			output("Client: no longer censoring bad language.");
-			Trace.getInstance().write(this, "Client: no longer censoring bad language.");
 		}
 		return true;
 	}
@@ -498,29 +533,23 @@ public class Client implements Runnable {
 		if (arr.length == 0) {
 			if (!(this.player.getDisplay().print(gameState.getTournament().getColour()))) {
 				output("Client: no cards in your display");
-				Trace.getInstance().write(this, this.player.getName() + ": No cards in your display to show.");
 			}
 			// show all displays
 		} else if (args.equalsIgnoreCase("-a")) {
 			for (Player p : this.gameState.getPlayers()) {
 				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
 					output("Client: no cards in " + p.getName() + "'s display\n");
-					Trace.getInstance().write(this,
-							this.player.getName() + ": No cards in " + p.getName() + "'s display.");
 				}
 			}
 			// show someone else's display
 		} else {
 			Player p = this.gameState.getPlayer(args);
 			if (p == null) { // player doesn't exist
-				Trace.getInstance().write(this, args + " doesn't exist.  Can't print their Display.");
 				output("Client: " + args + " doesn't exist.  Can't print their Display.");
 				return false;
 			} else {
 				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
 					output("Client: no cards in " + p.getName() + "'s display\n");
-					Trace.getInstance().write(this,
-							this.player.getName() + ": No cards in " + p.getName() + "'s display.");
 				}
 			}
 		}
@@ -607,7 +636,6 @@ public class Client implements Runnable {
 					output("Client: not a valid color for the current tournament");
 					return false;
 				} else if (c.toString().equals("maiden:6") && player.getDisplay().hasCard((DisplayCard) c)) {
-					Trace.getInstance().write(this, "Client: you may not have more than one maiden in your Display.");
 					output("Client: you may not have more than one maiden in your Display.");
 					return false;
 				}
@@ -635,7 +663,6 @@ public class Client implements Runnable {
 
 		// check for invalid names
 		if ((args.equals("")) || (args.startsWith("-") || (args.startsWith("/")))) {
-			Trace.getInstance().write(this, "can't change name to '" + args + "'. Invalid name.");
 			output("Client: can't change name to '" + args + "'. Invalid name.");
 			return false;
 			// valid name
@@ -654,7 +681,6 @@ public class Client implements Runnable {
 			output("Client: listing tokens: ");
 		}
 		for (Player p : this.gameState.getPlayers()) {
-			Trace.getInstance().write(this, "Tokens: " + p.getName() + " : " + p.listTokens());
 			output(p.getName() + ": ");
 			output(p.listTokens());
 		}
@@ -667,8 +693,6 @@ public class Client implements Runnable {
 		// Check that no tournaments are running
 		if (this.gameState.getTournament() != null) {
 			output("Client: a tournament is already in progress");
-			Trace.getInstance().write(this,
-					this.player.getName() + ": can't use /tournament, a tournament is already in progress.");
 			return false;
 		}
 		// Check if its their turn
@@ -741,7 +765,6 @@ public class Client implements Runnable {
 		// no translating
 		if (Language.Dialect.none.toString().equals(d)) {
 			this.language = new Language(Language.Dialect.none, censor);
-			Trace.getInstance().write(this, "Client: no longer translating chat messages");
 			output("Client: no longer translating chat messages");
 			return true;
 		}
@@ -749,7 +772,6 @@ public class Client implements Runnable {
 		for (Language.Dialect dialect : Language.Dialect.values()) {
 			if (dialect.toString().equals(d)) {
 				this.language = new Language(dialect, censor);
-				Trace.getInstance().write(this, "Client: translating chat to " + this.language.getDialect().toString());
 				output("Client: translating chat to " + this.language.getDialect().toString());
 				return true;
 			}
@@ -785,6 +807,7 @@ public class Client implements Runnable {
 		System.out.println(s);
 		if (this.view != null)
 			view.writeConsole(s, 0);
+		Trace.getInstance().write(this, this.player.getName() + ": " + s);
 		return true;
 	}
 }
