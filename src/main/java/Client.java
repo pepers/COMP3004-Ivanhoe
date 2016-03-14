@@ -1,5 +1,6 @@
 package main.java;
 
+import java.awt.Color;
 import java.io.*;
 import java.net.*;
 
@@ -316,7 +317,7 @@ public class Client implements Runnable {
 			message = this.language.translate(message);
 			System.out.println(message);
 			if (view != null)
-				view.writeConsole(message, 0);
+				view.writeConsole(message, Color.white);
 			return true;
 			// Chat
 		} else if (o instanceof Chat) {
@@ -326,7 +327,7 @@ public class Client implements Runnable {
 			message = this.language.translate(message);
 			System.out.println(message);
 			if (view != null)
-				view.writeConsole(message, 1);
+				view.writeConsole(message, Color.yellow);
 			return true;
 			// Prompt
 		} else if (o instanceof Prompt) {
@@ -821,7 +822,7 @@ public class Client implements Runnable {
 	private boolean output(String s) {
 		System.out.println(s);
 		if (this.view != null)
-			view.writeConsole(s, 0);
+			view.writeConsole(s, Color.lightGray);
 		Trace.getInstance().write(this, (this.player == null) ? "New Player" : this.player.getName() + ": " + s);
 		return true;
 	}

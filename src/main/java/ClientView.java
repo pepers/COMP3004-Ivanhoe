@@ -202,23 +202,12 @@ public class ClientView extends JFrame {
 		this.setVisible(true);
 	}
 
-	public void writeConsole(String s, int type) {
+	public void writeConsole(String s, Color color) {
 		try {
 			JTextPane pane = ((JTextPane) ((JScrollPane) console.getComponent(0)).getViewport().getView());
 			StyledDocument doc = pane.getStyledDocument();
 			Style style = pane.addStyle("", null);
-
-			switch(type){
-			case 0:
-				StyleConstants.setForeground(style, Color.lightGray);
-				break;
-			case 1:
-				StyleConstants.setForeground(style, Color.yellow);
-				break;
-			default:
-				style = null;
-			}
-
+			StyleConstants.setForeground(style, color);
 			doc.insertString(doc.getLength(), ("\n " + s), style);
 			pane.selectAll();
 		} catch (BadLocationException exc) {
