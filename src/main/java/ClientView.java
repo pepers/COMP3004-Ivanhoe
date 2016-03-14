@@ -352,7 +352,7 @@ public class ClientView extends JFrame {
 							}
 						}else{
 							ActionCard selected =(ActionCard)card;
-							
+							client.cmdPlay(selected.toString());
 						}
 					}
 				}
