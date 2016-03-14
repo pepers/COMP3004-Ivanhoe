@@ -116,6 +116,7 @@ public class Client implements Runnable {
 				this.receiveThread.start();
 
 				view = new ClientView(this);
+				
 				output("\nType /help for a list of commands!");
 				break;
 			} else {
@@ -371,117 +372,102 @@ public class Client implements Runnable {
 
 	// deals with commands received from inputThread
 	public boolean processCmd(String s) {
-		// get argument line
-		String[] cmd = s.split("\\s+"); // array of command + arguments
-		String[] args = Arrays.copyOfRange(cmd, 1, cmd.length); // just
-																// arguments
-		String joined = String.join(" ", args);
+		Command cmd = new Command(s, this.player, this.view);
+		ValidCommand args;
+		ValidCommand tournament;
+		
 		// switch over command
-		switch (cmd[0]) {
-		case "/censor": // toggle the bad word censor
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		switch (cmd.getCmd()) {
+		case "censor": // toggle the bad word censor
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdCensor();
 			break;
-		case "/display": // look at display cards
-			cmdDisplay(args);
+		case "display": // look at display cards
+			cmdDisplay(cmd.getArgs());
 			break;
-		case "/end": // end turn
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "end": // end turn
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdEnd();
 			break;
-		case "/gamestate": // show gamestate
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "gamestate": // show gamestate
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdGameState(gameState);
 			break;
-		case "/hand": // look at cards in hand
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "hand": // look at cards in hand
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdHand();
 			break;
-		case "/help":
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "help":
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdHelp();
 			break;
-		case "/list":
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "list":
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdList();
 			break;
-		case "/play":
-			if (args.length < 1) {
-				return false;
-			} // check number of arguments
-			if (!tournamentAction(cmd[0])) {
-				return false;
-			} // checks if in tournament
-			cmdPlay(joined);
+		case "play":
+			args = new LessThanOneArgument();
+			tournament = new NotInTournament();
+			args.setSuccessor(tournament);
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
+			cmdPlay(String.join(" ", cmd.getArgs()));
 			break;
-		case "/ready":
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "ready":
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdReady();
 			break;
-		case "/setname":
-			if (args.length == 0) {
-				return false;
-			} // check number of arguments
-			cmdSetname(args);
+		case "setname":
+			args = new NoArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
+			cmdSetname(cmd.getArgs());
 			break;
-		case "/shutdown":
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "shutdown":
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			shutdown();
 			break;
-		case "/tokens":
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "tokens":
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdTokens();
 			break;
-		case "/tournament":
-			if (!((args.length == 2) || (args.length == 1))) {
-				return false;
-			} // check number of arguments
-			cmdTournament(args);
+		case "tournament":
+			args = new NotOneOrTwoArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
+			cmdTournament(cmd.getArgs());
 			break;
-		case "/translate":
-			if (args.length != 1) {
-				return false;
-			} // check number of arguments
-			cmdTranslate(args[0]);
+		case "translate":
+			args = new NotOneArgument();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
+			cmdTranslate(cmd.getArgs()[0]);
 			break;
-		case "/withdraw":
-			if (args.length != 0) {
-				return false;
-			} // check number of arguments
+		case "withdraw":
+			args = new NotZeroArguments();
+			args.isValid(cmd);
+			if (!cmd.isValid()) { return false; } 
 			cmdWithdraw();
 			break;
 		default:
-			return false;
-		}
-		return true;
-	}
-
-	/*
-	 * checks if player is in tournament and warns that an action can't be taken
-	 * if they are not
-	 */
-	public boolean tournamentAction(String cmd) {
-		if (!(this.player.getParticipation())) {
-			output("Client: can't perform that action while not in a tournament");
-			Trace.getInstance().write(this, this.player.getName() + ": can't use " + cmd + " while not in tournament.");
 			return false;
 		}
 		return true;
@@ -797,7 +783,7 @@ public class Client implements Runnable {
 
 	private boolean output(String s) {
 		System.out.println(s);
-		if (view != null)
+		if (this.view != null)
 			view.writeConsole(s, 0);
 		return true;
 	}
