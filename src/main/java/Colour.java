@@ -59,6 +59,7 @@ public class Colour implements Serializable {
 	@Override
 	public boolean equals (Object obj) {
 		if (this == obj) return true;
+		if (this.toString().equalsIgnoreCase(obj.toString())) return true;
 		if (this.getClass() != obj.getClass()) return false;
 		Colour col = (Colour) obj ;
 		return this.colour.equals(col.get());
