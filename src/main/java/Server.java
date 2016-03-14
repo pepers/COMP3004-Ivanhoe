@@ -158,7 +158,7 @@ public class Server implements Runnable, Serializable {
 		} else {
 			try {
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-				out.writeObject(new Chat("Sorry, too many knights at that location."));
+				out.writeObject(new Info("Sorry, too many knights at that location."));
 				socket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -317,7 +317,7 @@ public class Server implements Runnable, Serializable {
 			String message = ((Chat) action.object).getMessage();
 			String from = action.origin.getName();
 			String translated = language.translate(((Chat) action.object).getMessage());
-			broadcast(from + ": " + translated);
+			broadcastChat(from + ": " + translated);
 			Trace.getInstance().write(this,
 					"Server: " + action.object.getClass().getSimpleName() + " received from " + from + ": " + message);
 			return true;
@@ -471,11 +471,23 @@ public class Server implements Runnable, Serializable {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			t.send(new Chat(input));
+			t.send(new Info(input));
 		}
 		System.out.println(input);
 	}
 
+	/*
+	 * send a chat to all players(threads)
+	 */
+	public void broadcastChat(String input) {
+		Iterator<ServerThread> i = clients.keySet().iterator();
+		while (i.hasNext()) {
+			ServerThread t = i.next();
+			t.send(new Chat(input));
+		}
+		System.out.println(input);
+	}
+	
 	/*
 	 * send a message to everyone in game, except for one player
 	 */
@@ -484,7 +496,7 @@ public class Server implements Runnable, Serializable {
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			if (!(clients.get(t).equals(p))) {
-				t.send(new Chat(input));
+				t.send(new Info(input));
 			}
 
 		}
@@ -499,7 +511,7 @@ public class Server implements Runnable, Serializable {
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			if ((clients.get(t).equals(p))) {
-				t.send(new Chat(input));
+				t.send(new Info(input));
 				return true;
 			}
 		}

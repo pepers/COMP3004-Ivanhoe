@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -37,80 +35,91 @@ import main.resources.Trace;
 import net.miginfocom.swing.MigLayout;
 
 public class ClientView extends JFrame {
-
+	private static final long serialVersionUID = 1L;
+	
 	// TODO remove main
 	public static void main(String args[]) throws InterruptedException {
-		new ClientView(null);
+		ClientView c = new ClientView(null);
 	
-		/*
+		
 		Deck d = new Deck();
 		d.initialize();
 		ArrayList<Card> cards = new ArrayList<Card>();
 		ArrayList<Player> players = new ArrayList<Player>();
 		players.add(new Player("khalil"));
 		
-		
-		arena.update(players);
 		while(cards.size()<7){
 			cards.add(d.draw());
-			hand.update(cards);
+			c.hand.update(cards);
 		}
-		while(players.get(0).getDisplay().size() < 6){
-			Thread.sleep(1000);
-			players.get(0).addToDisplay(d.draw());
-			players.add(new Player("p#"));
-			arena.update(players);
-		}
-		*/
+		
 		
 	}
 
-	private static Image cardback;
-	private static final long serialVersionUID = 1L;
-	private JPanel parent, header, title, controls, console;
-	public CardPanel hand;
-	public DisplayPanel arena;
-	private Client client;
-	private Color sand = new Color(235, 210, 165);
-	private Color dark_sand = new Color(133, 113, 72);
-	private HashMap<Card, BufferedImage> images;
+	//Private members
+	private static Image cardback;										//The image of the cardback
+	private JPanel parent, header, title, controls, console;			//Purely visual JPanel members
+	private Client client;												//Reference to the parent client
+	private HashMap<Card, BufferedImage> images;						//Map to hold card images
+	
+	//Colors
+	private static final Color SAND = new Color(235, 210, 165);
+	private static final Color DARK_SAND = new Color(133, 113, 72);		
+	private static final Color IVAN_RED = new Color(194, 73, 49);
+	private static final Color IVAN_BLUE =  new Color(79, 131, 176);
+	private static final Color IVAN_YELLOW = new Color(230, 197, 67);
+	private static final Color IVAN_GREEN = new Color(94, 171, 90);
+	private static final Color IVAN_PURPLE = new Color(153, 99, 156);
+	
+	//Public members
+	public CardPanel hand;												//Hand of cards for the user
+	public DisplayPanel arena;											//Main area where displays are shown
+	public JButton endTurn;
 	
 	public ClientView(Client c) {
-		
-		try {
-			cardback = ImageIO.read(new File("./res/displaycards/cardback.png"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
 		client = c;
+		
+		//Setup the parent JPanel and general layout of the view
 		this.setResizable(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(1255, 685);
 		parent = new JPanel(new MigLayout("fill", 
 				"5[200::]5[200::]5[200::]5[200::]5[200::]5[200::]5",
 				"5[120::]5[120::]5[120::]5[120::]5[120::]20"));
-		parent.setBackground(dark_sand);
-
+		parent.setBackground(DARK_SAND);
+		//end parent setup
+		
+		//Setup header (stone wall that shows the tournament type
 		header = new ImagePanel("./res/cobblestone.png", ImagePanel.TILE);
 		header.setToolTipText("header");
 		parent.add(header, "cell 0 0 4 1, grow");
-
+		//end header setup
+		
+		//Setup title card "Ivanhoe", top right corner
 		title = new ImagePanel("./res/title.png", ImagePanel.CENTER_SCALE);
-		title.setBackground(sand);
+		title.setBackground(SAND);
 		title.setToolTipText("title");
 		parent.add(title, "cell 4 0 2 1, grow");
-
+		//end title setup
+		
+		//Setup arena section that shows displays
 		arena = new DisplayPanel("./res/sand.png", ImagePanel.TILE);
 		arena.setToolTipText("arena");
 		arena.setLayout(new GridLayout(1,0));
 		parent.add(arena, "cell 0 1 4 3, grow");
-
+		//end arena setup
+		
+		//Setup controls arena under title that shows context and turn buttons
 		controls = new ImagePanel("./res/wood1.png", ImagePanel.TILE);
 		controls.setToolTipText("context");
 		controls.setLayout(new MigLayout("fill", "5[200::]5[200::]5", "5[]5"));
 		
-		ImagePanel cardContext = new ImagePanel("./res/displaycards/cardback.png", ImagePanel.CENTER_SCALE);
+		try {
+			cardback = ImageIO.read(new File("./res/displaycards/cardback.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		ImagePanel cardContext = new ImagePanel(cardback, ImagePanel.CENTER_SCALE);
 		cardContext.setOpaque(false);
 		cardContext.setLayout(new MigLayout("", "5[200::]5", "5[120::][120::]5"));
 		TransparentTextArea cardDescription = new TransparentTextArea();
@@ -125,8 +134,11 @@ public class ClientView extends JFrame {
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
 		buttons.setOpaque(false);
 		
-		JButton endTurn = new JButton();
+		endTurn = new JButton();
 		endTurn.setText("End Turn");
+		endTurn.setOpaque(false);
+		endTurn.setBackground(DARK_SAND);
+		endTurn.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 		endTurn.setAlignmentX(CENTER_ALIGNMENT);
 		endTurn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
@@ -140,11 +152,16 @@ public class ClientView extends JFrame {
 		controls.add(buttons, "cell 0 0, grow");
 		controls.add(cardContext, "cell 1 0, grow");
 		parent.add(controls, "cell 4 1 2 2, grow");
-
+		//end controls setup
+		
+		//Setup hand panel below controls that shows card images
 		hand = new CardPanel("./res/wood2.png", ImagePanel.TILE);
 		hand.setToolTipText("hand");
 		parent.add(hand, "cell 4 3 2 2, grow");
-
+		//end hand setup
+		
+		
+		//Setup console for input output below the arena
 		console = new ImagePanel("./res/cloth2.png", ImagePanel.TILE);
 		console.setToolTipText("console");
 		console.setLayout(new BorderLayout());
@@ -178,7 +195,9 @@ public class ClientView extends JFrame {
 		input.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 		console.add(input, BorderLayout.SOUTH);
 		parent.add(console, "cell 0 4 4 1, grow");
-
+		//end console setup
+		
+		//Add the parent to the main view
 		this.getContentPane().add(parent);
 		this.setVisible(true);
 	}
@@ -189,9 +208,14 @@ public class ClientView extends JFrame {
 			StyledDocument doc = pane.getStyledDocument();
 			Style style = pane.addStyle("", null);
 
-			if (type == 1) {
+			switch(type){
+			case 0:
+				StyleConstants.setForeground(style, Color.lightGray);
+				break;
+			case 1:
 				StyleConstants.setForeground(style, Color.yellow);
-			} else {
+				break;
+			default:
 				style = null;
 			}
 
@@ -237,6 +261,8 @@ public class ClientView extends JFrame {
 		Image img;
 		int mode = 0;
 
+		public ImagePanel(Image i) {img = i;}
+		public ImagePanel(Image i, int m) {img = i; mode = m;}
 		public ImagePanel(String i) {
 			try {
 				img = ImageIO.read(new File(i));
@@ -424,7 +450,7 @@ public class ClientView extends JFrame {
 		static final int COLOURS = 0;
 		
 	    public SelectionMenu(int type, Card card){
-    		setBackground(dark_sand);
+    		setBackground(DARK_SAND);
 	    	switch(type){
 	    	case 0:
 	    		JLabel title = new JLabel("Pick a color");
@@ -439,32 +465,32 @@ public class ClientView extends JFrame {
 				}); 
 	    		
 	    		JMenuItem red = new JMenuItem("Red");
-	    		red.setBackground(new Color(194, 73, 49));
+	    		red.setBackground(IVAN_RED);
 	    		red.setForeground(Color.white);
 	    		red.addMouseListener(mouseListener);
 	    		add(red);
 	    		
 	    		
 	    		JMenuItem blue = new JMenuItem("Blue");
-	    		blue.setBackground(new Color(79, 131, 176));
+	    		blue.setBackground(IVAN_BLUE);
 	    		blue.setForeground(Color.white);
 	    		blue.addMouseListener(mouseListener);
 		        add(blue);
 		        
 		        JMenuItem yellow = new JMenuItem("Yellow");
-		        yellow.setBackground(new Color(230, 197, 67));
+		        yellow.setBackground(IVAN_YELLOW);
 		        yellow.setForeground(Color.white);
 		        yellow.addMouseListener(mouseListener);
 		        add(yellow);
 		        
 		        JMenuItem green = new JMenuItem("Green");
-		        green.setBackground(new Color(94, 171, 90));
+		        green.setBackground(IVAN_GREEN);
 		        green.setForeground(Color.white);
 		        green.addMouseListener(mouseListener);
 		        add(green);
 		        
 		        JMenuItem purple = new JMenuItem("Purple");
-		        purple.setBackground(new Color(153, 99, 156));
+		        purple.setBackground(IVAN_PURPLE);
 		        purple.setForeground(Color.white);
 		        purple.addMouseListener(mouseListener);
 		        add(purple);
@@ -543,7 +569,7 @@ public class ClientView extends JFrame {
             int xm = this.getWidth()/2;
             
             //Draw a crude banner
-            g2.setColor(sand);
+            g2.setColor(SAND);
             if(tournament != null){
             	g2.fillRect(xm-50, 0, 100, 100 + 15 * display.score(tournament.getColour()));
             }else{

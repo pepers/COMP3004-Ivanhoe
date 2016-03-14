@@ -178,6 +178,11 @@ public class Client implements Runnable {
 				process(o);
 			}
 			//TODO: remove gui testing
+			if(!gameState.hasHighScore(player)){
+				view.endTurn.setText("Withdraw");
+			}else{
+				view.endTurn.setText("End Turn");
+			}
 			view.hand.update(gameState.getPlayer(player).getHand());
 			view.arena.update(gameState.getPlayers());
 		}
@@ -303,6 +308,16 @@ public class Client implements Runnable {
 			return true;
 
 			/* ACTIONS: */
+			//Info
+		} else if (o instanceof Info) {
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received: "
+					+ ((Info) o).getMessage());
+			String message = ((Info) o).getMessage();
+			message = this.language.translate(message);
+			System.out.println(message);
+			if (view != null)
+				view.writeConsole(message, 0);
+			return true;
 			// Chat
 		} else if (o instanceof Chat) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received: "
@@ -807,7 +822,7 @@ public class Client implements Runnable {
 		System.out.println(s);
 		if (this.view != null)
 			view.writeConsole(s, 0);
-		Trace.getInstance().write(this, this.player.getName() + ": " + s);
+		Trace.getInstance().write(this, (this.player == null) ? "New Player" : this.player.getName() + ": " + s);
 		return true;
 	}
 }

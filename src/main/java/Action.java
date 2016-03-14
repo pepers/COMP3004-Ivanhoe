@@ -27,6 +27,22 @@ class Chat implements Action {
 	
 	public String getMessage() {return message;}
 }
+
+/*
+ * server gameplay messages
+ */
+class Info implements Action {
+
+	private static final long serialVersionUID = 1L;
+	private String message;
+	
+	public Info (String message) {
+		this.message = message;
+		Trace.getInstance().test(this, this.getAction());
+	}
+	
+	public String getMessage() {return message;}
+}
 /*
  *  intervening chat that is evaluated immediately
  */
