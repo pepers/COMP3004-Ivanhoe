@@ -283,6 +283,17 @@ public class GameState implements Serializable{
 			case "Outwit":
 				System.out.println("played an outwit card");
 				break;
+			case "Retreat":
+				prompt = new PromptCommand(server, "Which Display Card would you like to put back in your hand?", action.origin);
+				while (true) {
+					clientInput = invoker.execute(prompt);
+					dc = action.origin.getDisplay().get(clientInput);
+					if (dc != null) { break; }
+				}
+				action.origin.getDisplay().remove(dc);
+				action.origin.addToHand(dc);
+				System.out.println(dc.toString() + " was removed from " + action.origin.getName() + "'s Display, and added to their hand.");
+				break;
 			case "Riposte":
 				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin);
 				while (true) {
