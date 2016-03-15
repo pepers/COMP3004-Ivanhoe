@@ -576,7 +576,7 @@ public class ClientView extends JFrame {
             
             g2.setColor(Color.black);
             g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
-            g2.drawString(player.getName(), xm - player.getName().length()*5, 24);
+            g2.drawString(player.getName(), xm - player.getName().length()*5, 40);
             int i = 1;
             for (Card c : display.elements()){
             	BufferedImage img = getImage(c);

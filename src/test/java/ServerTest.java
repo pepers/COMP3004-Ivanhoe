@@ -65,7 +65,7 @@ public class ServerTest {
 		for (int i=0; i<200; i++) {
 			Card card = g.drawFromDeck();
 			if (card instanceof ActionCard) {
-				g.execute((ActionCard) card);
+				//g.execute(((ActionCard) card));
 			} else if (card instanceof DisplayCard) {
 				g.addDisplay(p, (DisplayCard) card); 
 			}
