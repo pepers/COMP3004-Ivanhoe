@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GameState implements Serializable{
 	private static final long serialVersionUID = 1L;	
@@ -173,6 +174,7 @@ public class GameState implements Serializable{
 		String clientInput = null; // client's input after prompted
 		Player target = null; // target opponent
 		DisplayCard dc = null; // display card retrieved
+		Card card = null; // card retrieved
 		
 		switch(c.toString()){
 			case "Break Lance":
@@ -273,6 +275,19 @@ public class GameState implements Serializable{
 					System.out.println("Drop Weapon card has no effect.");
 				}
 				break;
+			case "Knock Down":
+				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin);
+				while (true) {
+					clientInput = invoker.execute(prompt);
+					target = getPlayer(clientInput);
+					if (target != null) { break; }
+				}
+				int random = ThreadLocalRandom.current().nextInt(0, target.getHand().size());
+				card = target.getHand().get(random);
+				target.getHand().remove(card);
+				action.origin.addToHand(card);
+				System.out.println(card.toString() + " was taken from " + target.getName() + "'s Hand, and added to " + action.origin.getName() + "'s Hand.");
+				break;
 			case "Outmaneuver":
 				ps = getTournamentParticipants();
 				for (Player p: ps) {
@@ -301,10 +316,10 @@ public class GameState implements Serializable{
 					target = getPlayer(clientInput);
 					if (target != null) { break; }
 				}
-				Card card = target.getDisplay().get(target.getDisplay().size()-1);
+				dc = target.getDisplay().get(target.getDisplay().size()-1);
 				target.getDisplay().removeLast();
-				action.origin.addToDisplay(card);
-				System.out.println(card.toString() + " was removed from " + clientInput + 
+				action.origin.addToDisplay(dc);
+				System.out.println(dc.toString() + " was removed from " + clientInput + 
 						"'s Display, and added to " + action.origin.getName() + "'s Display.");
 				break;
 			case "Unhorse":
