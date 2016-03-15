@@ -173,6 +173,26 @@ public class GameState implements Serializable{
 		String clientInput = null; // client's input after prompted
 		
 		switch(c.toString()){
+			case "Change Weapon":
+				if (!(getTournament().getColour().equals(Colour.c.RED) ||
+						getTournament().getColour().equals(Colour.c.BLUE) ||
+						getTournament().getColour().equals(Colour.c.YELLOW))) {
+					System.out.println("Tournament is not Red, Blue, or Yellow. Can't change weapon.");
+					return false;
+				}
+				prompt = new PromptCommand(server, "Change tournament to which colour? (red, blue, yellow)", action.origin);
+				while (true) {
+					clientInput = invoker.execute(prompt);
+					if ((clientInput.equalsIgnoreCase("red")) ||
+						(clientInput.equalsIgnoreCase("blue")) ||
+						(clientInput.equalsIgnoreCase("yellow"))) {
+					break;
+					}
+				}
+				this.lastColour = getTournament().getColour();
+				getTournament().setColour(new Colour(clientInput));
+				System.out.println("Tournament colour changed to " + getTournament().getColour().toString());
+				break;
 			case "Charge":
 				int lowest = 99;
 				ps = getTournamentParticipants();
