@@ -172,6 +172,7 @@ public class GameState implements Serializable{
 		CommandInvoker invoker = new CommandInvoker(); // part of Command Pattern
 		String clientInput = null; // client's input after prompted
 		Player target = null; // target opponent
+		DisplayCard dc = null; // display card retrieved
 		
 		switch(c.toString()){
 			case "Break Lance":
@@ -244,6 +245,22 @@ public class GameState implements Serializable{
 					p.getDisplay().removeAll(new Colour(Colour.c.NONE));
 				}
 				System.out.println("All players remove all their supporters from their Display.");
+				break;
+			case "Dodge":
+				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin);
+				while (true) {
+					clientInput = invoker.execute(prompt);
+					target = getPlayer(clientInput);
+					if (target != null) { break; }
+				}
+				prompt = new PromptCommand(server, "Which card would you like to discard from " + clientInput + "'s Display?", action.origin);
+				while (true) {
+					clientInput = invoker.execute(prompt);
+					dc = target.getDisplay().get(clientInput);
+					if (dc != null) { break; }
+				}
+				target.getDisplay().remove(dc);
+				System.out.println(dc.toString() + " was removed from " + target.getName() + "'s Display.");
 				break;
 			case "Drop Weapon":
 				String tcol = getTournament().getColour().toString();

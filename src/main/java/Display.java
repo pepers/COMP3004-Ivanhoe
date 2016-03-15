@@ -36,6 +36,18 @@ public class Display implements Serializable {
 	}
 	
 	/*
+	 * get a card by name
+	 */
+	public DisplayCard get(String name) {
+		DisplayCard dc = null;
+		if (this.display.isEmpty()) { return dc; }
+		for (DisplayCard card : this.display) {
+			if (card.toString().equalsIgnoreCase(name)) { return card; }
+		}
+		return dc;		
+	}
+	
+	/*
 	 * add card to display
 	 */
 	public boolean add (DisplayCard c) {
