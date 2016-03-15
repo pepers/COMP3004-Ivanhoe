@@ -266,6 +266,19 @@ public class GameState implements Serializable{
 			case "Outwit":
 				System.out.println("played an outwit card");
 				break;
+			case "Riposte":
+				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin);
+				while (true) {
+					clientInput = invoker.execute(prompt);
+					target = getPlayer(clientInput);
+					if (target != null) { break; }
+				}
+				Card card = target.getDisplay().get(target.getDisplay().size()-1);
+				target.getDisplay().removeLast();
+				action.origin.addToDisplay(card);
+				System.out.println(card.toString() + " was removed from " + clientInput + 
+						"'s Display, and added to " + action.origin.getName() + "'s Display.");
+				break;
 			case "Unhorse":
 				if (!getTournament().getColour().equals(Colour.c.PURPLE)) {
 					System.out.println("Tournament is not Purple, can't unhorse.");
