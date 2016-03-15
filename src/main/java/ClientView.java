@@ -39,15 +39,18 @@ public class ClientView extends JFrame {
 	
 	// TODO remove main
 	public static void main(String args[]) throws InterruptedException {
+	
 		ClientView c = new ClientView(null);
 	
-		
 		Deck d = new Deck();
 		d.initialize();
 		ArrayList<Card> cards = new ArrayList<Card>();
 		ArrayList<Player> players = new ArrayList<Player>();
+		Player khalil = new Player("khalil");
+		khalil.addToDisplay(d.draw());
 		players.add(new Player("khalil"));
 		
+		c.arena.update(players);
 		while(cards.size()<7){
 			cards.add(d.draw());
 			c.hand.update(cards);
@@ -483,10 +486,7 @@ public class ClientView extends JFrame {
 		        purple.setForeground(Color.white);
 		        purple.addMouseListener(mouseListener);
 		        add(purple);
-		        
-		        
 	    	}
-	    	
 	    }
 	}
 	
@@ -535,6 +535,7 @@ public class ClientView extends JFrame {
 	public class DisplayView extends JPanel{
 		private static final long serialVersionUID = 1L;
 		
+		//The data members needed to populate the display
 		Player player;
 		Display display;
 		
@@ -551,22 +552,31 @@ public class ClientView extends JFrame {
 		
 		@Override
         protected void paintComponent(Graphics g) {
-			Tournament tournament = client.getGameState().getTournament();
+			super.paintComponent(g);
+			Graphics2D g2 = (Graphics2D) g;
 			
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g;
+			int width = 150;
             int xm = this.getWidth()/2;
             
-            //Draw a crude banner
-            g2.setColor(SAND);
-            if(tournament != null){
-            	g2.fillRect(xm-50, 0, 100, 100 + 15 * display.score(tournament.getColour()));
-            }else{
-            	g2.fillRect(xm-50, 0, 100, 100);
+            Tournament tournament = null;
+            if(client != null){
+            	tournament = client.getGameState().getTournament();
             }
             
-            g2.setColor(Color.white);
-            g2.drawString(player.getName(), xm - player.getName().length()*3, 12);
+            //Draw a crude banner
+            int height = (tournament != null) ? 150 + 15 * display.score(tournament.getColour()) : 150;
+            
+            g2.setColor((player.equals(client.getPlayer())) ? Color.lightGray : Color.black);
+            g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
+            g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
+            
+            g2.setColor(client.getGameState().#asHighScore(player) ? IVAN_PURPLE : SAND);
+            g2.fillRect(xm-width/2, 0, width, height);
+            g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
+            
+            g2.setColor(Color.black);
+            g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+            g2.drawString(player.getName(), xm - player.getName().length()*5, 24);
             int i = 1;
             for (Card c : display.elements()){
             	BufferedImage img = getImage(c);

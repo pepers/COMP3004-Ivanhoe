@@ -178,12 +178,10 @@ public class Client implements Runnable {
 			if (o != null) { // process object if it can be used
 				process(o);
 			}
-			//TODO: remove gui testing
-			if(!gameState.hasHighScore(player)){
-				view.endTurn.setText("Withdraw");
-			}else{
-				view.endTurn.setText("End Turn");
-			}
+			
+			view.endTurn.setForeground(player.isTurn ? Color.black : Color.lightGray);
+			view.endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
+
 			view.hand.update(gameState.getPlayer(player).getHand());
 			view.arena.update(gameState.getPlayers());
 		}
@@ -826,4 +824,5 @@ public class Client implements Runnable {
 		Trace.getInstance().write(this, (this.player == null) ? "New Player" : this.player.getName() + ": " + s);
 		return true;
 	}
+
 }
