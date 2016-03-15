@@ -171,8 +171,19 @@ public class GameState implements Serializable{
 		CommandInterface prompt; // part of Command Pattern
 		CommandInvoker invoker = new CommandInvoker(); // part of Command Pattern
 		String clientInput = null; // client's input after prompted
+		Player target = null; // target opponent
 		
 		switch(c.toString()){
+			case "Break Lance":
+				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin);
+				while (true) {
+					clientInput = invoker.execute(prompt);
+					target = getPlayer(clientInput);
+					if (target != null) { break; }
+				}
+				target.getDisplay().removeAll(new Colour(Colour.c.PURPLE));
+				System.out.println("Removed all Purple cards from " + clientInput + "'s Display.");
+				break;
 			case "Change Weapon":
 				if (!(getTournament().getColour().equals(Colour.c.RED) ||
 						getTournament().getColour().equals(Colour.c.BLUE) ||
@@ -229,16 +240,8 @@ public class GameState implements Serializable{
 				break;
 			case "Disgrace":
 				ps = getTournamentParticipants();
-				DisplayCard s2 = new DisplayCard(2, new Colour(Colour.c.NONE));
-				DisplayCard s3 = new DisplayCard(3, new Colour(Colour.c.NONE));
-				DisplayCard m6 = new DisplayCard(6, new Colour(Colour.c.NONE));
 				for (Player p: ps) {
-					while (p.getDisplay().hasColour(new Colour(Colour.c.NONE))) { // player has supporters in display
-						p.getDisplay().remove(s2); // squire:2
-						p.getDisplay().remove(s3); // squire:3
-						p.getDisplay().remove(m6); // maiden:6
-					}
-					
+					p.getDisplay().removeAll(new Colour(Colour.c.NONE));
 				}
 				System.out.println("All players remove all their supporters from their Display.");
 				break;

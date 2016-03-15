@@ -570,7 +570,7 @@ public class ClientView extends JFrame {
             g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
             g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
             
-            g2.setColor(client.getGameState().#asHighScore(player) ? IVAN_PURPLE : SAND);
+            g2.setColor(client.getGameState().hasHighScore(player) ? IVAN_PURPLE : SAND);
             g2.fillRect(xm-width/2, 0, width, height);
             g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
             

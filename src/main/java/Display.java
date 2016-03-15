@@ -61,6 +61,22 @@ public class Display implements Serializable {
 	}
 	
 	/*
+	 * remove all cards of a specific colour
+	 */
+	public boolean removeAll (Colour colour) {
+		if (this.display.isEmpty()) { return false; }
+		for (Iterator<DisplayCard> iterator = this.display.iterator(); iterator.hasNext();) {
+		    DisplayCard card = iterator.next();
+		    if (card.getColour().equals(colour)) {
+		        iterator.remove();
+		        this.score -= card.getValue();
+		        GameState.getDeck().discard(card);
+		    }
+		}
+		return true;
+	}
+	
+	/*
 	 * remove cards with a certain value
 	 */
 	public boolean removeValue (int value) {
@@ -147,19 +163,6 @@ public class Display implements Serializable {
 		if (this.display.isEmpty()) { return false; }
 		for (DisplayCard card : this.display) {
 			if (card.equals(c)) { return true; }
-		}
-		return false;
-	}
-	
-	/*
-	 * determines if there are cards in the display of a specific colour
-	 */
-	public boolean hasColour (Colour colour) {
-		if (this.display.isEmpty()) { return false; }
-		for (Card c : this.display) {
-			if (((DisplayCard) c).getColour().equals(colour)) {
-				return true;
-			}
 		}
 		return false;
 	}
