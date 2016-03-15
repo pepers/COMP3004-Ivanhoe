@@ -164,8 +164,14 @@ public class GameState implements Serializable{
 	/* 
 	 * deal with Action Cards' special abilities
 	 */
-	public boolean execute(ActionCard c) {
+	public boolean execute(ActionWrapper action, Server s) {
 		ArrayList<Player> ps;
+		ActionCard c = (ActionCard) ((Play) action.object).getCard(); // the Action Card to be played
+		Server server = s;
+		CommandInterface prompt; // part of Command Pattern
+		CommandInvoker invoker = new CommandInvoker(); // part of Command Pattern
+		String clientInput = null; // client's input after prompted
+		
 		switch(c.toString()){
 			case "Charge":
 				int lowest = 99;
@@ -236,6 +242,24 @@ public class GameState implements Serializable{
 				break;
 			case "Outwit":
 				System.out.println("played an outwit card");
+				break;
+			case "Unhorse":
+				if (!getTournament().getColour().equals(Colour.c.PURPLE)) {
+					System.out.println("Tournament is not Purple, can't unhorse.");
+					return false;
+				}
+				prompt = new PromptCommand(server, "Change tournament to which colour? (red, blue, yellow)", action.origin);
+				while (true) {
+					clientInput = invoker.execute(prompt);
+					if ((clientInput.equalsIgnoreCase("red")) ||
+						(clientInput.equalsIgnoreCase("blue")) ||
+						(clientInput.equalsIgnoreCase("yellow"))) {
+					break;
+					}
+				}
+				this.lastColour = getTournament().getColour();
+				getTournament().setColour(new Colour(clientInput));
+				System.out.println("Tournament colour changed to " + getTournament().getColour().toString());
 				break;
 			default:
 				return false;

@@ -47,7 +47,7 @@ public class Server implements Runnable, Serializable {
 	private ConcurrentHashMap<ServerThread, Player> clients;// holds the threads mapped to player objects
 
 	private long time = System.currentTimeMillis();         // time at last Action Card
-	private ActionCard blockedAction = null;                // last Action Card, waiting to be executed
+	private ActionWrapper blockedAction = null;             // last ActionWrapper over Action Card, waiting to be executed
 	
 	private boolean stop = false; 							// stops the main thread
 	private Queue<ActionWrapper> actions; 					// server actions to operate upon
@@ -272,7 +272,7 @@ public class Server implements Runnable, Serializable {
 				// it has been longer than 2 sec
 				if ((System.currentTimeMillis() - time) > 2000) { 
 					if (gameState != null) {
-						gameState.execute(blockedAction);
+						gameState.execute(blockedAction, this);
 						blockedAction = null;
 						updateGameStates();
 					}
@@ -388,8 +388,8 @@ public class Server implements Runnable, Serializable {
 			if (c instanceof ActionCard) {
 				if (c.toString().equalsIgnoreCase("Ivanhoe")) {
 					if (blockedAction != null) {
-						broadcast(action.origin.getName() + " blocks a " + blockedAction.toString() + " card with Ivanhoe!");
-						System.out.println(action.origin.getName() + " blocks a " + blockedAction.toString() + " card with Ivanhoe!");
+						broadcast(action.origin.getName() + " blocks a " + blockedAction.object.toString() + " card with Ivanhoe!");
+						System.out.println(action.origin.getName() + " blocks a " + blockedAction.object.toString() + " card with Ivanhoe!");
 					} else {
 						broadcast(action.origin.getName() + " plays a useless Ivanhoe.");
 						System.out.println(action.origin.getName() + " plays a useless Ivanhoe.");
@@ -403,7 +403,7 @@ public class Server implements Runnable, Serializable {
 					gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
 					GameState.getDeck().discard(c);
 					this.time = System.currentTimeMillis();
-					blockedAction = (ActionCard) c;
+					blockedAction = action;
 					return true;
 				} else {
 					messageExcept("Your Action Card cooldown is " + (System.currentTimeMillis() - time)/1000 + " seconds.", gameState.getPlayer(action.origin.getName()));
