@@ -47,11 +47,11 @@ class Info implements Action {
 /*
  *  intervening chat that is evaluated immediately
  */
-class Prompt<T> implements Action {
+class Prompt implements Action {
 
 	private static final long serialVersionUID = 1L;
 	private String message;
-	private ArrayList<T> options;
+	private ArrayList<Object> options;
 	
 	public Prompt (String message, ArrayList<T> options) {
 		this.message = message;
@@ -60,6 +60,7 @@ class Prompt<T> implements Action {
 	}
 	
 	public String getMessage() {return message;}
+	public ArrayList<Object> getOptions() { return options;}
 }
 
 /*
