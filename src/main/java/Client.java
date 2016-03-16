@@ -336,12 +336,7 @@ public class Client implements Runnable {
 		} else if (o instanceof Prompt) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName()
 					+ " was prompted: " + ((Prompt) o).getMessage());
-			if(view != null){
-				lastPrompt = (Prompt)o;
-				while(lastPrompt != null){
-					//wait around
-				}
-			}else{
+			if (view == null) { // no gui
 				String s = userInput(((Prompt) o).getMessage());
 				send(new Prompt(s));
 			}
