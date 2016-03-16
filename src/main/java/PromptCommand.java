@@ -6,13 +6,13 @@ import java.util.ArrayList;
  * Command Design Pattern - Concrete Command
  * to run prompt in GameState execute method
  */
-public class PromptCommand<T> implements CommandInterface {
+public class PromptCommand implements CommandInterface {
 	private Server server;        // the Server
 	private String msg;           // prompt message
 	private Player p;             // player to send prompt to
-	private ArrayList<T> options; // options for player to choose from
+	private ArrayList<?> options; // options for player to choose from
 	
-	public PromptCommand (Server server, String msg, Player p, ArrayList<T> options) {
+	public PromptCommand (Server server, String msg, Player p, ArrayList<?> options) {
 		this.server = server;
 		this.msg = msg;
 		this.p = p;
