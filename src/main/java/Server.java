@@ -425,7 +425,7 @@ public class Server implements Runnable, Serializable {
 			Colour colour = gameState.getTournament().getColour();
 			String strCol = colour.toString();
 			if(strCol.equalsIgnoreCase("PURPLE")){
-				ArrayList<Colour> colours = new ArrayList<Colour>();
+				ArrayList<Object> colours = new ArrayList<Object>();
 				colours.add(new Colour(Colour.c.PURPLE));
 				colours.add(new Colour(Colour.c.RED));
 				colours.add(new Colour(Colour.c.BLUE));
@@ -527,7 +527,7 @@ public class Server implements Runnable, Serializable {
 	/*
 	 * prompt player for some input
 	 */
-	public <T> String prompt(String input, Player p, ArrayList<T> options) {
+	public String prompt(String input, Player p, ArrayList<Object> options) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
