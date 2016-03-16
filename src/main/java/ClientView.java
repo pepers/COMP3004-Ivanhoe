@@ -523,14 +523,14 @@ public class ClientView extends JFrame {
 		    			item.addMouseListener(mouseListener);
 			    		add(item);
 		    		}
-	    		}else{
+	    		}else {
 	    			
 	    			//Start a execute the command 
 	    			
 	    			MouseListener mouseListener = (new MouseAdapter() {
 						@Override
 						public void mouseReleased(MouseEvent e) {
-							//client.send(e.getComponent())
+							client.send(((JMenuItem)e.getComponent()).getText());
 						}
 					}); 
 		    		
