@@ -178,7 +178,8 @@ public class GameState implements Serializable{
 	 */
 	public <T> boolean execute(ActionWrapper action, Server s) {
 		ArrayList<Player> ps;
-		ActionCard c = (ActionCard) ((Play) action.object).getCard(); // the Action Card to be played
+		Play play = (Play) action.object;
+		ActionCard c = (ActionCard) play.getCard(); // the Action Card to be played
 		Server server = s;
 		CommandInterface prompt; // part of Command Pattern
 		CommandInvoker invoker = new CommandInvoker(); // part of Command Pattern
@@ -350,21 +351,27 @@ public class GameState implements Serializable{
 					System.out.println("Tournament is not Purple, can't unhorse.");
 					return false;
 				}
-				options = new ArrayList<Object>();
-				options.add(new Colour(Colour.c.RED));
-				options.add(new Colour(Colour.c.BLUE));
-				options.add(new Colour(Colour.c.YELLOW));
-				prompt = new PromptCommand(server, "Change tournament to which colour? (red, blue, yellow)", action.origin, options);
-				while (true) {
-					clientInput = invoker.execute(prompt);
-					if ((clientInput.equalsIgnoreCase("red")) ||
-						(clientInput.equalsIgnoreCase("blue")) ||
-						(clientInput.equalsIgnoreCase("yellow"))) {
-					break;
+				if (play.getColours() == null) {
+					options = new ArrayList<Object>();
+					options.add(new Colour(Colour.c.RED));
+					options.add(new Colour(Colour.c.BLUE));
+					options.add(new Colour(Colour.c.YELLOW));
+					prompt = new PromptCommand(server, "Change tournament to which colour? (red, blue, yellow)",
+						action.origin, options);
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						if ((clientInput.equalsIgnoreCase("red")) || (clientInput.equalsIgnoreCase("blue"))
+							|| (clientInput.equalsIgnoreCase("yellow"))) {
+							break;
+						}
 					}
+			
+					this.lastColour = getTournament().getColour();
+					getTournament().setColour(new Colour(clientInput));
+				} else {
+					this.lastColour = getTournament().getColour();
+					getTournament().setColour(play.getColours().get(0));
 				}
-				this.lastColour = getTournament().getColour();
-				getTournament().setColour(new Colour(clientInput));
 				System.out.println("Tournament colour changed to " + getTournament().getColour().toString());
 				break;
 			default:

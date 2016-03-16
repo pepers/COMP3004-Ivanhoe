@@ -118,7 +118,7 @@ public class Client implements Runnable {
 				this.receiveThread = new Thread(this);
 				this.receiveThread.start();
 
-				//view = new ClientView(this);
+				view = new ClientView(this);
 				
 				output("\nType /help for a list of commands!");
 				break;

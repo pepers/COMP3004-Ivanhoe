@@ -85,13 +85,28 @@ class EndTurn implements Action {
 class Play implements Action {
 	private static final long serialVersionUID = 1L;
 	private Card c;
+	private ArrayList<Colour> colours = null;
+	private ArrayList<Player> opponents = null;
+	private ArrayList<Card> cards = null;
+	
 	
 	public Play(Card c) {
 		this.c = c;
 		Trace.getInstance().test(this, this.getAction());
 	}
 	
-	public Card getCard(){return c;}
+	public Play(Card c, ArrayList<Colour> colours, ArrayList<Player> opponents, ArrayList<Card> cards) {
+		this.c = c;
+		this.colours = colours;
+		this.opponents = opponents;
+		this.cards = cards;
+		Trace.getInstance().test(this, this.getAction());
+	}
+	
+	public Card getCard(){return this.c;}
+	public ArrayList<Colour> getColours(){return this.colours;}
+	public ArrayList<Player> getOpponents(){return this.opponents;}
+	public ArrayList<Card> getCards(){return this.cards;}
 }
 
 class StartTournament implements Action {
