@@ -58,6 +58,10 @@ class Prompt implements Action {
 		this.options = options;
 		Trace.getInstance().test(this, this.getAction());
 	}
+	public Prompt (String message) {
+		this.message = message;
+		Trace.getInstance().test(this, this.getAction());
+	}
 	
 	public String getMessage() {return message;}
 	public ArrayList<Object> getOptions() { return options;}

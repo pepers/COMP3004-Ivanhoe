@@ -76,6 +76,8 @@ public class ClientView extends JFrame {
 	//Colors
 	private static final Color SAND = new Color(235, 210, 165);
 	private static final Color DARK_SAND = new Color(133, 113, 72);		
+	
+	
 	private static final Color IVAN_RED = new Color(194, 73, 49);
 	private static final Color IVAN_BLUE =  new Color(79, 131, 176);
 	private static final Color IVAN_YELLOW = new Color(230, 197, 67);
@@ -165,7 +167,7 @@ public class ClientView extends JFrame {
             }
         });      
 		
-		buttons.add(Box.createRigidArea(new Dimension(0, 40)));
+		buttons.add(Box.createRigidArea(new Dimension(0, this.getHeight()/20)));
 		buttons.add(endTurn);
 		
 		controls.add(buttons, "cell 0 0, grow");
@@ -407,7 +409,15 @@ public class ClientView extends JFrame {
 							if (client.getGameState().getTournament() == null) {
 								//Auto start a tournament
 								if(selected.getColour().equals("none")){
-									SelectionMenu menu = new SelectionMenu(0, selected);
+									ArrayList<Object> possibleColours = new ArrayList<Object>();
+									possibleColours.add(new Colour(Colour.c.RED));
+									possibleColours.add(new Colour(Colour.c.BLUE));
+									possibleColours.add(new Colour(Colour.c.YELLOW));
+									possibleColours.add(new Colour(Colour.c.GREEN));
+									if(!client.getGameState().getLastColour().equals("purple")){
+										possibleColours.add(new Colour(Colour.c.PURPLE));
+									}
+									SelectionMenu menu = new SelectionMenu(selected, possibleColours);
 								    menu.show(e.getComponent(), e.getX(), e.getY());
 								}else{
 									client.cmdTournament(new String[]{selected.getColour().toString(), selected.toString()});
@@ -418,8 +428,16 @@ public class ClientView extends JFrame {
 							}
 						}else{
 							ActionCard selected =(ActionCard)card;
-							
 							client.cmdPlay(selected.toString());
+							
+							while(client.lastPrompt == null){
+								//wait around
+							}
+							Prompt prompt = client.lastPrompt;
+							client.lastPrompt = null;
+							
+							SelectionMenu menu = new SelectionMenu(selected, prompt.getOptions());
+						    menu.show(e.getComponent(), e.getX(), e.getY());
 						}
 					}
 				}
@@ -476,52 +494,74 @@ public class ClientView extends JFrame {
 	class SelectionMenu extends JPopupMenu {
 		private static final long serialVersionUID = 1L;
 		static final int COLOURS = 0;
+		static final int PLAYERS = 1;
+		static final int CARDS = 2;
 		
-	    public SelectionMenu(int type, Card card){
-    		setBackground(DARK_SAND);
-	    	switch(type){
-	    	case 0:
-	    		JLabel title = new JLabel("Pick a color");
-	    		add(title);
-	    		
-	    		MouseListener mouseListener = (new MouseAdapter() {
-					//Clicking on a color (to play)
-					@Override
-					public void mouseReleased(MouseEvent e) {
-						client.cmdTournament(new String[]{((JMenuItem) e.getComponent()).getText().toLowerCase(), ((DisplayCard) card).toString()});
-					}
-				}); 
-	    		
-	    		JMenuItem red = new JMenuItem("Red");
-	    		red.setBackground(IVAN_RED);
-	    		red.setForeground(Color.white);
-	    		red.addMouseListener(mouseListener);
-	    		add(red);
-	    		
-	    		
-	    		JMenuItem blue = new JMenuItem("Blue");
-	    		blue.setBackground(IVAN_BLUE);
-	    		blue.setForeground(Color.white);
-	    		blue.addMouseListener(mouseListener);
-		        add(blue);
-		        
-		        JMenuItem yellow = new JMenuItem("Yellow");
-		        yellow.setBackground(IVAN_YELLOW);
-		        yellow.setForeground(Color.white);
-		        yellow.addMouseListener(mouseListener);
-		        add(yellow);
-		        
-		        JMenuItem green = new JMenuItem("Green");
-		        green.setBackground(IVAN_GREEN);
-		        green.setForeground(Color.white);
-		        green.addMouseListener(mouseListener);
-		        add(green);
-		        
-		        JMenuItem purple = new JMenuItem("Purple");
-		        purple.setBackground(IVAN_PURPLE);
-		        purple.setForeground(Color.white);
-		        purple.addMouseListener(mouseListener);
-		        add(purple);
+	    public SelectionMenu(Card card, ArrayList<Object> contents){
+	    	
+	    	setBackground(DARK_SAND);
+	    	if (contents.get(0) instanceof Colour){
+	    		if(card instanceof DisplayCard){
+	    			
+	    			//Start a tournament with a supporter
+	    			
+	    			
+		    		MouseListener mouseListener = (new MouseAdapter() {
+						@Override
+						public void mouseReleased(MouseEvent e) {
+							client.cmdTournament(new String[]{((JMenuItem) e.getComponent()).getText().toLowerCase(), ((DisplayCard) card).toString()});
+						}
+					}); 
+		    		
+		    		JLabel title = new JLabel("Pick a color");
+		    		add(title);
+		    		for (Object t : contents){
+		    			Colour colour = (Colour) t;
+		    			JMenuItem item = new JMenuItem(colour.toString());
+		    			item.setBackground(toRGB(colour));
+		    			item.setForeground(Color.white);
+		    			item.addMouseListener(mouseListener);
+			    		add(item);
+		    		}
+	    		}else{
+	    			
+	    			//Start a execute the command 
+	    			
+	    			MouseListener mouseListener = (new MouseAdapter() {
+						@Override
+						public void mouseReleased(MouseEvent e) {
+							//client.send(e.getComponent())
+						}
+					}); 
+		    		
+		    		JLabel title = new JLabel("Pick a color");
+		    		add(title);
+		    		for (Object t : contents){
+		    			Colour colour = (Colour) t;
+		    			JMenuItem item = new JMenuItem(colour.toString());
+		    			item.setBackground(toRGB(colour));
+		    			item.setForeground(Color.white);
+		    			item.addMouseListener(mouseListener);
+			    		add(item);
+		    		}
+	    		}
+	    	}
+	    }
+	    
+	    private Color toRGB(Colour colour){
+	    	switch(colour.toString().toLowerCase()){
+	    		case "red":
+	    			return IVAN_RED;
+	    		case "blue":
+	    			return IVAN_BLUE;
+	    		case "yellow":
+	    			return IVAN_YELLOW;
+	    		case "green":
+	    			return IVAN_GREEN;
+	    		case "purple":
+	    			return IVAN_RED;
+	    		default:
+	    			return Color.black;
 	    	}
 	    }
 	}
@@ -632,8 +672,8 @@ public class ClientView extends JFrame {
 		public LobbyView(){
 			setLayout(new MigLayout(
 					"fill",
-					"0[450!][450!]0",
-					"0[680]0"));
+					"0[:450:][:450:]0",
+					"0[:680:]0"));
 			setSize(900, 680);
 			setBackground(DARK_SAND);
 			

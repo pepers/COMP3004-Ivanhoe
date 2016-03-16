@@ -24,7 +24,9 @@ public class Client implements Runnable {
 	private GameState gameState = null; // the local copy of the game state
 	private Player player = null; // the local copy of this client's player
 	private ClientView view = null;
-
+	
+	public Prompt lastPrompt = null;
+	
 	public Player getPlayer() {
 		return player;
 	}
@@ -332,8 +334,15 @@ public class Client implements Runnable {
 		} else if (o instanceof Prompt) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName()
 					+ " was prompted: " + ((Prompt) o).getMessage());
-			String s = userInput(((Prompt) o).getMessage());
-			send(new Prompt(s));
+			if(view != null){
+				lastPrompt = (Prompt)o;
+				while(lastPrompt != null){
+					//wait around
+				}
+			}else{
+				String s = userInput(((Prompt) o).getMessage());
+				send(new Prompt(s));
+			}
 			return true;
 
 			// unrecognized object
