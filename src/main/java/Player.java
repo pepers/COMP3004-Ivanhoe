@@ -206,6 +206,7 @@ public class Player implements Serializable{
 	
 	@Override
 	public boolean equals(Object o){
+		if (o == null){return false;}
 		if (this.id == ((Player) o).id){
 			return true;
 		}

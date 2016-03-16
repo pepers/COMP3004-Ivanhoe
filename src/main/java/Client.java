@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.*;
 import java.net.*;
 
+import main.java.ClientView;
 import main.resources.Config;
 import main.resources.Language;
 import main.resources.Language.Dialect;

@@ -31,6 +31,14 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import main.java.ActionCard;
+import main.java.Card;
+import main.java.Client;
+import main.java.Deck;
+import main.java.Display;
+import main.java.DisplayCard;
+import main.java.Player;
+import main.java.Tournament;
 import main.resources.Trace;
 import net.miginfocom.swing.MigLayout;
 
@@ -80,6 +88,14 @@ public class ClientView extends JFrame {
 	public JButton endTurn;
 	
 	public ClientView(Client c) {
+		
+		LobbyView lobby = new LobbyView();
+		JFrame testFrame = new JFrame();
+		testFrame.add(lobby);
+		testFrame.setSize(lobby.getWidth(), lobby.getHeight());
+		testFrame.setVisible(true);
+		testFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
 		client = c;
 		
 		//Setup the parent JPanel and general layout of the view
@@ -252,6 +268,8 @@ public class ClientView extends JFrame {
 
 		Image img;
 		int mode = 0;
+		int imgWidth = 0;
+		int imgHeight = 0;
 
 		public ImagePanel(Image i) {img = i;}
 		public ImagePanel(Image i, int m) {img = i; mode = m;}
@@ -271,6 +289,16 @@ public class ClientView extends JFrame {
 			this.mode = mode;
 		}
 
+		public ImagePanel(String i, int mode, int w, int h) {
+			try {
+				img = ImageIO.read(new File(i));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			this.mode = mode;
+			this.imgWidth = w;
+			this.imgHeight = h;
+		}
 		public void setImage(Image i){
 			img = i;
 		}
@@ -282,11 +310,19 @@ public class ClientView extends JFrame {
 				g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), null);
 				break;
 			case TILE:
-				int i = 0;
-				while (i < this.getWidth()) {
-					g.drawImage(img, i, 0, null);
-					i += img.getWidth(null);
+				if(imgWidth == 0)imgWidth = img.getWidth(null);
+				if(imgHeight == 0)imgHeight = img.getHeight(null);
+				
+				int j = 0;
+				while (j < this.getHeight()) {
+					int i = 0;
+					while (i < this.getWidth()) {
+						g.drawImage(img, i, j, imgWidth, imgHeight, null);
+						i += imgWidth;
+					}
+					j = j + imgHeight;
 				}
+
 				break;
 			case FILL:
 				double d = img.getHeight(null) * ((double) this.getWidth() / img.getWidth(null));
@@ -562,15 +598,19 @@ public class ClientView extends JFrame {
             if(client != null){
             	tournament = client.getGameState().getTournament();
             }
+            if (player == null){
+            	player = new Player("NULL");
+            }
             
             //Draw a crude banner
             int height = (tournament != null) ? 150 + 15 * display.score(tournament.getColour()) : 150;
             
-            g2.setColor((player.equals(client.getPlayer())) ? Color.lightGray : Color.black);
+            
+            if(client != null)g2.setColor((player.equals(client.getPlayer())) ? Color.lightGray : Color.black);
             g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
             g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
             
-            g2.setColor(client.getGameState().hasHighScore(player) ? IVAN_PURPLE : SAND);
+            if(client != null)g2.setColor(client.getGameState().hasHighScore(player) ? IVAN_PURPLE : SAND);
             g2.fillRect(xm-width/2, 0, width, height);
             g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
             
@@ -584,5 +624,37 @@ public class ClientView extends JFrame {
             	g2.drawImage(img, xm-37, 20 * i, 75, 106, null);
 			}
         }
+	}
+	
+	class LobbyView extends JPanel{
+		private static final long serialVersionUID = 1L;
+
+		public LobbyView(){
+			setLayout(new MigLayout(
+					"fill",
+					"0[450!][450!]0",
+					"0[680]0"));
+			setSize(900, 680);
+			setBackground(DARK_SAND);
+			
+			ImagePanel cover = new ImagePanel("./res/ivanhoe_cover.png");
+			this.add(cover, "cell 0 0, grow");
+			
+			ImagePanel bricks = new ImagePanel("./res/stonebrick2.png", ImagePanel.TILE, 200, 200);
+			bricks.setLayout(new MigLayout(
+					"fill",
+					"20[410!]20",
+					"20[640!]20"));
+			
+			JTextArea console = new JTextArea();
+			console.setBackground(Color.black);
+			console.setForeground(Color.white);
+			
+			
+			bricks.add(console, "cell 0 0, grow");
+			
+			
+			this.add(bricks, "cell 1 0, grow");
+		}
 	}
 }
