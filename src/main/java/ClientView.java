@@ -428,16 +428,15 @@ public class ClientView extends JFrame {
 							}
 						}else{
 							ActionCard selected =(ActionCard)card;
-							client.cmdPlay(selected.toString());
 							
-							while(client.lastPrompt == null){
-								//wait around
-							}
-							Prompt prompt = client.lastPrompt;
-							client.lastPrompt = null;
 							
-							SelectionMenu menu = new SelectionMenu(selected, prompt.getOptions());
-						    menu.show(e.getComponent(), e.getX(), e.getY());
+							ArrayList<Colour> a = new ArrayList<Colour>();
+							a.add(new Colour(Colour.c.RED));
+							client.send(new Play(card, a,null, null));
+							
+							
+							//SelectionMenu menu = new SelectionMenu(selected, prompt.getOptions());
+						    //menu.show(e.getComponent(), e.getX(), e.getY());
 						}
 					}
 				}
@@ -559,7 +558,7 @@ public class ClientView extends JFrame {
 	    		case "green":
 	    			return IVAN_GREEN;
 	    		case "purple":
-	    			return IVAN_RED;
+	    			return IVAN_PURPLE;
 	    		default:
 	    			return Color.black;
 	    	}
