@@ -118,7 +118,7 @@ public class Client implements Runnable {
 				this.receiveThread = new Thread(this);
 				this.receiveThread.start();
 
-				view = new ClientView(this);
+				//view = new ClientView(this);
 				
 				output("\nType /help for a list of commands!");
 				break;
@@ -182,11 +182,13 @@ public class Client implements Runnable {
 				process(o);
 			}
 			
-			view.endTurn.setForeground(player.isTurn ? Color.black : Color.lightGray);
-			view.endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
+			if (view != null) {
+				view.endTurn.setForeground(player.isTurn ? Color.black : Color.lightGray);
+				view.endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
 
-			view.hand.update(gameState.getPlayer(player).getHand());
-			view.arena.update(gameState.getPlayers());
+				view.hand.update(gameState.getPlayer(player).getHand());
+				view.arena.update(gameState.getPlayers());
+			}
 		}
 		if (!this.shutDown) {
 			shutdown();
