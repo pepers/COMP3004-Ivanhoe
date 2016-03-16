@@ -175,6 +175,7 @@ public class GameState implements Serializable{
 		Player target = null; // target opponent
 		DisplayCard dc = null; // display card retrieved
 		Card card = null; // card retrieved
+		ArrayList<T> options; // options to send in prompt
 		
 		switch(c.toString()){
 			case "Break Lance":

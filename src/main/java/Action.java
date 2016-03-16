@@ -1,6 +1,7 @@
 package main.java;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import main.resources.Trace;
 
@@ -46,13 +47,15 @@ class Info implements Action {
 /*
  *  intervening chat that is evaluated immediately
  */
-class Prompt implements Action {
+class Prompt<T> implements Action {
 
 	private static final long serialVersionUID = 1L;
 	private String message;
+	private ArrayList<T> options;
 	
-	public Prompt (String message) {
+	public Prompt (String message, ArrayList<T> options) {
 		this.message = message;
+		this.options = options;
 		Trace.getInstance().test(this, this.getAction());
 	}
 	

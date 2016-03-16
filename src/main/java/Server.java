@@ -424,9 +424,15 @@ public class Server implements Runnable, Serializable {
 			
 			Colour colour = gameState.getTournament().getColour();
 			String strCol = colour.toString();
-			if(strCol.equalsIgnoreCase("purple")){
+			if(strCol.equalsIgnoreCase("PURPLE")){
+				ArrayList<Colour> colours = new ArrayList<Colour>();
+				colours.add(new Colour(Colour.c.PURPLE));
+				colours.add(new Colour(Colour.c.RED));
+				colours.add(new Colour(Colour.c.BLUE));
+				colours.add(new Colour(Colour.c.YELLOW));
+				colours.add(new Colour(Colour.c.GREEN));
 				while (true) {
-					strCol = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner);
+					strCol = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner, colours);
 					if ((strCol.equalsIgnoreCase("purple")) ||
 						(strCol.equalsIgnoreCase("red")) ||
 						(strCol.equalsIgnoreCase("blue")) ||
@@ -521,12 +527,12 @@ public class Server implements Runnable, Serializable {
 	/*
 	 * prompt player for some input
 	 */
-	public String prompt(String input, Player p) {
+	public <T> String prompt(String input, Player p, ArrayList<T> options) {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			if ((clients.get(t).equals(p))) {
-				t.send(new Prompt(input));
+				t.send(new Prompt(input, options));
 				while(t.promptResponses.isEmpty()){
 					System.out.flush();
 				}
