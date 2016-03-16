@@ -10,9 +10,9 @@ public class PromptCommand implements CommandInterface {
 	private Server server;        // the Server
 	private String msg;           // prompt message
 	private Player p;             // player to send prompt to
-	private ArrayList<?> options; // options for player to choose from
+	private ArrayList<Object> options; // options for player to choose from
 	
-	public PromptCommand (Server server, String msg, Player p, ArrayList<?> options) {
+	public PromptCommand (Server server, String msg, Player p, ArrayList<Object> options) {
 		this.server = server;
 		this.msg = msg;
 		this.p = p;
