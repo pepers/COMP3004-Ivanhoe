@@ -510,7 +510,7 @@ public class ClientView extends JFrame {
 							client.send(new Play(card, null, param, null));
 						}else if(options.get(0) instanceof Card){
 							ArrayList<Card> param = new ArrayList<Card>();
-							param.add(new ActionCard(((JMenuItem) e.getComponent()).getText()));
+							param.add(new DisplayCard(((JMenuItem) e.getComponent()).getText()));
 							client.send(new Play(card, null, null, param));
 						}
 

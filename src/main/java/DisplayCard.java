@@ -12,6 +12,16 @@ public class DisplayCard extends Card{
 		this.colour = colour;
 	}
 	
+	public DisplayCard(String text) {
+		this.value = Integer.valueOf(text.split(":")[1]);
+		String type = text.split(":")[0];
+		if (type.equalsIgnoreCase("squire") || type.equalsIgnoreCase("maiden")){
+			this.colour = new Colour(Colour.c.NONE);
+		}else{
+			this.colour = new Colour(Colour.c.valueOf(type.toUpperCase()));
+		}
+	}
+
 	public Colour getColour() { 
 		return this.colour; 
 	}
