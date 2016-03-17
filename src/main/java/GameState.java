@@ -198,7 +198,7 @@ public class GameState implements Serializable{
 						if (target != null) { break; }
 					}
 				}else{
-					target = play.getOpponents().get(0);
+					target = getPlayer(play.getOpponents().get(0).getName());
 				}
 				target.getDisplay().removeAll(new Colour(Colour.c.PURPLE));
 				System.out.println("Removed all Purple cards from " + clientInput + "'s Display.");
@@ -284,7 +284,7 @@ public class GameState implements Serializable{
 						if (dc != null) { break; }
 					}
 				}else{
-					target = play.getOpponents().get(0);
+					target = getPlayer(play.getOpponents().get(0).getName());
 				}
 				target.getDisplay().remove(dc);
 				System.out.println(dc.toString() + " was removed from " + target.getName() + "'s Display.");
@@ -309,7 +309,7 @@ public class GameState implements Serializable{
 						if (target != null) { break; }
 					}
 				}else{
-					target = play.getOpponents().get(0);
+					target = getPlayer(play.getOpponents().get(0).getName());
 				}
 				int random = ThreadLocalRandom.current().nextInt(0, target.getHand().size());
 				card = target.getHand().get(random);
