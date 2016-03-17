@@ -187,42 +187,43 @@ public class GameState implements Serializable{
 		Player target = null; // target opponent
 		DisplayCard dc = null; // display card retrieved
 		Card card = null; // card retrieved
-		ArrayList<Object> options = new ArrayList<Object>(); // options to send in prompt
 		
 		switch(c.toString()){
 			case "Break Lance":
-				options.addAll(getOpponents(action.origin));
-				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, options);
-				while (true) {
-					clientInput = invoker.execute(prompt);
-					target = getPlayer(clientInput);
-					if (target != null) { break; }
+				if(play.getOpponents() == null){
+					prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, getTargets(c, action.origin));
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						target = getPlayer(clientInput);
+						if (target != null) { break; }
+					}
+				}else{
+					target = play.getOpponents().get(0);
 				}
 				target.getDisplay().removeAll(new Colour(Colour.c.PURPLE));
 				System.out.println("Removed all Purple cards from " + clientInput + "'s Display.");
 				break;
 			case "Change Weapon":
-				if (!(getTournament().getColour().equals(Colour.c.RED) ||
-						getTournament().getColour().equals(Colour.c.BLUE) ||
-						getTournament().getColour().equals(Colour.c.YELLOW))) {
+				if(getTargets(c, action.origin).size() == 0){
 					System.out.println("Tournament is not Red, Blue, or Yellow. Can't change weapon.");
 					return false;
 				}
-				options = new ArrayList<Object>();
-				options.add(new Colour(Colour.c.RED));
-				options.add(new Colour(Colour.c.BLUE));
-				options.add(new Colour(Colour.c.YELLOW));
-				prompt = new PromptCommand(server, "Change tournament to which colour? (red, blue, yellow)", action.origin, options);
-				while (true) {
-					clientInput = invoker.execute(prompt);
-					if ((clientInput.equalsIgnoreCase("red")) ||
-						(clientInput.equalsIgnoreCase("blue")) ||
-						(clientInput.equalsIgnoreCase("yellow"))) {
-					break;
-					}
-				}
 				this.lastColour = getTournament().getColour();
-				getTournament().setColour(new Colour(clientInput));
+				if(play.getColours() == null){
+					prompt = new PromptCommand(server, "Change tournament to which colour? (red, blue, yellow)", action.origin, getTargets(c, action.origin));
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						if ((clientInput.equalsIgnoreCase("red")) ||
+							(clientInput.equalsIgnoreCase("blue")) ||
+							(clientInput.equalsIgnoreCase("yellow"))) {
+						break;
+						}
+					}
+					getTournament().setColour(new Colour(clientInput));
+				}else{
+					getTournament().setColour(play.getColours().get(0));
+				}
+				
 				System.out.println("Tournament colour changed to " + getTournament().getColour().toString());
 				break;
 			case "Charge":
@@ -267,20 +268,23 @@ public class GameState implements Serializable{
 				System.out.println("All players remove all their supporters from their Display.");
 				break;
 			case "Dodge":
-				options.addAll(getOpponents(action.origin));
-				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, options);
-				while (true) {
-					clientInput = invoker.execute(prompt);
-					target = getPlayer(clientInput);
-					if (target != null) { break; }
-				}
-				options.clear();
-				options.addAll(target.getDisplay().elements());
-				prompt = new PromptCommand(server, "Which card would you like to discard from " + clientInput + "'s Display?", action.origin, options);
-				while (true) {
-					clientInput = invoker.execute(prompt);
-					dc = target.getDisplay().get(clientInput);
-					if (dc != null) { break; }
+				if(play.getOpponents() == null){
+					prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, getTargets(c, action.origin));
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						target = getPlayer(clientInput);
+						if (target != null) { break; }
+					}
+					ArrayList<Object> options = new ArrayList<Object>();
+					options.addAll(target.getDisplay().elements());
+					prompt = new PromptCommand(server, "Which card would you like to discard from " + clientInput + "'s Display?", action.origin, options);
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						dc = target.getDisplay().get(clientInput);
+						if (dc != null) { break; }
+					}
+				}else{
+					target = play.getOpponents().get(0);
 				}
 				target.getDisplay().remove(dc);
 				System.out.println(dc.toString() + " was removed from " + target.getName() + "'s Display.");
@@ -297,12 +301,15 @@ public class GameState implements Serializable{
 				}
 				break;
 			case "Knock Down":
-				options.addAll(getOpponents(action.origin));
-				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, options);
-				while (true) {
-					clientInput = invoker.execute(prompt);
-					target = getPlayer(clientInput);
-					if (target != null) { break; }
+				if(play.getOpponents() == null){
+					prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, getTargets(c, action.origin));
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						target = getPlayer(clientInput);
+						if (target != null) { break; }
+					}
+				}else{
+					target = play.getOpponents().get(0);
 				}
 				int random = ThreadLocalRandom.current().nextInt(0, target.getHand().size());
 				card = target.getHand().get(random);
@@ -321,24 +328,30 @@ public class GameState implements Serializable{
 				System.out.println("played an outwit card");
 				break;
 			case "Retreat":
-				options.addAll(action.origin.getDisplay().elements());
-				prompt = new PromptCommand(server, "Which Display Card would you like to put back in your hand?", action.origin, options);
-				while (true) {
-					clientInput = invoker.execute(prompt);
-					dc = action.origin.getDisplay().get(clientInput);
-					if (dc != null) { break; }
+				if(play.getCards() == null){
+					prompt = new PromptCommand(server, "Which Display Card would you like to put back in your hand?", action.origin, getTargets(c, action.origin));
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						dc = action.origin.getDisplay().get(clientInput);
+						if (dc != null) { break; }
+					}
+				}else{
+					dc = (DisplayCard) play.getCards().get(0);
 				}
 				action.origin.getDisplay().remove(dc);
 				action.origin.addToHand(dc);
 				System.out.println(dc.toString() + " was removed from " + action.origin.getName() + "'s Display, and added to their hand.");
 				break;
 			case "Riposte":
-				options.addAll(getOpponents(action.origin));
-				prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, options);
-				while (true) {
-					clientInput = invoker.execute(prompt);
-					target = getPlayer(clientInput);
-					if (target != null) { break; }
+				if(play.getOpponents() == null){
+					prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, getTargets(c, action.origin));
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						target = getPlayer(clientInput);
+						if (target != null) { break; }
+					}
+				}else{
+					target = play.getOpponents().get(0);
 				}
 				dc = target.getDisplay().get(target.getDisplay().size()-1);
 				target.getDisplay().removeLast();
@@ -351,25 +364,19 @@ public class GameState implements Serializable{
 					System.out.println("Tournament is not Purple, can't unhorse.");
 					return false;
 				}
+				this.lastColour = getTournament().getColour();
 				if (play.getColours() == null) {
-					options = new ArrayList<Object>();
-					options.add(new Colour(Colour.c.RED));
-					options.add(new Colour(Colour.c.BLUE));
-					options.add(new Colour(Colour.c.YELLOW));
 					prompt = new PromptCommand(server, "Change tournament to which colour? (red, blue, yellow)",
-						action.origin, options);
+						action.origin, getTargets(c, action.origin));
 					while (true) {
 						clientInput = invoker.execute(prompt);
 						if ((clientInput.equalsIgnoreCase("red")) || (clientInput.equalsIgnoreCase("blue"))
-							|| (clientInput.equalsIgnoreCase("yellow"))) {
+								|| (clientInput.equalsIgnoreCase("yellow"))) {
 							break;
 						}
 					}
-			
-					this.lastColour = getTournament().getColour();
 					getTournament().setColour(new Colour(clientInput));
 				} else {
-					this.lastColour = getTournament().getColour();
 					getTournament().setColour(play.getColours().get(0));
 				}
 				System.out.println("Tournament colour changed to " + getTournament().getColour().toString());
@@ -378,5 +385,43 @@ public class GameState implements Serializable{
 				return false;
 		}	
 		return true;
+	}
+	
+	public ArrayList<Object> getTargets(ActionCard ac, Player controller){
+		ArrayList<Object> targets = new ArrayList<Object>();
+		switch(ac.toString()){
+			case "Break Lance":
+				targets.addAll(getOpponents(controller));
+				return targets;
+			case "Change Weapon":
+				if(getTournament().getColour().equals("purple") || getTournament().getColour().equals("green")){
+					return targets;
+				}
+				targets.add(new Colour(Colour.c.RED));
+				targets.add(new Colour(Colour.c.BLUE));
+				targets.add(new Colour(Colour.c.YELLOW));
+				targets.remove(getTournament().getColour());
+				return targets;
+			case "Dodge":
+				targets.addAll(getOpponents(controller));
+				return targets;
+			case "Knock Down":
+				targets.addAll(getOpponents(controller));
+				return targets;
+			case "Retreat":
+				targets.addAll(controller.getDisplay().elements());
+				return targets;
+			case "Riposte":
+				targets.addAll(getOpponents(controller));
+				return targets;
+			case "Unhorse":
+				targets.add(new Colour(Colour.c.RED));
+				targets.add(new Colour(Colour.c.BLUE));
+				targets.add(new Colour(Colour.c.YELLOW));
+				return targets;
+			default:
+				return null;
+		}	
+		
 	}
 }
