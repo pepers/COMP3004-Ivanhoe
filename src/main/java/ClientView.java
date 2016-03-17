@@ -429,7 +429,7 @@ public class ClientView extends JFrame {
 						}else{
 							ActionCard selected =(ActionCard)card;
 							ArrayList<Object> options = client.getGameState().getTargets(selected, client.getPlayer());
-							if(options.size() > 0){
+							if ((options != null) && (options.size() > 0)) {
 								SelectionMenu menu = new SelectionMenu(selected, options);
 							    menu.show(e.getComponent(), e.getX(), e.getY());
 							}
@@ -506,7 +506,7 @@ public class ClientView extends JFrame {
 							client.send(new Play(card, param, null, null));
 						}else if(options.get(0) instanceof Player){
 							ArrayList<Player> param = new ArrayList<Player>();
-							param.add(new Player(((JMenuItem) e.getComponent()).getText()));
+							param.add(client.getGameState().getPlayer(((JMenuItem) e.getComponent()).getText()));
 							client.send(new Play(card, null, param, null));
 						}else if(options.get(0) instanceof Card){
 							ArrayList<Card> param = new ArrayList<Card>();
@@ -535,7 +535,7 @@ public class ClientView extends JFrame {
 				add(title);
 				for (Object t : options) {
 					Player p = (Player) t;
-					JMenuItem item = new JMenuItem(p.toString());
+					JMenuItem item = new JMenuItem(p.getName());
 					item.setBackground(Color.black);
 					item.setForeground(Color.white);
 					item.addMouseListener(mouseListener);

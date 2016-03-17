@@ -9,13 +9,13 @@ public class MedievalNames {
 		
 		switch (r.nextInt(4)){
 			case 0:
-				return context + " Joust";
+				return context + " Competition";
 			case 1:
 				return "Tournament of " + context;
 			case 2:
 				return "Grand Tourney of " + context;
 			case 3:
-				return context+ " Celebratory Joust";
+				return context+ " Celebratory Competition";
 			default:
 				return "An Unknown Tournament";
 		}

@@ -343,21 +343,29 @@ public class GameState implements Serializable{
 				System.out.println(dc.toString() + " was removed from " + action.origin.getName() + "'s Display, and added to their hand.");
 				break;
 			case "Riposte":
-				if(play.getOpponents() == null){
+				if(play.getOpponents() == null) {
 					prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, getTargets(c, action.origin));
 					while (true) {
 						clientInput = invoker.execute(prompt);
 						target = getPlayer(clientInput);
 						if (target != null) { break; }
 					}
-				}else{
-					target = play.getOpponents().get(0);
+				} else {
+					target = getPlayer(play.getOpponents().get(0).getName());
 				}
-				dc = target.getDisplay().get(target.getDisplay().size()-1);
-				target.getDisplay().removeLast();
-				action.origin.addToDisplay(dc);
-				System.out.println(dc.toString() + " was removed from " + clientInput + 
-						"'s Display, and added to " + action.origin.getName() + "'s Display.");
+				dc = target.getDisplay().getLast();
+				if (dc != null) {
+					if (target.getDisplay().removeLast()) { 
+						action.origin.addToDisplay(dc);
+						System.out.println(dc.toString() + " was removed from " + target.getName() + 
+								"'s Display, and added to " + action.origin.getName() + "'s Display.");
+					} else {
+					System.out.println("Last card of " + target.getName() + "'s Display could not be removed and added to " 
+							+ action.origin.getName() + "'s Display.");
+					}
+				} else {
+					System.out.println("Last card of " + target.getName() + "'s Display could not be found.");
+				}
 				break;
 			case "Unhorse":
 				if (!getTournament().getColour().equals(Colour.c.PURPLE)) {

@@ -32,7 +32,11 @@ public class Display implements Serializable {
 	 * get a card at a specific index
 	 */
 	public DisplayCard get(int i) {
-		return display.get(i);
+		if (i < display.size()) {
+			return display.get(i);
+		} else {
+			return null;
+		}
 	}
 	
 	/*
@@ -45,6 +49,17 @@ public class Display implements Serializable {
 			if (card.toString().equalsIgnoreCase(name)) { return card; }
 		}
 		return dc;		
+	}
+	
+	/*
+	 * get last card of display
+	 */
+	public DisplayCard getLast() {
+		DisplayCard d = null;
+		if (this.display.size() > 0) {
+			d = (DisplayCard) this.display.get(this.display.size()-1);
+		}
+		return d;
 	}
 	
 	/*
