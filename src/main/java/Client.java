@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.*;
 
 import main.java.ClientView;
+import main.java.ClientView.ConsoleView;
 import main.resources.Config;
 import main.resources.Language;
 import main.resources.Language.Dialect;
@@ -30,7 +31,7 @@ public class Client implements Runnable {
 	public Player getPlayer() {
 		return player;
 	}
-
+	
 	// testing methods
 	public void setGameState(GameState g) {
 		gameState = g;
@@ -60,14 +61,17 @@ public class Client implements Runnable {
 	// initial Client startup activities
 	public void startUp() {
 
+
+		view = new ClientView(this);
+		
 		// welcome message
-		System.out.println(" _____                _                ");
-		System.out.println("|_   _|              | |               ");
-		System.out.println("  | |_   ____ _ _ __ | |__   ___   ___ ");
-		System.out.println("  | \\ \\ / / _` | '_ \\| '_ \\ / _ \\ / _ \\");
-		System.out.println(" _| |\\ V / (_| | | | | | | | (_) |  __/");
-		System.out.println("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
-		System.out.println("\nClient: Welcome brave knight!");
+		outputText(" _____                _                ");
+		outputText("|_   _|              | |               ");
+		outputText("  | |_   ____ _ _ __ | |__   ___   ___ ");
+		outputText("  | \\ \\ / / _` | '_ \\| '_ \\ / _ \\ / _ \\");
+		outputText(" _| |\\ V / (_| | | | | | | | (_) |  __/");
+		outputText("|_____\\_/ \\__,_|_| |_|_| |_|\\___/ \\___|");
+		outputText("\nClient: Welcome brave knight!");
 
 		// get user's name
 		String username = userInput("What is thy name?: ");
@@ -98,7 +102,7 @@ public class Client implements Runnable {
 					try {
 						port = Integer.parseInt(portStr);
 					} catch (NumberFormatException nfe) {
-						System.out.println("Please enter a port number...");
+						outputText("Please enter a port number...");
 						continue;
 					}
 					break;
@@ -116,25 +120,22 @@ public class Client implements Runnable {
 
 				// start new thread to receive from Server
 				this.receiveThread = new Thread(this);
-				this.receiveThread.start();
-
-				view = new ClientView(this);
-				
-				output("\nType /help for a list of commands!");
+				this.receiveThread.start();				
+				outputText("\nType /help for a list of commands!");
 				break;
 			} else {
-				System.out.println("There are no tournaments at that location! \n");
+				outputText("There are no tournaments at that location! \n");
 
 				while (true) {
 					String ui = userInput("Do you want to search for a new tournament (y/n): ");
 					if (ui.equalsIgnoreCase("y")) {
 						break;
 					} else if (ui.equalsIgnoreCase("n")) {
-						System.out.println("Client: fare thee well!");
+						outputText("Client: fare thee well!");
 						search = false;
 						break;
 					} else {
-						System.out.println("That is not an option, my good knight!");
+						outputText("That is not an option, my good knight!");
 					}
 				}
 			}
@@ -146,7 +147,7 @@ public class Client implements Runnable {
 	public boolean shutdown() {
 		this.shutDown = true;
 		this.stop = true;
-		output("\nClient: Shutting down...");
+		outputText("\nClient: Shutting down...");
 
 		if (inputThread != null) {
 			inputThread.shutdown();
@@ -169,7 +170,7 @@ public class Client implements Runnable {
 		receiveThread = null;
 
 		Trace.getInstance().write(this, "Client shut down, successfully.");
-		System.out.println("Client: fare thee well!");
+		outputText("Client: fare thee well!");
 		return true;
 	}
 
@@ -182,7 +183,7 @@ public class Client implements Runnable {
 				process(o);
 			}
 			
-			if (view != null) {
+			if (view != null && view.inGame) {
 				view.endTurn.setForeground(player.isTurn ? Color.black : Color.lightGray);
 				view.endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
 
@@ -197,17 +198,29 @@ public class Client implements Runnable {
 
 	// get user input from console
 	public String userInput(String message) {
-		this.input = new BufferedReader(new InputStreamReader(System.in));
-		output(message);
-		String strInput = "";
-		try {
-			strInput = this.input.readLine();
-		} catch (IOException e) {
-			Trace.getInstance().exception(this, e);
-			return null;
+		outputText(message);
+		if(view == null){
+			this.input = new BufferedReader(new InputStreamReader(System.in));
+			String strInput = "";
+			try {
+				strInput = this.input.readLine();
+			} catch (IOException e) {
+				Trace.getInstance().exception(this, e);
+				return null;
+			}
+			Trace.getInstance().write(this, message + strInput);
+			return strInput;
+		}else{
+			view.getConsole().setMode(ConsoleView.USER_INPUT);
+			String output = null;
+			while(output == null){
+				output = view.getConsole().getText();
+				System.out.flush();
+			}
+			view.getConsole().clearText();
+			view.getConsole().setMode(ConsoleView.COMMAND);
+			return output;
 		}
-		Trace.getInstance().write(this, message + strInput);
-		return strInput;
 	}
 
 	// connect to Server
@@ -221,15 +234,15 @@ public class Client implements Runnable {
 			this.clientInputStream = new ObjectInputStream(this.socket.getInputStream());
 			return true;
 		} catch (SocketException se) {
-			System.out.println("Unable to connect to a server.");
+			outputText("Unable to connect to a server.");
 			Trace.getInstance().exception(this, se);
 			this.stop = true;
 		} catch (UnknownHostException uhe) {
-			System.out.println("Unknown Host");
+			outputText("Unknown Host");
 			Trace.getInstance().exception(this, uhe);
 			this.stop = true;
 		} catch (IOException ioe) {
-			System.out.println("Unexpected exception");
+			outputText("Unexpected exception");
 			Trace.getInstance().exception(this, ioe);
 			this.stop = true;
 		}
@@ -242,7 +255,7 @@ public class Client implements Runnable {
 			this.clientOutputStream.writeObject(o);
 			return true;
 		} catch (IOException e) {
-			System.out.println("Unexpected exception: writing object to output stream");
+			outputText("Unexpected exception: writing object to output stream");
 			Trace.getInstance().exception(this, e);
 		}
 		return false;
@@ -259,11 +272,11 @@ public class Client implements Runnable {
 			Trace.getInstance().exception(this, se);
 			this.stop = true;
 		} catch (ClassNotFoundException cnf) {
-			System.out.println("Class Not Found Exception: reading object from input stream");
+			outputText("Class Not Found Exception: reading object from input stream");
 			Trace.getInstance().exception(this, cnf);
 			this.stop = true;
 		} catch (IOException ioe) {
-			System.out.println("Unexpected Exception: reading object from input stream");
+			outputText("Unexpected Exception: reading object from input stream");
 			Trace.getInstance().exception(this, ioe);
 			this.stop = true;
 		}
@@ -295,20 +308,22 @@ public class Client implements Runnable {
 			}
 			this.player = gameState.getPlayer(this.player.getName());
 			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
+			
+			if(!view.inGame)view.setupGameView();
 			return true;
 
 			// ActionCard
 		} else if (o instanceof ActionCard) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player.addToHand((ActionCard) o);
-			output("Client: " + o.toString() + " added to hand");
+			outputText("Client: " + o.toString() + " added to hand");
 			return true;
 
 			// DisplayCard
 		} else if (o instanceof DisplayCard) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
 			this.player.addToHand((DisplayCard) o);
-			output("Client: " + o.toString() + " added to hand");
+			outputText("Client: " + o.toString() + " added to hand");
 			return true;
 
 			/* ACTIONS: */
@@ -318,9 +333,7 @@ public class Client implements Runnable {
 					+ ((Info) o).getMessage());
 			String message = ((Info) o).getMessage();
 			message = this.language.translate(message);
-			System.out.println(message);
-			if (view != null)
-				view.writeConsole(message, Color.white);
+			outputText(message, ClientView.INFO);
 			return true;
 			// Chat
 		} else if (o instanceof Chat) {
@@ -328,9 +341,7 @@ public class Client implements Runnable {
 					+ ((Chat) o).getMessage());
 			String message = ((Chat) o).getMessage();
 			message = this.language.translate(message);
-			System.out.println(message);
-			if (view != null)
-				view.writeConsole(message, Color.yellow);
+			outputText(message, ClientView.CHAT);
 			return true;
 			// Prompt
 		} else if (o instanceof Prompt) {
@@ -351,14 +362,15 @@ public class Client implements Runnable {
 	}
 
 	public boolean processInput(String input) {
-		if (input.length() == 0){
+		
+		if (input.length() == 0) {
 			return false;
 		}
 		if (validCmd(input)) { // process valid commands
 			processCmd(input);
 			Trace.getInstance().write(this, getPlayer().getName() + ": command processed: " + input);
 		} else if (input.charAt(0) == '/') { // process invalid commands
-			output("Client: invalid command, try typing '/help' for more info.");
+			outputText("Client: invalid command, try typing '/help' for more info.");
 		} else { // process chat
 			String translated = language.translate(input);
 			send(new Chat(translated));
@@ -398,7 +410,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdCensor();
@@ -410,7 +422,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdEnd();
@@ -419,7 +431,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdGameState(gameState);
@@ -428,7 +440,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdHand();
@@ -437,7 +449,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdHelp();
@@ -446,7 +458,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdList();
@@ -457,7 +469,7 @@ public class Client implements Runnable {
 			args.setSuccessor(tournament);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdPlay(String.join(" ", cmd.getArgs()));
@@ -466,7 +478,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdReady();
@@ -475,7 +487,7 @@ public class Client implements Runnable {
 			args = new NoArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdSetname(cmd.getArgs());
@@ -484,7 +496,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			shutdown();
@@ -493,7 +505,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdTokens();
@@ -502,7 +514,7 @@ public class Client implements Runnable {
 			args = new NotOneOrTwoArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdTournament(cmd.getArgs());
@@ -511,7 +523,7 @@ public class Client implements Runnable {
 			args = new NotOneArgument();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdTranslate(cmd.getArgs()[0]);
@@ -520,7 +532,7 @@ public class Client implements Runnable {
 			args = new NotZeroArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
-				output("Client: " + cmd.getMessage());
+				outputText("Client: " + cmd.getMessage());
 				return false;
 			} 
 			cmdWithdraw();
@@ -538,10 +550,10 @@ public class Client implements Runnable {
 		this.language = new Language(dialect, censor);
 		// censored
 		if (censor) {
-			output("Client: now censoring bad language.");
+			outputText("Client: now censoring bad language.");
 		// not censored
 		} else {
-			output("Client: no longer censoring bad language.");
+			outputText("Client: no longer censoring bad language.");
 		}
 		return true;
 	}
@@ -553,24 +565,24 @@ public class Client implements Runnable {
 		// show own display
 		if (arr.length == 0) {
 			if (!(this.player.getDisplay().print(gameState.getTournament().getColour()))) {
-				output("Client: no cards in your display");
+				outputText("Client: no cards in your display");
 			}
 			// show all displays
 		} else if (args.equalsIgnoreCase("-a")) {
 			for (Player p : this.gameState.getPlayers()) {
 				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
-					output("Client: no cards in " + p.getName() + "'s display\n");
+					outputText("Client: no cards in " + p.getName() + "'s display\n");
 				}
 			}
 			// show someone else's display
 		} else {
 			Player p = this.gameState.getPlayer(args);
 			if (p == null) { // player doesn't exist
-				output("Client: " + args + " doesn't exist.  Can't print their Display.");
+				outputText("Client: " + args + " doesn't exist.  Can't print their Display.");
 				return false;
 			} else {
 				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
-					output("Client: no cards in " + p.getName() + "'s display\n");
+					outputText("Client: no cards in " + p.getName() + "'s display\n");
 				}
 			}
 		}
@@ -580,10 +592,10 @@ public class Client implements Runnable {
 	// end your turn
 	public boolean cmdEnd() {
 		if (!this.player.isTurn) {
-			output("Client: Its not your turn.");
+			outputText("Client: Its not your turn.");
 			return false;
 		} else if (gameState.getTournament() == null && this.player.hasValidDisplayCard(new Colour(Colour.c.NONE))) {
-			output("Client: You MUST start a tournament if able.");
+			outputText("Client: You MUST start a tournament if able.");
 			return false;
 		} else {
 			this.player.isTurn = false;
@@ -595,11 +607,11 @@ public class Client implements Runnable {
 	// show cards in hand
 	public boolean cmdHand() {
 		if (this.player.getHand().isEmpty()) {
-			output("Client: You have no cards in your hand.");
+			outputText("Client: You have no cards in your hand.");
 		} else {
-			output("Client: You have the following cards in your hand: ");
+			outputText("Client: You have the following cards in your hand: ");
 			for (Card card : this.player.getHand()) {
-				output("\t- " + card.toString());
+				outputText("\t- " + card.toString());
 			}
 		}
 		return true;
@@ -607,23 +619,23 @@ public class Client implements Runnable {
 
 	// list possible commands and their corresponding syntax
 	public boolean cmdHelp() {
-		output("Client: list of possible commands: ");
+		outputText("Client: list of possible commands: ");
 		for (Config.ClientCommand helpCmd : Config.ClientCommand.values()) {
-			output("\t/" + helpCmd + helpCmd.getSyntax());
+			outputText("\t/" + helpCmd + helpCmd.getSyntax());
 		}
 		return true;
 	}
 
 	// list other players in game
 	public boolean cmdList() {
-		output("- State    : Player ");
+		outputText("- State    : Player ");
 		for (int i = 0; i < this.gameState.getPlayers().size(); i++) {
 			Player p = this.gameState.getPlayers().get(i);
 			String name = p.getName();
 			if (name == this.player.getName()) { // found yourself
 				name += " (you)";
 			}
-			output(String.format("%-10s : %s\n", p.getReadyState(), name));
+			outputText(String.format("%-10s : %s\n", p.getReadyState(), name));
 		}
 		return true;
 	}
@@ -634,7 +646,7 @@ public class Client implements Runnable {
 
 		// card doesn't exist in hand
 		if (c == null) {
-			output("Client: you don't have the card: " + card + "\n\t Type '/hand' to view the cards in your hand.");
+			outputText("Client: you don't have the card: " + card + "\n\t Type '/hand' to view the cards in your hand.");
 			return false;
 			// not the player's turn
 		} else if (!this.player.isTurn) {
@@ -643,27 +655,27 @@ public class Client implements Runnable {
 				send(new Play(c));
 				return true;
 			} else {
-				output("Client: you may not play that card when it is not your turn");
+				outputText("Client: you may not play that card when it is not your turn");
 				return false;
 			}
 			// is player's turn
 		} else {
 			if (c instanceof DisplayCard) {
 				if (gameState.getTournament() == null) {
-					output("Client: no tournament is running, start one with /tournament");
+					outputText("Client: no tournament is running, start one with /tournament");
 					return false;
 				} else if (!(((DisplayCard) c).getColour().equals("none")
 						|| gameState.getTournament().getColour().equals(((DisplayCard) c).getColour()))) {
-					output("Client: not a valid color for the current tournament");
+					outputText("Client: not a valid color for the current tournament");
 					return false;
 				} else if (c.toString().equals("maiden:6") && player.getDisplay().hasCard((DisplayCard) c)) {
-					output("Client: you may not have more than one maiden in your Display.");
+					outputText("Client: you may not have more than one maiden in your Display.");
 					return false;
 				}
 				// action card
 			} else {
 				if (gameState.getTournament() == null) {
-					output("Client: no tournament is running, start one with /tournament");
+					outputText("Client: no tournament is running, start one with /tournament");
 					return false;
 				}
 			}
@@ -684,7 +696,7 @@ public class Client implements Runnable {
 
 		// check for invalid names
 		if ((args.equals("")) || (args.startsWith("-") || (args.startsWith("/")))) {
-			output("Client: can't change name to '" + args + "'. Invalid name.");
+			outputText("Client: can't change name to '" + args + "'. Invalid name.");
 			return false;
 			// valid name
 		} else {
@@ -696,14 +708,14 @@ public class Client implements Runnable {
 	// view everyone's tokens
 	public boolean cmdTokens() {
 		if (this.gameState.getNumPlayers() < 1) {
-			output("Client: there are no players in the game.");
+			outputText("Client: there are no players in the game.");
 			return false;
 		} else {
-			output("Client: listing tokens: ");
+			outputText("Client: listing tokens: ");
 		}
 		for (Player p : this.gameState.getPlayers()) {
-			output(p.getName() + ": ");
-			output(p.listTokens());
+			outputText(p.getName() + ": ");
+			outputText(p.listTokens());
 		}
 		return true;
 	}
@@ -713,12 +725,12 @@ public class Client implements Runnable {
 
 		// Check that no tournaments are running
 		if (this.gameState.getTournament() != null) {
-			output("Client: a tournament is already in progress");
+			outputText("Client: a tournament is already in progress");
 			return false;
 		}
 		// Check if its their turn
 		if (!(this.player.isTurn)) {
-			output("Client: you may not start a tournament when it is not your turn");
+			outputText("Client: you may not start a tournament when it is not your turn");
 			return false;
 		}
 
@@ -732,11 +744,11 @@ public class Client implements Runnable {
 		Card card = this.player.getCard(strCard); // get card to start
 													// tournament with
 		if (card == null) {
-			output("Client: you don't have the card: " + strCard + "\n\t Type '/hand' to view the cards in your hand.");
+			outputText("Client: you don't have the card: " + strCard + "\n\t Type '/hand' to view the cards in your hand.");
 			return false;
 		}
 		if (!(card instanceof DisplayCard)) {
-			output("Client: " + card.toString() + " is not a display card.");
+			outputText("Client: " + card.toString() + " is not a display card.");
 			return false;
 		}
 		DisplayCard displayCard = (DisplayCard) card;
@@ -746,7 +758,7 @@ public class Client implements Runnable {
 			try {
 				colour = new Colour(args[0]);
 			} catch (IllegalArgumentException iae) {
-				output("Client: " + args[0] + " is not a valid tournament colour. Type '/help'.");
+				outputText("Client: " + args[0] + " is not a valid tournament colour. Type '/help'.");
 				return false;
 			}
 		} else {
@@ -755,13 +767,13 @@ public class Client implements Runnable {
 
 		// tournament must be an actual colour, not NONE
 		if (colour.isNone()) {
-			output("Client: " + colour.toString() + " is not a valid tournament colour. Type '/help'.");
+			outputText("Client: " + colour.toString() + " is not a valid tournament colour. Type '/help'.");
 			return false;
 		}
 
 		// last tournament was purple (another colour must be chosen)
 		if ((gameState.getLastColour().toString().equalsIgnoreCase("purple")) && (colour.equals(Colour.c.PURPLE))) {
-			output("Client: the last tournament was Jousting (purple). "
+			outputText("Client: the last tournament was Jousting (purple). "
 					+ "\n A tournament of a different colour must be started.");
 			return false;
 		}
@@ -770,7 +782,7 @@ public class Client implements Runnable {
 		if (!displayCard.getColour().isNone()) {
 			// tournament colour selected doesn't equal display card colour
 			if (!displayCard.getColour().equals(colour)) {
-				output("Client: " + displayCard.toString()
+				outputText("Client: " + displayCard.toString()
 						+ " does not match the colour of the tournament you are trying to start. "
 						+ "\n\t Type '/hand' to view the cards in your hand.");
 				return false;
@@ -786,14 +798,14 @@ public class Client implements Runnable {
 		// no translating
 		if (Language.Dialect.none.toString().equals(d)) {
 			this.language = new Language(Language.Dialect.none, censor);
-			output("Client: no longer translating chat messages");
+			outputText("Client: no longer translating chat messages");
 			return true;
 		}
 		// translating
 		for (Language.Dialect dialect : Language.Dialect.values()) {
 			if (dialect.toString().equals(d)) {
 				this.language = new Language(dialect, censor);
-				output("Client: translating chat to " + this.language.getDialect().toString());
+				outputText("Client: translating chat to " + this.language.getDialect().toString());
 				return true;
 			}
 		}
@@ -813,22 +825,25 @@ public class Client implements Runnable {
 		if (g == null) {
 			return false;
 		}
-		output("Gamestate::");
+		outputText("Gamestate::");
 		if (g.getTournament() == null) {
-			output("No tournament running.");
+			outputText("No tournament running.");
 		}
 		for (Player p : g.getPlayers()) {
-			output(p.getName() + ":" + p.getId());
-			output("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
+			outputText(p.getName() + ":" + p.getId());
+			outputText("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
 		}
 		return true;
 	}
 
-	private boolean output(String s) {
-		System.out.println(s);
+	private boolean outputText(String message) {
+		 return outputText(message, 0);
+	}
+	private boolean outputText(String message, int type) {
+		System.out.println(message);
 		if (this.view != null)
-			view.writeConsole(s, Color.lightGray);
-		Trace.getInstance().write(this, (this.player == null) ? "New Player" : this.player.getName() + ": " + s);
+			view.writeConsole(message, type);
+		Trace.getInstance().write(this, (this.player == null) ? "New Player" : this.player.getName() + ": " + message);
 		return true;
 	}
 

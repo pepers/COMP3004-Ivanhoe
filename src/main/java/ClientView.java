@@ -48,8 +48,9 @@ public class ClientView extends JFrame {
 	// TODO remove main
 	public static void main(String args[]) throws InterruptedException {
 	
+		
 		ClientView c = new ClientView(null);
-	
+		/*
 		Deck d = new Deck();
 		d.initialize();
 		ArrayList<Card> cards = new ArrayList<Card>();
@@ -63,26 +64,32 @@ public class ClientView extends JFrame {
 			cards.add(d.draw());
 			c.hand.update(cards);
 		}
+		*/
 		
 		
 	}
 
 	//Private members
 	private static Image cardback;										//The image of the cardback
-	private JPanel parent, header, title, controls, console;			//Purely visual JPanel members
+	private JPanel gameView, header, title, controls;
+	private ConsoleView console;	
 	private Client client;												//Reference to the parent client
 	private HashMap<Card, BufferedImage> images;						//Map to hold card images
+	private LobbyView lobbyView;
+	boolean inGame = false;
 	
 	//Colors
 	private static final Color SAND = new Color(235, 210, 165);
 	private static final Color DARK_SAND = new Color(133, 113, 72);		
-	
-	
 	private static final Color IVAN_RED = new Color(194, 73, 49);
 	private static final Color IVAN_BLUE =  new Color(79, 131, 176);
 	private static final Color IVAN_YELLOW = new Color(230, 197, 67);
 	private static final Color IVAN_GREEN = new Color(94, 171, 90);
 	private static final Color IVAN_PURPLE = new Color(153, 99, 156);
+	
+	public static final int INFO = 0;
+	public static final int CHAT = 1;
+	public static final int ERROR = 2;
 	
 	//Public members
 	public CardPanel hand;												//Hand of cards for the user
@@ -90,44 +97,47 @@ public class ClientView extends JFrame {
 	public JButton endTurn;
 	
 	public ClientView(Client c) {
-		
-		LobbyView lobby = new LobbyView();
-		JFrame testFrame = new JFrame();
-		testFrame.add(lobby);
-		testFrame.setSize(lobby.getWidth(), lobby.getHeight());
-		testFrame.setVisible(true);
-		testFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
 		client = c;
 		
-		//Setup the parent JPanel and general layout of the view
 		this.setResizable(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setVisible(true);
+		lobbyView = new LobbyView();
+		this.setSize(900, 680);
+		this.getContentPane().add(lobbyView);
+		this.revalidate();
+		
+	}
+	
+	public void setupGameView(){
+		
+		inGame = true;
+		//Setup the parent JPanel and general layout of the view
 		this.setSize(1255, 685);
-		parent = new JPanel(new MigLayout("fill", 
+		gameView = new JPanel(new MigLayout("fill", 
 				"5[200::]5[200::]5[200::]5[200::]5[200::]5[200::]5",
 				"5[120::]5[120::]5[120::]5[120::]5[120::]20"));
-		parent.setBackground(DARK_SAND);
+		gameView.setBackground(DARK_SAND);
 		//end parent setup
 		
 		//Setup header (stone wall that shows the tournament type
 		header = new ImagePanel("./res/cobblestone.png", ImagePanel.TILE);
 		header.setToolTipText("header");
-		parent.add(header, "cell 0 0 4 1, grow");
+		gameView.add(header, "cell 0 0 4 1, grow");
 		//end header setup
 		
 		//Setup title card "Ivanhoe", top right corner
 		title = new ImagePanel("./res/title.png", ImagePanel.CENTER_SCALE);
 		title.setBackground(SAND);
 		title.setToolTipText("title");
-		parent.add(title, "cell 4 0 2 1, grow");
+		gameView.add(title, "cell 4 0 2 1, grow");
 		//end title setup
 		
 		//Setup arena section that shows displays
 		arena = new DisplayPanel("./res/sand.png", ImagePanel.TILE);
 		arena.setToolTipText("arena");
 		arena.setLayout(new GridLayout(1,0));
-		parent.add(arena, "cell 0 1 4 3, grow");
+		gameView.add(arena, "cell 0 1 4 3, grow");
 		//end arena setup
 		
 		//Setup controls arena under title that shows context and turn buttons
@@ -172,70 +182,37 @@ public class ClientView extends JFrame {
 		
 		controls.add(buttons, "cell 0 0, grow");
 		controls.add(cardContext, "cell 1 0, grow");
-		parent.add(controls, "cell 4 1 2 2, grow");
+		gameView.add(controls, "cell 4 1 2 2, grow");
 		//end controls setup
 		
 		//Setup hand panel below controls that shows card images
 		hand = new CardPanel("./res/wood2.png", ImagePanel.TILE);
 		hand.setToolTipText("hand");
-		parent.add(hand, "cell 4 3 2 2, grow");
+		gameView.add(hand, "cell 4 3 2 2, grow");
 		//end hand setup
 		
 		
 		//Setup console for input output below the arena
-		console = new ImagePanel("./res/cloth2.png", ImagePanel.TILE);
-		console.setToolTipText("console");
-		console.setLayout(new BorderLayout());
-
-		JTextPane textArea = new JTextPane();
-		textArea.setSize(console.getSize());
-		textArea.setOpaque(false);
-		textArea.setForeground(Color.white);
-		textArea.setFont(new Font("Book Antiqua", Font.BOLD, 20));
-		textArea.setEditable(false);
-		textArea.setFocusable(false);
-		DefaultCaret caret = ((DefaultCaret) textArea.getCaret());
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		JScrollPane areaScrollPane = new JScrollPane(textArea);
-		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		areaScrollPane.setOpaque(false);
-		areaScrollPane.getViewport().setOpaque(false);
-		areaScrollPane.setAutoscrolls(true);
-		console.add(areaScrollPane, BorderLayout.CENTER);
-
-		JTextField input = new JTextField();
-		input.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (client != null)
-					client.processInput(input.getText());
-				input.setText("");
-			}
-		});
-		input.setOpaque(false);
-		input.setForeground(Color.white);
-		input.setFont(new Font("Book Antiqua", Font.BOLD, 20));
-		console.add(input, BorderLayout.SOUTH);
-		parent.add(console, "cell 0 4 4 1, grow");
+		console = new ConsoleView("./res/cloth2.png", ImagePanel.TILE);
+		gameView.add(console, "cell 0 4 4 1, grow");
 		//end console setup
 		
 		//Add the parent to the main view
-		this.getContentPane().add(parent);
-		this.setVisible(true);
+		this.getContentPane().removeAll();
+		this.getContentPane().add(gameView);
+		this.revalidate();
 	}
 
-	public void writeConsole(String s, Color color) {
-		try {
-			JTextPane pane = ((JTextPane) ((JScrollPane) console.getComponent(0)).getViewport().getView());
-			StyledDocument doc = pane.getStyledDocument();
-			Style style = pane.addStyle("", null);
-			StyleConstants.setForeground(style, color);
-			doc.insertString(doc.getLength(), ("\n " + s), style);
-			pane.selectAll();
-		} catch (BadLocationException exc) {
-			exc.printStackTrace();
+	public void writeConsole(String message, int type) {
+		if(lobbyView != null){
+			ConsoleView lobbyConsole = (ConsoleView) ((ImagePanel) lobbyView.getComponent(1)).getComponent(0);
+			lobbyConsole.write(message, type);
+		}
+		if(gameView != null){
+			console.write(message, type);
 		}
 	}
-
+	
 	public BufferedImage getImage(Card c){
 		try{
 			if (images.containsKey(c)) {
@@ -260,6 +237,11 @@ public class ClientView extends JFrame {
 		return images.get(c);
 	}
 	
+	/*
+	 * Below are the custom swing classes
+	 */
+	
+	
 	class ImagePanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		public static final int STRETCH = 1;
@@ -283,24 +265,15 @@ public class ClientView extends JFrame {
 			}
 		}
 		public ImagePanel(String i, int mode) {
-			try {
-				img = ImageIO.read(new File(i));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			this(i);
 			this.mode = mode;
 		}
-
 		public ImagePanel(String i, int mode, int w, int h) {
-			try {
-				img = ImageIO.read(new File(i));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			this.mode = mode;
+			this(i, mode);
 			this.imgWidth = w;
 			this.imgHeight = h;
 		}
+		
 		public void setImage(Image i){
 			img = i;
 		}
@@ -346,7 +319,6 @@ public class ClientView extends JFrame {
 		}
 	}
 
-	// Hand visual structure
 	class CardPanel extends ImagePanel {
 		private static final long serialVersionUID = 1L;
 		private ArrayList<Card> hand;
@@ -573,7 +545,7 @@ public class ClientView extends JFrame {
 	    }
 	}
 	
-	public class TransparentTextArea extends JTextArea {
+	class TransparentTextArea extends JTextArea {
 		private static final long serialVersionUID = 1L;
 
 		public TransparentTextArea() {
@@ -594,7 +566,7 @@ public class ClientView extends JFrame {
 
     }
 	
-	public class DisplayPanel extends ImagePanel{
+	class DisplayPanel extends ImagePanel{
 		private static final long serialVersionUID = 1L;
 
 		public DisplayPanel(String path, int i){
@@ -615,7 +587,7 @@ public class ClientView extends JFrame {
 		}
 	}
 	
-	public class DisplayView extends JPanel{
+	class DisplayView extends JPanel{
 		private static final long serialVersionUID = 1L;
 		
 		//The data members needed to populate the display
@@ -676,6 +648,8 @@ public class ClientView extends JFrame {
 	class LobbyView extends JPanel{
 		private static final long serialVersionUID = 1L;
 
+		private ConsoleView console;
+		
 		public LobbyView(){
 			setLayout(new MigLayout(
 					"fill",
@@ -684,24 +658,115 @@ public class ClientView extends JFrame {
 			setSize(900, 680);
 			setBackground(DARK_SAND);
 			
-			ImagePanel cover = new ImagePanel("./res/ivanhoe_cover.png");
+			ImagePanel cover = new ImagePanel("./res/ivanhoe_cover.png", ImagePanel.CENTER);
 			this.add(cover, "cell 0 0, grow");
 			
 			ImagePanel bricks = new ImagePanel("./res/stonebrick2.png", ImagePanel.TILE, 200, 200);
 			bricks.setLayout(new MigLayout(
 					"fill",
 					"20[410!]20",
-					"20[640!]20"));
+					"20[600!]20"));
 			
-			JTextArea console = new JTextArea();
-			console.setBackground(Color.black);
-			console.setForeground(Color.white);
-			
-			
+			console = new ConsoleView("./res/arena.png");
 			bricks.add(console, "cell 0 0, grow");
 			
 			
 			this.add(bricks, "cell 1 0, grow");
 		}
 	}
+	
+	class ConsoleView extends ImagePanel{
+		private static final long serialVersionUID = 1L;
+		public static final int COMMAND = 0;
+		public static final int USER_INPUT = 1;
+		private String inputText = null;
+		int mode = COMMAND;
+		
+		JScrollPane areaScrollPane;
+		JTextPane textArea;
+		JTextField input;
+		
+		public ConsoleView(String path){
+			this(path, ImagePanel.TILE);
+		}
+		public ConsoleView(String path, int style){
+			super(path, style);
+			this.setLayout(new BorderLayout());
+
+			textArea = new JTextPane();
+			textArea.setSize(this.getSize());
+			textArea.setOpaque(false);
+			textArea.setForeground(Color.white);
+			textArea.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			textArea.setEditable(false);
+			textArea.setFocusable(false);
+			DefaultCaret caret = ((DefaultCaret) textArea.getCaret());
+			caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+			areaScrollPane = new JScrollPane(textArea);
+			areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			areaScrollPane.setOpaque(false);
+			areaScrollPane.getViewport().setOpaque(false);
+			areaScrollPane.setAutoscrolls(true);
+			this.add(areaScrollPane, BorderLayout.CENTER);
+
+			input = new JTextField();
+			input.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					switch (mode){
+						case USER_INPUT:
+							inputText = input.getText();
+							input.setText("");
+							break;
+						default:
+							if (client != null)client.processInput(input.getText());
+							input.setText("");
+							break;
+					}
+					
+				}
+			});
+			input.setOpaque(false);
+			input.setForeground(Color.white);
+			input.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.add(input, BorderLayout.SOUTH);
+		}
+	
+		public String getText(){return inputText;}
+		public void clearText(){inputText = null;}
+		public int getMode(){return mode;}
+		public void setMode(int mode){
+			//write("Now operating in " + mode + " mode.",INFO);
+			this.mode = mode;
+		}
+		public void write(String s, int type) {
+			StyledDocument doc = textArea.getStyledDocument();
+			Style style = textArea.addStyle("", null);
+			try {
+				switch(type){
+				case INFO:
+					StyleConstants.setForeground(style, Color.lightGray);
+					break;
+				case CHAT:
+					StyleConstants.setForeground(style, Color.lightGray);
+					break;
+				default:
+					StyleConstants.setForeground(style, Color.lightGray);
+				}
+				doc.insertString(doc.getLength(), ("\n " + s), style);
+				textArea.setCaretPosition(textArea.getDocument().getLength());
+			} catch (BadLocationException exc) {
+				exc.printStackTrace();
+			}
+		}
+	}
+
+	public ConsoleView getConsole() {
+		if(!inGame){
+			return (ConsoleView) ((ImagePanel) lobbyView.getComponent(1)).getComponent(0);
+		}else{
+			return console;
+		}
+	}
+
+	
 }

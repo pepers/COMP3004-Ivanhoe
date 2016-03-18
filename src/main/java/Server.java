@@ -560,7 +560,7 @@ public class Server implements Runnable, Serializable {
 		broadcast("Preparing to start a game...");
 
 		gameState = new GameState();
-
+		
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
