@@ -86,6 +86,7 @@ public class ClientView extends JFrame {
 	private static final Color IVAN_YELLOW = new Color(230, 197, 67);
 	private static final Color IVAN_GREEN = new Color(94, 171, 90);
 	private static final Color IVAN_PURPLE = new Color(153, 99, 156);
+	private static final Color IVAN_GOLD = new Color(255, 217, 64);
 	
 	public static final int INFO = 0;
 	public static final int CHAT = 1;
@@ -622,20 +623,20 @@ public class ClientView extends JFrame {
             }
             
             //Draw a crude banner
-            int height = (tournament != null) ? 150 + 15 * display.score(tournament.getColour()) : 150;
+            int height = (tournament != null) ? 180 + 15 * display.score(tournament.getColour()) : 150;
             
             
             if(client != null)g2.setColor((player.equals(client.getPlayer())) ? Color.lightGray : Color.black);
             g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
             g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
             
-            if(client != null)g2.setColor(client.getGameState().hasHighScore(player) ? IVAN_PURPLE : SAND);
+            if(client != null)g2.setColor(client.getGameState().hasHighScore(player) ? IVAN_GOLD : SAND);
             g2.fillRect(xm-width/2, 0, width, height);
             g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
             
             g2.setColor(Color.black);
             g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
-            g2.drawString(player.getName(), xm - player.getName().length()*5, 40);
+            g2.drawString(player.getName(), xm - player.getName().length()*5, 50);
             int i = 1;
             for (Card c : display.elements()){
             	BufferedImage img = getImage(c);
@@ -659,7 +660,7 @@ public class ClientView extends JFrame {
             	}else {
             		g2.setColor(Color.black);
             	}
-            	g2.fillRect(xm-width/2 + (i * width/5), 20, 10, 10);
+            	g2.fillRect(xm-width/2 + (i * width/6), 20, 10, 10);
 			}
         }
 	}
