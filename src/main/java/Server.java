@@ -431,16 +431,12 @@ public class Server implements Runnable, Serializable {
 				colours.add(new Colour(Colour.c.BLUE));
 				colours.add(new Colour(Colour.c.YELLOW));
 				colours.add(new Colour(Colour.c.GREEN));
-				while (true) {
-					strCol = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner, colours);
-					if ((strCol.equalsIgnoreCase("purple")) ||
-						(strCol.equalsIgnoreCase("red")) ||
-						(strCol.equalsIgnoreCase("blue")) ||
-						(strCol.equalsIgnoreCase("yellow")) ||
-						(strCol.equalsIgnoreCase("green"))) {
-						break;
-					}
+				strCol = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner, colours);
+				
+				while(!Colour.getValid(strCol)){
+					strCol = prompt("Please choose a valid colour of token...", winner, colours);
 				}
+				colour = new Colour(strCol);
 			}
 			
 			if (winner.giveToken(new Token(colour, gameState.getTournament().getContext()))) {

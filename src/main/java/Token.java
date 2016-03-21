@@ -32,4 +32,12 @@ public class Token implements Serializable {
 	public String toString() {
 		return this.colour.toString() + " token from " + origin;
 	}
+	
+	public Colour getColour() {
+		return colour;
+	}
+	
+	public String getOrigin() {
+		return origin;
+	}
 }

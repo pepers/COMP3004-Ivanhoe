@@ -640,7 +640,26 @@ public class ClientView extends JFrame {
             for (Card c : display.elements()){
             	BufferedImage img = getImage(c);
             	i++;
-            	g2.drawImage(img, xm-37, 20 * i, 75, 106, null);
+            	g2.drawImage(img, xm-37, 40 + (20 * i), 75, 106, null);
+			}
+            i = 0;
+            for (Token t : player.getTokens()){
+            	i++;
+            	
+            	if(t.getColour().equals("red")){
+            		g2.setColor(IVAN_RED);
+            	}else if(t.getColour().equals("blue")){
+            		g2.setColor(IVAN_BLUE);
+            	}else if(t.getColour().equals("yellow")){
+            		g2.setColor(IVAN_YELLOW);
+            	}else if(t.getColour().equals("green")){
+            		g2.setColor(IVAN_GREEN);
+            	}else if(t.getColour().equals("purple")){
+            		g2.setColor(IVAN_PURPLE);
+            	}else {
+            		g2.setColor(Color.black);
+            	}
+            	g2.fillRect(xm-width/2 + (i * width/5), 20, 10, 10);
 			}
         }
 	}

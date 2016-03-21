@@ -219,4 +219,7 @@ public class Player implements Serializable{
 	public void setTurn() {
 		isTurn = true;
 	}
+	public ArrayList<Token> getTokens() {
+		return tokens;
+	}
 }

@@ -64,4 +64,13 @@ public class Colour implements Serializable {
 		Colour col = (Colour) obj ;
 		return this.colour.equals(col.get());
 	}
+	
+	public static boolean getValid(String s){
+		for (Colour.c c : c.values()){
+			if (s.equalsIgnoreCase(c.toString())){
+				return true;
+			}
+		}
+		return false;
+	}
 }

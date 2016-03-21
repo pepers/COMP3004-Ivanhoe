@@ -133,6 +133,7 @@ public class Client implements Runnable {
 					} else if (ui.equalsIgnoreCase("n")) {
 						outputText("Client: fare thee well!");
 						search = false;
+						shutdown();
 						break;
 					} else {
 						outputText("That is not an option, my good knight!");
@@ -171,6 +172,7 @@ public class Client implements Runnable {
 
 		Trace.getInstance().write(this, "Client shut down, successfully.");
 		outputText("Client: fare thee well!");
+		if(view != null)view.dispose();
 		return true;
 	}
 
@@ -347,10 +349,8 @@ public class Client implements Runnable {
 		} else if (o instanceof Prompt) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName()
 					+ " was prompted: " + ((Prompt) o).getMessage());
-			if (view == null) { // no gui
-				String s = userInput(((Prompt) o).getMessage());
-				send(new Prompt(s));
-			}
+			String s = userInput(((Prompt) o).getMessage());
+			send(new Prompt(s));
 			return true;
 
 			// unrecognized object
