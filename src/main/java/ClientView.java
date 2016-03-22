@@ -4,6 +4,7 @@ package main.java;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -77,6 +78,7 @@ public class ClientView extends JFrame {
 	private HashMap<Card, BufferedImage> images;						//Map to hold card images
 	private LobbyView lobbyView;
 	boolean inGame = false;
+	private boolean connected = false; // connected to server
 	
 	//Colors
 	private static final Color SAND = new Color(235, 210, 165);
@@ -108,6 +110,15 @@ public class ClientView extends JFrame {
 		this.getContentPane().add(lobbyView);
 		this.revalidate();
 		
+		// hacky way to wait until connected to server
+		while (!connected) {
+			System.out.println("");
+		}
+		
+		lobbyView = new LobbyView();
+		this.setSize(900, 680);
+		this.setContentPane(lobbyView);
+		this.revalidate();
 	}
 	
 	public void setupGameView(){
@@ -669,6 +680,7 @@ public class ClientView extends JFrame {
 		private static final long serialVersionUID = 1L;
 
 		private ConsoleView console;
+		private LoginView login;
 		
 		public LobbyView(){
 			setLayout(new MigLayout(
@@ -687,12 +699,112 @@ public class ClientView extends JFrame {
 					"20[410!]20",
 					"20[600!]20"));
 			
-			console = new ConsoleView("./res/arena.png");
-			bricks.add(console, "cell 0 0, grow");
-			
+			if (!connected) {
+				login = new LoginView("./res/arena.png");
+				bricks.add(login);
+			} else {
+				console = new ConsoleView("./res/arena.png");
+				bricks.add(console, "grow");
+			}
 			
 			this.add(bricks, "cell 1 0, grow");
 		}
+	}
+	
+	/*
+	 * enter name, server address, server port
+	 */
+	class LoginView extends ImagePanel {
+		private static final long serialVersionUID = 1L;
+		private JLabel lname    = new JLabel("Your Name: ");
+		private JLabel laddress = new JLabel("Server Address: ");
+		private JLabel lport    = new JLabel("Server Port: ");
+		private JTextField tname = new JTextField(10);
+		private JTextField taddress = new JTextField(10);
+		private JTextField tport = new JTextField(10);
+		private JButton connect = new JButton("Connect");
+		private JPanel labels = new JPanel();
+		private JPanel textfields = new JPanel();
+		
+		public LoginView(String path) {
+			this(path, ImagePanel.TILE);
+		}
+		
+		public LoginView(String path, int style){
+			super(path, style);
+			this.setOpaque(false);
+			
+			this.labels.setLayout(new BoxLayout(this.labels, BoxLayout.Y_AXIS));
+			this.labels.setOpaque(false);
+			
+			this.textfields.setLayout(new BoxLayout(this.textfields, BoxLayout.Y_AXIS));
+			this.textfields.setOpaque(false);
+
+			// add labels and textareas
+			this.labels.add(this.lname);
+			this.textfields.add(this.tname);
+			
+			this.labels.add(this.laddress);
+			this.textfields.add(this.taddress);
+			
+			this.labels.add(this.lport);
+			this.textfields.add(this.tport);
+			
+			// set properties of labels
+			this.lname.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.lname.setForeground(Color.WHITE);
+			this.lname.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			
+			this.laddress.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.laddress.setForeground(Color.WHITE);
+			this.laddress.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+			this.lport.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.lport.setForeground(Color.WHITE);
+			this.lport.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			
+			// set properties of textfields
+			this.tname.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.tname.setText("Player");
+			
+			this.taddress.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.taddress.setText("127.0.0.1");
+			
+			this.tport.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.tport.setText("5050");
+			
+			// set properties of Connect button
+			this.connect.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			
+			// add each line
+			this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+			this.add(this.labels);
+			this.add(this.textfields);
+			this.add(this.connect);
+			
+			// send info when ready button is clicked
+			this.connect.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (client != null) {
+						client.initialize(getName());
+						int port;
+						try {
+							port = Integer.parseInt(getPort());
+						} catch (NumberFormatException nfe) {
+							return;
+						}
+						if (client.guiStartUp(getAddress(), port)) {
+							connected = true;
+							connect.setEnabled(false);
+						}
+					}
+				}
+			});
+		}
+		
+		public String getName() { return this.tname.getText(); }
+		public String getAddress() { return this.taddress.getText(); }
+		public String getPort() { return this.tport.getText(); }
 	}
 	
 	class ConsoleView extends ImagePanel{
@@ -705,6 +817,8 @@ public class ClientView extends JFrame {
 		JScrollPane areaScrollPane;
 		JTextPane textArea;
 		JTextField input;
+		private JButton ready = new JButton("Ready");
+		private JPanel bottom = new JPanel();
 		
 		public ConsoleView(String path){
 			this(path, ImagePanel.TILE);
@@ -712,6 +826,7 @@ public class ClientView extends JFrame {
 		public ConsoleView(String path, int style){
 			super(path, style);
 			this.setLayout(new BorderLayout());
+			this.bottom.setLayout(new BoxLayout(this.bottom, BoxLayout.X_AXIS));
 
 			textArea = new JTextPane();
 			textArea.setSize(this.getSize());
@@ -728,6 +843,15 @@ public class ClientView extends JFrame {
 			areaScrollPane.getViewport().setOpaque(false);
 			areaScrollPane.setAutoscrolls(true);
 			this.add(areaScrollPane, BorderLayout.CENTER);
+			
+			// set the Ready button
+			this.ready.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.ready.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					client.cmdReady();
+					ready.setEnabled(false);
+				}
+			});
 
 			input = new JTextField();
 			input.addActionListener(new ActionListener() {
@@ -748,7 +872,9 @@ public class ClientView extends JFrame {
 			input.setOpaque(false);
 			input.setForeground(Color.white);
 			input.setFont(new Font("Book Antiqua", Font.BOLD, 20));
-			this.add(input, BorderLayout.SOUTH);
+			this.bottom.add(input); // add textfield to bottom
+			this.bottom.add(ready); // add Ready button beside textfield
+			this.add(bottom, BorderLayout.SOUTH);
 		}
 	
 		public String getText(){return inputText;}
