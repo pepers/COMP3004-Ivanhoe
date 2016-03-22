@@ -26,7 +26,9 @@ public class Player implements Serializable{
 	
 	public int getHandSize(){return this.handSize;}
 	public boolean getShielded(){return this.isShielded;}
+	public void setShielded(boolean shield) { this.isShielded = shield; } 
 	public boolean getStunned(){return this.isStunned;}
+	public void setStunned(boolean stunned) { this.isStunned = stunned; } 
 	public boolean getParticipation(){return this.inTournament;}
 	public ArrayList<Card> getHand () {	return this.hand; }
 	public int getId() { return this.id;	}

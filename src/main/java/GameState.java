@@ -134,12 +134,12 @@ public class GameState implements Serializable{
 	}
 	
 	/*
-	 * get all opponents of player
+	 * get all opponents of player, if they are not shielded
 	 */
 	public ArrayList<Player> getOpponents (Player player) {
 		ArrayList<Player> opponents = new ArrayList<Player>();
 		for (Player p : players) {
-			if (p.getParticipation() && !p.equals(player)) opponents.add(p);
+			if (p.getParticipation() && !p.equals(player) && !p.getShielded()) opponents.add(p);
 		}
 		return opponents;
 	}
@@ -366,6 +366,10 @@ public class GameState implements Serializable{
 				} else {
 					System.out.println("Last card of " + target.getName() + "'s Display could not be found.");
 				}
+				break;
+			case "Shield":
+				action.origin.setShielded(true);
+				System.out.println(action.origin.getName() + " is now Shielded.");
 				break;
 			case "Unhorse":
 				if (!getTournament().getColour().equals(Colour.c.PURPLE)) {
