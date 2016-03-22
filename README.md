@@ -43,4 +43,7 @@ Ivanhoe is a card game by Reiner Knizia.  The rules and faq for the game can be 
 - run the Server
   - `java -jar Server.jar`
 - run the Client(s)
-  - `java -jar Client.jar`
+  - in GUI Mode
+    - `java -jar Client.jar`
+  - or Command Line Mode
+    - `java -jar Client.jar -c`
