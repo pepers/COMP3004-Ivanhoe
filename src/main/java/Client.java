@@ -359,7 +359,9 @@ public class Client implements Runnable {
 			this.player = gameState.getPlayer(this.player.getName());
 			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
 			
-			if(!view.inGame)view.setupGameView();
+			if (gui) {
+				if(!view.inGame)view.setupGameView();
+			}
 			return true;
 
 			// ActionCard

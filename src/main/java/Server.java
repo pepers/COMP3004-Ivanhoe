@@ -355,9 +355,21 @@ public class Server implements Runnable, Serializable {
 				if (gameState.getTournament() != null) {
 					if (gameState.hasHighScore(p) == false) {
 						p.setParticipation(false);
-						p.getDisplay().clear();;
 						message("YOU have been ELIMINATED from " + gameState.getTournament().getName() + "!", p);
 						messageExcept(p.getName() + " has been ELIMINATED from " + gameState.getTournament().getName()+ "!", p);
+						if (p.getDisplay().hasMaiden()) { // check for maiden
+							if (p.getNumTokens() > 0) { // if they have tokens
+								ArrayList<Object> tokens = new ArrayList<Object>();
+								for (Object obj : p.getTokens()) {
+									tokens.add(obj);
+								}
+								String strTok = prompt("You had a Maiden in your Display, please choose a token to return: ", p, tokens);
+								Colour colour = new Colour(strTok);
+								Token token = new Token(colour, "token to remove");
+								p.removeToken(token);
+							}
+						}
+						p.getDisplay().clear();
 					} else {
 						gameState.setHighScore(p.getDisplay().score(gameState.getTournament().getColour()));
 					}
@@ -370,9 +382,21 @@ public class Server implements Runnable, Serializable {
 			Player p = gameState.getPlayer(action.origin.getName());
 			if (p != null) {
 				p.setParticipation(false);
-				p.getDisplay().clear();
 				message("You withdraw from " + gameState.getTournament().getName() + "!", p);
 				messageExcept(p.getName() + " has withdrew from " + gameState.getTournament().getName() + "!", p);
+				if (p.getDisplay().hasMaiden()) { // check for maiden
+					if (p.getNumTokens() > 0) { // if they have tokens
+						ArrayList<Object> tokens = new ArrayList<Object>();
+						for (Object obj : p.getTokens()) {
+							tokens.add(obj);
+						}
+						String strTok = prompt("You had a Maiden in your Display, please choose a token to return: ", p, tokens);
+						Colour colour = new Colour(strTok);
+						Token token = new Token(colour, "token to remove");
+						p.removeToken(token);
+					}
+				}
+				p.getDisplay().clear();
 				endTurn();
 			}
 			return true;

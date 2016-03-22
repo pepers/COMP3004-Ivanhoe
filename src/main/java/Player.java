@@ -151,6 +151,23 @@ public class Player implements Serializable{
 		return true;
 	}
 	
+	/*
+	 * remove a token
+	 */
+	public boolean removeToken (Token token) {
+		if (tokens.size() < 1) { return false; }
+		for (Token t : tokens) {
+			if (t.equals(token)) {
+				tokens.remove(t);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/*
+	 * return the number of tokens the player has earned
+	 */
 	public int getNumTokens() {
 		return tokens.size();
 	}

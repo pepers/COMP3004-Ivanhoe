@@ -184,6 +184,18 @@ public class Display implements Serializable {
 	}
 	
 	/*
+	 * checks if there is a Maiden card in Display
+	 */
+	public boolean hasMaiden() {
+		if (this.display.isEmpty()) { return false; }
+		DisplayCard maiden = new DisplayCard(6, new Colour(Colour.c.NONE));
+		for (DisplayCard card : this.display) {
+			if (card.equals(maiden)) { return true; }
+		}
+		return false;
+	}
+	
+	/*
 	 * checks if the display has a specific card
 	 */
 	public boolean hasCard (DisplayCard c) {
