@@ -818,6 +818,7 @@ public class ClientView extends JFrame {
 		JTextPane textArea;
 		JTextField input;
 		private JButton ready = new JButton("Ready");
+		private boolean isReady = false;
 		private JPanel bottom = new JPanel();
 		
 		public ConsoleView(String path){
@@ -849,7 +850,13 @@ public class ClientView extends JFrame {
 			this.ready.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					client.cmdReady();
-					ready.setEnabled(false);
+					if (isReady) {
+						isReady = false;
+						ready.setText("Ready");
+					} else {
+						isReady = true;
+						ready.setText("Not Ready");
+					}
 				}
 			});
 

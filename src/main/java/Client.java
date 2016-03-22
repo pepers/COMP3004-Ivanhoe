@@ -84,7 +84,7 @@ public class Client implements Runnable {
 		if (gui) {
 			view = new ClientView(this);
 		} else {
-			clStartUp();
+			cliStartUp();
 		}
 	}
 	
@@ -113,7 +113,7 @@ public class Client implements Runnable {
 	/*
 	 *  command line start up
 	 */
-	public void clStartUp() {
+	public void cliStartUp() {
 		// welcome message
 		outputText(" _____                _                ");
 		outputText("|_   _|              | |               ");
