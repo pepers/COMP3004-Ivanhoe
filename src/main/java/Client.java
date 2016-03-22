@@ -453,6 +453,8 @@ public class Client implements Runnable {
 		Command cmd = new Command(s, this.player);
 		ValidCommand args;
 		ValidCommand tournament;
+		ValidCommand hasCard;
+		ValidCommand stunned;
 		
 		// switch over command
 		switch (cmd.getCmd()) {
@@ -516,6 +518,10 @@ public class Client implements Runnable {
 		case "play":
 			args = new LessThanOneArgument();
 			tournament = new NotInTournament();
+			hasCard = new HasCardInHand();
+			stunned = new StunnedAndPlayedDC();
+			hasCard.setSuccessor(stunned);
+			tournament.setSuccessor(hasCard);
 			args.setSuccessor(tournament);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 

@@ -17,6 +17,7 @@ public class Player implements Serializable{
 	
 	private boolean inTournament = false;
 	private boolean isStunned = false;
+	private boolean addedToDisplay = false;  // if stunned, can only add one card to Display each turn
 	private boolean isShielded = false;
 	private ArrayList<Token> tokens = new ArrayList<Token>();  // tokens won for tournament wins
 	private int id;
@@ -29,6 +30,8 @@ public class Player implements Serializable{
 	public void setShielded(boolean shield) { this.isShielded = shield; } 
 	public boolean getStunned(){return this.isStunned;}
 	public void setStunned(boolean stunned) { this.isStunned = stunned; } 
+	public boolean getAddedToDisplay() { return this.addedToDisplay; }
+	public void setAddedToDisplay(boolean added) { this.addedToDisplay = added; }
 	public boolean getParticipation(){return this.inTournament;}
 	public ArrayList<Card> getHand () {	return this.hand; }
 	public int getId() { return this.id;	}

@@ -28,7 +28,6 @@ public class Command {
 	public String   getMessage()         { return this.error; }
 	public void     setMessage(String s) { this.error = s; }
 	public boolean  isValid()            { return this.isValid; }
-	public boolean  inTournament()       { return this.player.getParticipation(); }
 	
 	public void notValid() {
 		this.isValid = false;

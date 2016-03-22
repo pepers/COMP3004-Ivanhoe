@@ -99,9 +99,48 @@ class NotOneOrTwoArguments extends ValidCommand {
 class NotInTournament extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
-		if (!command.inTournament()) {
+		if (!command.getPlayer().getParticipation()) {
 			command.setMessage("can't perform that action while not in a tournament");
 			command.notValid();
+		} else if (successor != null) {
+        	successor.isValid(command);
+    	}	
+	}	
+}
+
+/*
+ * player has card in their hand
+ */
+class HasCardInHand extends ValidCommand {
+	@Override
+	public void isValid(Command command) {
+		String args = String.join(" ", command.getArgs());
+		Card c = command.getPlayer().getCard(args);
+		if (c == null) {
+			command.setMessage("don't have that card in your hand");
+			command.notValid();
+		} else if (successor != null) {
+        	successor.isValid(command);
+		}
+	}
+}
+
+/*
+ * player is Stunned and already played a Display Card
+ */
+class StunnedAndPlayedDC extends ValidCommand {
+	@Override
+	public void isValid(Command command) {
+		if (command.getPlayer().getStunned() && 
+				command.getPlayer().getAddedToDisplay()) {
+			String args = String.join(" ", command.getArgs());
+			Card c = command.getPlayer().getCard(args);
+			if (c instanceof DisplayCard) { 
+				command.setMessage("can't play another Display Card while stunned.");
+				command.notValid();
+			} else if (successor != null) {
+				successor.isValid(command);
+			}
 		} else if (successor != null) {
         	successor.isValid(command);
     	}	

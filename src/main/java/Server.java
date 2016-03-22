@@ -351,6 +351,7 @@ public class Server implements Runnable, Serializable {
 		}
 		if (action.object instanceof EndTurn) {
 			Player p = gameState.getPlayer(action.origin.getName());
+			p.setAddedToDisplay(false); // if stunned, can add a card next turn 
 			if (p != null) {
 				if (gameState.getTournament() != null) {
 					if (gameState.hasHighScore(p) == false) {
@@ -380,6 +381,7 @@ public class Server implements Runnable, Serializable {
 		}
 		if (action.object instanceof Withdraw) {
 			Player p = gameState.getPlayer(action.origin.getName());
+			p.setAddedToDisplay(false); // if stunned, can add a card next turn 
 			if (p != null) {
 				p.setParticipation(false);
 				message("You withdraw from " + gameState.getTournament().getName() + "!", p);
@@ -404,10 +406,18 @@ public class Server implements Runnable, Serializable {
 		if (action.object instanceof Play) {
 			Card c = ((Play) action.object).getCard();
 			if (c instanceof DisplayCard) {
-				broadcast(action.origin.getName() + " plays a " + c.toString());
-				gameState.addDisplay(gameState.getPlayer(action.origin.getName()), (DisplayCard) c);
-				gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
-				return true;
+				// player is stunned, and has already played DisplayCard
+				if (action.origin.getStunned() &&
+						action.origin.getAddedToDisplay()) { 
+					messageExcept("You are Stunned, and can't play another Display Card this turn.", gameState.getPlayer(action.origin.getName()));
+					return false;
+				} else {
+					broadcast(action.origin.getName() + " plays a " + c.toString());
+					gameState.addDisplay(gameState.getPlayer(action.origin.getName()), (DisplayCard) c);
+					gameState.removeHand(gameState.getPlayer(action.origin.getName()), c);
+					action.origin.setAddedToDisplay(true); // has added to display this turn
+					return true;
+				}
 			}
 			if (c instanceof ActionCard) {
 				if (c.toString().equalsIgnoreCase("Ivanhoe")) {

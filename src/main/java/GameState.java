@@ -371,6 +371,24 @@ public class GameState implements Serializable{
 				action.origin.setShielded(true);
 				System.out.println(action.origin.getName() + " is now Shielded.");
 				break;
+			case "Stunned":
+				if(play.getOpponents() == null) {
+					prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, getTargets(c, action.origin));
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						target = getPlayer(clientInput);
+						if (target != null) { break; }
+					}
+				} else {
+					target = getPlayer(play.getOpponents().get(0).getName());
+				}
+				if (target.getStunned()) { // check if already stunned
+					System.out.println("Can't stun " + target.getName() + ". They were already stunned.");
+				} else {
+					target.setStunned(true); // stun target opponent
+					System.out.println(target.getName() + " has been stunned.");
+				}
+				break;
 			case "Unhorse":
 				if (!getTournament().getColour().equals(Colour.c.PURPLE)) {
 					System.out.println("Tournament is not Purple, can't unhorse.");
@@ -424,6 +442,9 @@ public class GameState implements Serializable{
 				targets.addAll(controller.getDisplay().elements());
 				return targets;
 			case "Riposte":
+				targets.addAll(getOpponents(controller));
+				return targets;
+			case "Stunned":
 				targets.addAll(getOpponents(controller));
 				return targets;
 			case "Unhorse":
