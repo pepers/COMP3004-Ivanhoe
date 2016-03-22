@@ -25,6 +25,7 @@ public class Client implements Runnable {
 	private GameState gameState = null; // the local copy of the game state
 	private Player player = null; // the local copy of this client's player
 	private ClientView view = null;
+	private static boolean gui = true; // start in gui mode or not (command line mode)
 	
 	public Prompt lastPrompt = null;
 	
@@ -47,6 +48,20 @@ public class Client implements Runnable {
 	}
 
 	public static void main(String args[]) {
+		// GUI Mode - no command line arguments
+		if (args.length == 0) {
+			gui = true;
+			
+		// Command Line Mode - command line argument = "-c"
+		} else if (args[0].equals("-c")) {
+			gui = false;
+			
+		// invalid arguments
+		} else {
+			System.out.println("Error: Invalid command line arguments.");
+			System.exit(0);
+		}
+				
 		Client client = new Client(); // client object
 		client.startUp();
 	}
@@ -61,8 +76,9 @@ public class Client implements Runnable {
 	// initial Client startup activities
 	public void startUp() {
 
-
-		view = new ClientView(this);
+		if (gui) {
+			view = new ClientView(this);
+		}
 		
 		// welcome message
 		outputText(" _____                _                ");
