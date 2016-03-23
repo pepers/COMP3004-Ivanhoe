@@ -459,7 +459,7 @@ public class Client implements Runnable {
 		// switch over command
 		switch (cmd.getCmd()) {
 		case "censor": // toggle the bad word censor
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -471,7 +471,7 @@ public class Client implements Runnable {
 			cmdDisplay(cmd.getArgs());
 			break;
 		case "end": // end turn
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -480,7 +480,7 @@ public class Client implements Runnable {
 			cmdEnd();
 			break;
 		case "gamestate": // show gamestate
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -489,7 +489,7 @@ public class Client implements Runnable {
 			cmdGameState(gameState);
 			break;
 		case "hand": // look at cards in hand
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -498,7 +498,7 @@ public class Client implements Runnable {
 			cmdHand();
 			break;
 		case "help":
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -507,7 +507,7 @@ public class Client implements Runnable {
 			cmdHelp();
 			break;
 		case "list":
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -516,9 +516,9 @@ public class Client implements Runnable {
 			cmdList();
 			break;
 		case "play":
-			args = new LessThanOneArgument();
-			tournament = new NotInTournament();
-			hasCard = new HasCardInHand();
+			args = new Arguments("<", 1);
+			tournament = new InTournament();
+			hasCard = new CardInHand();
 			stunned = new StunnedAndPlayedDC();
 			hasCard.setSuccessor(stunned);
 			tournament.setSuccessor(hasCard);
@@ -531,7 +531,7 @@ public class Client implements Runnable {
 			cmdPlay(String.join(" ", cmd.getArgs()));
 			break;
 		case "ready":
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -540,7 +540,7 @@ public class Client implements Runnable {
 			cmdReady();
 			break;
 		case "setname":
-			args = new NoArguments();
+			args = new Arguments("==", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -549,7 +549,7 @@ public class Client implements Runnable {
 			cmdSetname(cmd.getArgs());
 			break;
 		case "shutdown":
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -558,7 +558,7 @@ public class Client implements Runnable {
 			shutdown();
 			break;
 		case "tokens":
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -567,7 +567,7 @@ public class Client implements Runnable {
 			cmdTokens();
 			break;
 		case "tournament":
-			args = new NotOneOrTwoArguments();
+			args = new TwoArguments("!=", 1, "!=", 2);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -576,7 +576,7 @@ public class Client implements Runnable {
 			cmdTournament(cmd.getArgs());
 			break;
 		case "translate":
-			args = new NotOneArgument();
+			args = new Arguments("!=", 1);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -585,7 +585,7 @@ public class Client implements Runnable {
 			cmdTranslate(cmd.getArgs()[0]);
 			break;
 		case "withdraw":
-			args = new NotZeroArguments();
+			args = new Arguments("!=", 0);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
