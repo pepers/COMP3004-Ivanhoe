@@ -87,7 +87,7 @@ class Play implements Action {
 	private Card c;
 	private ArrayList<Colour> colours = null;
 	private ArrayList<Player> opponents = null;
-	private ArrayList<Card> cards = null;
+	private ArrayList<Card> cards = null; // (Outwit: given card = [0], taken card = [1])
 	
 	
 	public Play(Card c) {

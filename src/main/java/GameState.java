@@ -144,6 +144,9 @@ public class GameState implements Serializable{
 		return opponents;
 	}
 	
+	/* 
+	 * cleanup after tournament ends
+	 */
 	public void endTournament(){
 		lastColour = getTournament().getColour();
 		tnmt = null;
@@ -151,6 +154,8 @@ public class GameState implements Serializable{
 		for (Player p:players){
 			p.setParticipation(false);
 			p.getDisplay().clear();
+			p.setStunned(false);
+			p.setShielded(false);
 		}
 	}
 	
@@ -186,6 +191,7 @@ public class GameState implements Serializable{
 		String clientInput = null; // client's input after prompted
 		Player target = null; // target opponent
 		DisplayCard dc = null; // display card retrieved
+		ActionCard ac = null; // action card retrieved
 		Card card = null; // card retrieved
 		
 		switch(c.toString()){
@@ -325,7 +331,111 @@ public class GameState implements Serializable{
 				System.out.println("All players remove the last card played on their Display.");
 				break;
 			case "Outwit":
-				System.out.println("played an outwit card");
+				DisplayCard dc2 = null; // second display card retrieved
+				ActionCard ac2 = null;  // second action card retrieved
+				Card given = null;      // card given
+				Card taken = null;      // card taken
+				
+				if(play.getOpponents() == null){
+					prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, getTargets(c, action.origin));
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						target = getPlayer(clientInput);
+						if (target != null) { break; }
+					}
+					
+					// populate options with player's cards
+					ArrayList<Object> options = new ArrayList<Object>();
+					options.addAll(action.origin.getDisplay().elements()); // add Display Cards to options
+					if (action.origin.getStunned()) { // add Stunned to options
+						Card stunned = new ActionCard("Stunned");
+						options.add(stunned);
+					}
+					if (action.origin.getShielded()) { // add Shield to options
+						Card shield = new ActionCard("Shield");
+						options.add(shield);
+					}
+					
+					prompt = new PromptCommand(server, "Which card would you like to give to " + target.getName() + "?", action.origin, options);
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						if (clientInput.equalsIgnoreCase("Stunned")) {
+							ac = new ActionCard("Stunned");
+							break;
+						} else if (clientInput.equalsIgnoreCase("Shield")) {
+							ac = new ActionCard("Shield");
+							break;
+						}
+						dc = action.origin.getDisplay().get(clientInput);
+						if (dc != null) { break; }
+					}
+
+					// populate options with target's cards
+					options.clear();
+					options.addAll(target.getDisplay().elements()); // add Display Cards to options
+					if (target.getStunned()) { // add Stunned to options
+						Card stunned = new ActionCard("Stunned");
+						options.add(stunned);
+					}
+					if (target.getShielded()) { // add Shield to options
+						Card shield = new ActionCard("Shield");
+						options.add(shield);
+					}
+					
+					prompt = new PromptCommand(server, "Which card would you like to take from " + target.getName() + "?", action.origin, options);
+					while (true) {
+						clientInput = invoker.execute(prompt);
+						if (clientInput.equalsIgnoreCase("Stunned")) {
+							ac2 = new ActionCard("Stunned");
+							break;
+						} else if (clientInput.equalsIgnoreCase("Shield")) {
+							ac2 = new ActionCard("Shield");
+							break;
+						}
+						dc2 = target.getDisplay().get(clientInput);
+						if (dc2 != null) { break; }
+					}
+				}else{
+					target = getPlayer(play.getOpponents().get(0).getName());
+					given = play.getCards().get(0);
+					taken = play.getCards().get(1);
+				}
+				
+				
+				// give card to target and remove from player
+				if (ac != null) {
+					if (ac.toString().equalsIgnoreCase("Stunned")) {
+						target.setStunned(true);
+						action.origin.setStunned(false);
+					} else if (ac.toString().equalsIgnoreCase("Shield")) {
+						target.setShielded(true);
+						action.origin.setShielded(false);
+					}
+					given = ac;
+				} else if (dc != null) {
+					target.getDisplay().add(dc);
+					action.origin.getDisplay().remove(dc);
+					given = dc;
+				}
+				
+				// take card from target and give to player
+				if (ac2 != null) {
+					if (ac2.toString().equalsIgnoreCase("Stunned")) {
+						target.setStunned(false);
+						action.origin.setStunned(true);
+					} else if (ac2.toString().equalsIgnoreCase("Shield")) {
+						target.setShielded(false);
+						action.origin.setShielded(true);
+					}
+					taken = ac2;
+				} else if (dc2 != null) {
+					action.origin.getDisplay().add(dc2);
+					target.getDisplay().remove(dc2);
+					taken = dc2;
+				}
+					
+				System.out.println(action.origin.getName() + " took a " + taken.toString() + " card from "
+						+ target.getName() + ", and gave them a " + given.toString() + " card.");
 				break;
 			case "Retreat":
 				if(play.getCards() == null){
@@ -436,6 +546,9 @@ public class GameState implements Serializable{
 				targets.addAll(getOpponents(controller));
 				return targets;
 			case "Knock Down":
+				targets.addAll(getOpponents(controller));
+				return targets;
+			case "Outwit":
 				targets.addAll(getOpponents(controller));
 				return targets;
 			case "Retreat":
