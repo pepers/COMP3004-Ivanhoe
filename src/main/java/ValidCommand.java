@@ -66,25 +66,12 @@ class Arguments extends ValidCommand {
 }
 
 /*
- * invalid if comparison#1 and comparison#2 of Arguments
+ * invalid if not one or two arguments
  */
-class TwoArguments extends ValidCommand {
-	private ValidCommand vcmd1 = null;
-	private ValidCommand vcmd2 = null;
-	private Command cmd1 = null;
-	private Command cmd2 = null;
-
-	public TwoArguments (String comp1, int arg1, String comp2, int arg2) {
-		this.vcmd1 = new Arguments(comp1, arg1);
-		this.vcmd2 = new Arguments(comp2, arg2);
-	}
-
+class OneOrTwoArguments extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
-		cmd1 = cmd2 = command;
-		vcmd1.isValid(cmd1);
-		vcmd2.isValid(cmd2);
-		if (cmd1.isValid() && cmd2.isValid()) {
+		if ((command.getArgs().length != 1) && (command.getArgs().length != 2)) {
 			command.setMessage("invalid number of arguments. Type /help");
 			command.notValid();
 		} else if (successor != null) {

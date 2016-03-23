@@ -567,7 +567,7 @@ public class Client implements Runnable {
 			cmdTokens();
 			break;
 		case "tournament":
-			args = new TwoArguments("!=", 1, "!=", 2);
+			args = new OneOrTwoArguments();
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
