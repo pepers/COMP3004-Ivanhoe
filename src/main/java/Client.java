@@ -452,6 +452,7 @@ public class Client implements Runnable {
 	public boolean processCmd(String s) {
 		Command cmd = new Command(s, this.player);
 		ValidCommand args;
+		ValidCommand turn;
 		ValidCommand tournament;
 		ValidCommand hasCard;
 		ValidCommand stunned;
@@ -472,6 +473,8 @@ public class Client implements Runnable {
 			break;
 		case "end": // end turn
 			args = new Arguments("!=", 0);
+			turn = new IsTurn();
+			args.setSuccessor(turn);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -647,10 +650,7 @@ public class Client implements Runnable {
 
 	// end your turn
 	public boolean cmdEnd() {
-		if (!this.player.isTurn) {
-			outputText("Client: Its not your turn.");
-			return false;
-		} else if (gameState.getTournament() == null && this.player.hasValidDisplayCard(new Colour(Colour.c.NONE))) {
+		if (gameState.getTournament() == null && this.player.hasValidDisplayCard(new Colour(Colour.c.NONE))) {
 			outputText("Client: You MUST start a tournament if able.");
 			return false;
 		} else {

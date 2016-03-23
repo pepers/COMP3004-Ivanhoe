@@ -82,6 +82,21 @@ class OneOrTwoArguments extends ValidCommand {
 }
 
 /*
+ * invalid if not player's turn
+ */
+class IsTurn extends ValidCommand {
+	@Override
+	public void isValid(Command command) {
+		if (!command.getPlayer().isTurn) {
+			command.setMessage("can't perform that action when not your turn");
+			command.notValid();
+		} else if (successor != null) {
+        	successor.isValid(command);
+    	}	
+	}	
+}
+
+/*
  * invalid if player is not in a tournament
  */
 class InTournament extends ValidCommand {
