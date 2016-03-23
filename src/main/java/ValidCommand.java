@@ -19,84 +19,85 @@ public abstract class ValidCommand {
 // CLASSES TO PROCESS COMMANDS:
 
 /*
- * invalid if not zero arguments
+ * invalid if comparison provided with number of arguments
  */
-class NotZeroArguments extends ValidCommand {
+class Arguments extends ValidCommand {
+	private String comparison; // comparison asked for
+	private int argNum;        // number of arguments
+	private String[] validComparisons = { "==", "!=", "<=", ">=", "<", ">" };
+	
+	public Arguments(String comparison, int argNum) throws IllegalArgumentException {
+		// check that comparison asked for is a valid comparison
+		boolean error = true;
+		for (String c : validComparisons) {
+			if (c.equals(comparison)) { error = false; }
+		}
+		if (error) {
+			throw new IllegalArgumentException("'" + comparison + "' is not a valid comparison");
+		}
+		
+		this.comparison = comparison;
+		this.argNum = argNum;
+	}
+
 	@Override
 	public void isValid(Command command) {
-		if (command.getArgs().length != 0) {
+		int length = command.getArgs().length;
+		boolean valid = true;
+		
+		// switch over the comparison asked for
+		switch (this.comparison) {
+			case "==": if (length == this.argNum) { valid = false; }; break;
+			case "!=": if (length != this.argNum) { valid = false; }; break;
+			case "<=": if (length <= this.argNum) { valid = false; }; break;
+			case ">=": if (length >= this.argNum) { valid = false; }; break;
+			case "<": if (length < this.argNum) { valid = false; }; break;
+			case ">": if (length > this.argNum) { valid = false; }; break;
+			default: break;
+		}
+		
+		if (!valid) {
 			command.setMessage("invalid number of arguments. Type /help");
 			command.notValid();
 		} else if (successor != null) {
         	successor.isValid(command);
     	}	
-	}	
+	}
 }
 
 /*
- * invalid if less than one argument
+ * invalid if comparison#1 and comparison#2 of Arguments
  */
-class LessThanOneArgument extends ValidCommand {
-	@Override
-	public void isValid(Command command) {
-		if (command.getArgs().length < 1) {
-			command.setMessage("invalid number of arguments. Type /help");
-			command.notValid();
-		} else if (successor != null) {
-        	successor.isValid(command);
-    	}	
-	}	
-}
+class TwoArguments extends ValidCommand {
+	private ValidCommand vcmd1 = null;
+	private ValidCommand vcmd2 = null;
+	private Command cmd1 = null;
+	private Command cmd2 = null;
 
-/*
- * invalid if no arguments
- */
-class NoArguments extends ValidCommand {
-	@Override
-	public void isValid(Command command) {
-		if (command.getArgs().length == 0) {
-			command.setMessage("invalid number of arguments. Type /help");
-			command.notValid();
-		} else if (successor != null) {
-        	successor.isValid(command);
-    	}	
-	}	
-}
+	public TwoArguments (String comp1, int arg1, String comp2, int arg2) {
+		this.vcmd1 = new Arguments(comp1, arg1);
+		this.vcmd2 = new Arguments(comp2, arg2);
+	}
 
-/*
- * invalid if not one argument
- */
-class NotOneArgument extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
-		if (command.getArgs().length != 1) {
+		cmd1 = cmd2 = command;
+		vcmd1.isValid(cmd1);
+		vcmd2.isValid(cmd2);
+		if (cmd1.isValid() && cmd2.isValid()) {
 			command.setMessage("invalid number of arguments. Type /help");
 			command.notValid();
 		} else if (successor != null) {
         	successor.isValid(command);
     	}	
-	}	
-}
-
-/*
- * invalid if not one or two arguments
- */
-class NotOneOrTwoArguments extends ValidCommand {
-	@Override
-	public void isValid(Command command) {
-		if (!((command.getArgs().length == 1) || (command.getArgs().length == 2))) {
-			command.setMessage("invalid number of arguments. Type /help");
-			command.notValid();
-		} else if (successor != null) {
-        	successor.isValid(command);
-    	}	
-	}	
+	
+	}
 }
 
 /*
  * invalid if player is not in a tournament
  */
-class NotInTournament extends ValidCommand {
+class InTournament extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
 		if (!command.getPlayer().getParticipation()) {
@@ -109,9 +110,9 @@ class NotInTournament extends ValidCommand {
 }
 
 /*
- * player has card in their hand
+ * invalid if player doesn't have card in their hand
  */
-class HasCardInHand extends ValidCommand {
+class CardInHand extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
 		String args = String.join(" ", command.getArgs());
@@ -126,7 +127,7 @@ class HasCardInHand extends ValidCommand {
 }
 
 /*
- * player is Stunned and already played a Display Card
+ * invalid if player is Stunned and already played a Display Card
  */
 class StunnedAndPlayedDC extends ValidCommand {
 	@Override

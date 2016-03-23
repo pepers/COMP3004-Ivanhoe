@@ -9,6 +9,12 @@ public class Command {
 	private Player player;           // player that used command
 	private String error;            // error message when command is not valid
 	
+	// for all commands (Client and Server) that don't require Player comparisons
+	public Command (String input) {
+		this(input, null);
+	}
+	
+	// for player commands from Client
 	public Command (String input, Player p) {
 		String[] command = input.split("\\s+"); // array of command + arguments
 		this.args = Arrays.copyOfRange(command, 1, command.length); 
@@ -21,6 +27,7 @@ public class Command {
 			this.isValid = false;  // doesn't start with slash (not command)
 		}
 	}
+	
 	
 	public String   getCmd()             { return this.cmd; }
 	public String[] getArgs()            { return this.args; }
