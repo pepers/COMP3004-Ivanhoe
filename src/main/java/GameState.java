@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameState implements Serializable{
@@ -177,6 +178,23 @@ public class GameState implements Serializable{
 		}
 		return false;
 	}
+	
+	/*
+	 * remove shielded from Player list
+	 * (to be used when executing Action cards)
+	 */
+	public ArrayList<Player> removeShielded (ArrayList<Player> in, ActionCard c) {
+		if (in.isEmpty()) { return in; }
+		ArrayList<Player> out = new ArrayList<Player>();
+		for (Player p : in) {
+			if (!p.getShielded()) { 
+				out.add(p); 
+			} else {
+				System.out.println(p.getName() + " is Shielded from the " + c.toString() + " card.");
+			}
+		}
+		return out;
+	}
 
 	/* 
 	 * deal with Action Cards' special abilities
@@ -193,8 +211,52 @@ public class GameState implements Serializable{
 		DisplayCard dc = null; // display card retrieved
 		ActionCard ac = null; // action card retrieved
 		Card card = null; // card retrieved
+		ArrayList<Player> targets = new ArrayList<Player>(); // targets
 		
 		switch(c.toString()){
+			case "Adapt":
+				// shielded players aren't affected
+				targets = removeShielded(getTournamentParticipants(), c);
+				if (targets.isEmpty()) { break; }
+				for (Player p : targets) {
+					ArrayList<Card>keep = new ArrayList<Card>();
+					if (play.getCards() == null) {
+						// get all different values of cards in Display
+						Set<Integer> values = p.getDisplay().getValues();
+						if (values.isEmpty()) { break; }
+						for (Integer v : values) {
+							// get all cards of value v
+							ArrayList<DisplayCard> cards =  p.getDisplay().getAll(v);
+							if (!cards.isEmpty()) {
+								// if only one option, keep and don't prompt
+								if (cards.size() > 1) {
+									ArrayList<Object> options = new ArrayList<Object>();
+									options.addAll(cards);
+									prompt = new PromptCommand(server, "Choose which Display Card of value " + v + " to keep in your Display: ", p, options);
+									while (true) {
+										clientInput = invoker.execute(prompt);
+										dc = p.getDisplay().get(clientInput);
+										if (dc != null) { break; }
+									}
+									keep.add(dc); // add card of value v that player wants to keep
+								} else {
+									keep.add(cards.get(0)); // if only one option just keep
+								}
+							}
+						}
+					} else {
+						keep = play.getCards();
+					}
+					if (!keep.isEmpty()) {
+						// delete all cards from Display that weren't chosen to be kept
+						p.getDisplay().clear();
+						for (Card k : keep) {
+							p.getDisplay().add((DisplayCard) k);
+						}
+					}
+				}
+				System.out.println("Each player keeps one Display Card of each value.");
+				break;
 			case "Break Lance":
 				if(play.getOpponents() == null){
 					prompt = new PromptCommand(server, "Which opponent would you like to target?", action.origin, getTargets(c, action.origin));
@@ -234,7 +296,8 @@ public class GameState implements Serializable{
 				break;
 			case "Charge":
 				int lowest = 99;
-				ps = getTournamentParticipants();
+				// shielded players aren't affected
+				ps = removeShielded(getTournamentParticipants(), c);
 				for (Player p : ps) {
 					if (p.getDisplay().lowestValue() < lowest) {
 						lowest = p.getDisplay().lowestValue();
@@ -251,7 +314,8 @@ public class GameState implements Serializable{
 				break;
 			case "Countercharge":
 				int highest = 0;
-				ps = getTournamentParticipants();
+				// shielded players aren't affected
+				ps = removeShielded(getTournamentParticipants(), c);
 				for (Player p : ps) {
 					if (p.getDisplay().highestValue() > highest) {
 						highest = p.getDisplay().highestValue();
@@ -267,7 +331,8 @@ public class GameState implements Serializable{
 				}
 				break;
 			case "Disgrace":
-				ps = getTournamentParticipants();
+				// shielded players aren't affected
+				ps = removeShielded(getTournamentParticipants(), c);
 				for (Player p: ps) {
 					p.getDisplay().removeAll(new Colour(Colour.c.NONE));
 				}
@@ -324,7 +389,8 @@ public class GameState implements Serializable{
 				System.out.println(card.toString() + " was taken from " + target.getName() + "'s Hand, and added to " + action.origin.getName() + "'s Hand.");
 				break;
 			case "Outmaneuver":
-				ps = getTournamentParticipants();
+				// shielded players aren't affected
+				ps = removeShielded(getTournamentParticipants(), c);
 				for (Player p: ps) {
 					p.getDisplay().removeLast();
 				}
@@ -529,45 +595,55 @@ public class GameState implements Serializable{
 	
 	public ArrayList<Object> getTargets(ActionCard ac, Player controller){
 		ArrayList<Object> targets = new ArrayList<Object>();
+		ArrayList<Player> unshielded = new ArrayList<Player>();
 		switch(ac.toString()){
 			case "Break Lance":
-				targets.addAll(getOpponents(controller));
-				return targets;
+				// shielded players aren't affected
+				unshielded = removeShielded(getOpponents(controller), ac);
+				targets.addAll(unshielded);
+				break;
 			case "Change Weapon":
 				if(getTournament().getColour().equals("purple") || getTournament().getColour().equals("green")){
-					return targets;
+					break;
 				}
 				targets.add(new Colour(Colour.c.RED));
 				targets.add(new Colour(Colour.c.BLUE));
 				targets.add(new Colour(Colour.c.YELLOW));
 				targets.remove(getTournament().getColour());
-				return targets;
+				break;
 			case "Dodge":
+				// shielded players aren't affected
+				unshielded = removeShielded(getOpponents(controller), ac);
+				targets.addAll(unshielded);
 				targets.addAll(getOpponents(controller));
-				return targets;
+				break;
 			case "Knock Down":
 				targets.addAll(getOpponents(controller));
-				return targets;
+				break;
 			case "Outwit":
-				targets.addAll(getOpponents(controller));
-				return targets;
+				// shielded players aren't affected
+				unshielded = removeShielded(getOpponents(controller), ac);
+				targets.addAll(unshielded);
+				break;
 			case "Retreat":
 				targets.addAll(controller.getDisplay().elements());
-				return targets;
+				break;
 			case "Riposte":
-				targets.addAll(getOpponents(controller));
-				return targets;
+				// shielded players aren't affected
+				unshielded = removeShielded(getOpponents(controller), ac);
+				targets.addAll(unshielded);
+				break;
 			case "Stunned":
 				targets.addAll(getOpponents(controller));
-				return targets;
+				break;
 			case "Unhorse":
 				targets.add(new Colour(Colour.c.RED));
 				targets.add(new Colour(Colour.c.BLUE));
 				targets.add(new Colour(Colour.c.YELLOW));
-				return targets;
+				break;
 			default:
 				return null;
 		}	
-		
+		return targets;		
 	}
 }

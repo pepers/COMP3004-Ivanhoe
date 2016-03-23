@@ -2,7 +2,9 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public class Display implements Serializable {
 	
@@ -37,6 +39,18 @@ public class Display implements Serializable {
 		} else {
 			return null;
 		}
+	}
+	
+	/*
+	 * get all cards of a specific value
+	 */
+	public ArrayList<DisplayCard> getAll(int value) {
+		if (this.display.isEmpty()) { return null; }
+		ArrayList<DisplayCard> cards = new ArrayList<DisplayCard>();
+		for (DisplayCard card : this.display) {
+			if (card.getValue() == value) {	cards.add(card); }
+		}
+		return cards;
 	}
 	
 	/*
@@ -204,6 +218,18 @@ public class Display implements Serializable {
 			if (card.equals(c)) { return true; }
 		}
 		return false;
+	}
+	
+	/*
+	 * returns a set of every value in display
+	 */
+	public Set<Integer> getValues() {
+		if (this.display.isEmpty()) { return null; }
+		Set<Integer> values = new HashSet<Integer>();
+		for (DisplayCard card : this.display) {
+			values.add(card.getValue());
+		}
+		return values;
 	}
 	
 	/*
