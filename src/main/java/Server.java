@@ -1009,4 +1009,37 @@ public class Server implements Runnable, Serializable {
 			System.out.println("Error reading bannedPlayers (IOException)");
 		}
 	}
+	
+	/*
+	 * end current tournament or game
+	 */
+	public boolean cmdEnd(String arg) {
+		// end tournament
+		if (arg.equals("-t")) {
+			if ((gameState != null) && (gameState.getTournament() != null)) { 
+				broadcast("Server ending current tournament.");
+				gameState.endTournament();
+				return true;
+			} else {
+				System.out.println("Error: no tournament running.");
+				return false;
+			}
+			
+		// end game
+		} else if (arg.equals("-g")) {
+			if (gameState != null) {
+				broadcast("Server ending game.");
+				endGame();
+				return true;
+			} else {
+				System.out.println("Error: no game running.");
+				return false;
+			}
+			
+		// error
+		} else {
+			System.out.println("Error: incorrect argument for /end command. Type /help.");
+			return false;
+		}
+	}
 }

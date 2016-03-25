@@ -67,27 +67,38 @@ public class ServerInput extends Thread{
 	
 	//process the command s
 	public boolean processCmd(String s){
-		// get argument line
-		String[] cmd = s.split("\\s+");                         // array of command + arguments
-		String[] args = Arrays.copyOfRange(cmd, 1, cmd.length); // just arguments
-		String sub = String.join(" ", args);                    // join arguments into one string
+		Command cmd = new Command(s);
+		ValidCommand args;
+		
+		String argJoin = String.join(" ", cmd.getArgs());
 		
 		// switch over command 
-		switch (cmd[0]) {
+		switch (cmd.getCmd()) {
 			case "/ban":
-				server.ban(sub);
+				args = new Arguments("==", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.ban(argJoin);
 				return true;
 			case "/censor": // toggle the bad word censor
-				if (args.length != 0) {	return false; } // check number of arguments 
+				args = new Arguments("!=", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
 				server.cmdCensor();
 				break;
 			case "/display":
-				if (args.length == 0) { // show every player's display
+				if (cmd.getArgs().length == 0) { // show every player's display
 					for (Player p: server.getGameState().getPlayers()) {
 						server.printSingleDisplay(p);
 					}
 				} else {
-					Player p = server.getGameState().getPlayer(sub);
+					Player p = server.getGameState().getPlayer(argJoin);
 					if (p == null) { // player doesn't exist
 						return false;
 					} else {
@@ -96,77 +107,151 @@ public class ServerInput extends Thread{
 				}
 				break;
 			case "/end":
-				if (args.length != 1) { return false; } // no arguments allowed for this command
-				return false;
+				args = new Arguments("!=", 1);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.cmdEnd(argJoin);
+				break;
 			case "/gamestate":
 				if(!server.printGameState()){ System.out.println("Failed to find gamestate."); }
 				break;
 			case "/give":
-				if (args.length < 2) {	return false; } // check number of arguments
+				args = new Arguments("<", 2);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
 				int playerNum;
 				try {
-					playerNum = Integer.parseInt(args[0]);
+					playerNum = Integer.parseInt(cmd.getArgs()[0]);
 				} catch (NumberFormatException e) {	return false; }
-				if (server.cmdGive(playerNum, String.join(" ", Arrays.copyOfRange(args, 1, args.length)))) {
+				if (server.cmdGive(playerNum, String.join(" ", Arrays.copyOfRange(cmd.getArgs(), 1, cmd.getArgs().length)))) {
 					server.updateGameStates();
 				}
 				break;
 			case "/hand":
-				server.printHand(sub);
+				args = new Arguments("==", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.printHand(argJoin);
 				break;
 			case "/help":
-				if (args.length != 0) { return false; } // no arguments allowed for this command
+				args = new Arguments("!=", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
 				System.out.println("Server: list of possible commands: ");
 				for (Config.ServerCommand helpCmd: Config.ServerCommand.values()) {
 					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
                 break;
 			case "/kick":
-				if(sub.charAt(0) >= '0' && sub.charAt(0) <= '9'){
-					int toRemove = Integer.parseInt(sub);
+				args = new Arguments("==", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				if(argJoin.charAt(0) >= '0' && argJoin.charAt(0) <= '9'){
+					int toRemove = Integer.parseInt(argJoin);
 					server.removeThread(toRemove);
 				} else {
-					server.removeThread(sub);
+					server.removeThread(argJoin);
 				}
 				break;
 			case "/list":
-				if (args.length != 0) { return false; } // no arguments allowed for this command
+				args = new Arguments("!=", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
 				server.listClients();
 				break;
 			case "/max":
-				if (args.length != 1) { return false; } // only one argument allowed
-				server.setMaxPlayers(Integer.parseInt(sub));
+				args = new Arguments("!=", 1);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.setMaxPlayers(Integer.parseInt(argJoin));
 				break;
 			case "/min":
-				if (args.length != 1) { return false; } // only one argument allowed
-				server.setMinPlayers(Integer.parseInt(sub));
+				args = new Arguments("!=", 1);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.setMinPlayers(Integer.parseInt(argJoin));
 				break;
 			case "/pardon":
-				server.unban(sub);
+				args = new Arguments("==", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.unban(argJoin);
 				return true;
 			case "/port":  // change Server's port on which Clients connect
-				if (args.length != 1) { return false; } // only one argument allowed
+				args = new Arguments("!=", 1);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
 				int port;
 				try {
-					port = Integer.parseInt(args[0]);
+					port = Integer.parseInt(argJoin);
 				} catch (NumberFormatException nfe) { return false; }
 				server.port = port;
 				break;
 			case "/shutdown":
-				if (args.length != 0) { return false; } // no arguments allowed for this command
+				args = new Arguments("!=", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
 				server.shutdown();
 				break;
 			case "/start":
-				if (args.length != 0) { return false; } // no arguments allowed for this command
+				args = new Arguments("!=", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
 				server.startGame();
 				break;
 			case "/tokens":
-				if (args.length != 0) { return false; } // check number of arguments 
+				args = new Arguments("!=", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
 				server.cmdTokens();
 				break;	
 			case "/translate":
-				if (args.length != 1) { return false; } // check number of arguments 
-				server.cmdTranslate(args[0]);
+				args = new Arguments("!=", 1);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.cmdTranslate(argJoin);
 				break;
 			default:
 				return false;
