@@ -107,7 +107,6 @@ public class ClientView extends JFrame {
 	
 			
 	public ClientView(Client c) {
-		
 		//load some images
 		try {
 			greyBanner = ImageIO.read(new File("./res/banner_default.png"));
@@ -145,7 +144,7 @@ public class ClientView extends JFrame {
 	}
 	
 	public void setupGameView(){
-		
+		this.setTitle(client.getPlayer().getName() + " - Ivanhoe");
 		lobbyView = null;
 		inGame = true;
 		//Setup the parent JPanel and general layout of the view
@@ -240,7 +239,7 @@ public class ClientView extends JFrame {
 		this.getContentPane().add(gameView);
 		this.revalidate();
 	}
-
+	
 	public void writeConsole(String message, int type) {
 		if(lobbyView != null){
 			ConsoleView lobbyConsole = (ConsoleView) ((ImagePanel) lobbyView.getComponent(1)).getComponent(0);
@@ -702,7 +701,7 @@ public class ClientView extends JFrame {
 			}
             
             if(player.getStunned()){
-            	g2.drawImage(stun, xm, height + 30, null);
+            	g2.drawImage(stun, xm - 30, height - 25, 60, 60, null);
             }
             if(player.getShielded()){
             	

@@ -495,6 +495,14 @@ public class Server implements Runnable, Serializable {
 		Player next = gameState.nextTurn();
 		Card drew = gameState.drawFromDeck();
 		gameState.addHand(next, drew);
+		
+		
+		for (ServerThread s : clients.keySet()){
+			if (clients.get(s).equals(next)){
+				s.send(new EndTurn());
+			}
+		}
+		
 		message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
 		messageExcept(next.getName() + " has begun their turn!", next);
 		return false;

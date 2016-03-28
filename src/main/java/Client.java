@@ -404,6 +404,11 @@ public class Client implements Runnable {
 			return true;
 
 			// unrecognized object
+		} else if (o instanceof EndTurn) {
+			if(view != null)view.toFront();
+			return true;
+
+			// unrecognized object
 		} else {
 			Exception e = new Exception(this.player.getName() + ": unrecognized object received");
 			Trace.getInstance().exception(this, e);
