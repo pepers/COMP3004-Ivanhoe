@@ -34,6 +34,10 @@ public class Client implements Runnable {
 	}
 	
 	// testing methods
+	public void setGui(boolean b) {
+		gui = b;
+	}
+	
 	public void setGameState(GameState g) {
 		gameState = g;
 		this.player = gameState.getPlayer(this.player.getName());
@@ -68,7 +72,7 @@ public class Client implements Runnable {
 
 	// initialize the player and game states
 	public void initialize(String name) {
-		Player p = new Player(name, 0);
+		Player p = new Player(name);
 		GameState g = new GameState();
 		initialize(p, g);
 	}
@@ -642,6 +646,7 @@ public class Client implements Runnable {
 				}
 			} else {
 				outputText("Client: no tournament running, you have no display");
+				return false;
 			}
 			// show all displays
 		} else if (args.equalsIgnoreCase("-a")) {
@@ -653,8 +658,13 @@ public class Client implements Runnable {
 					status += " (STUNNED)";
 				}
 				System.out.println(status);
-				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
-					outputText("Client: no cards in " + p.getName() + "'s display\n");
+				if (gameState.getTournament() != null) {
+					if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
+						outputText("Client: no cards in " + p.getName() + "'s display\n");
+					}
+				} else {
+					outputText("Client: no tournament running, you have no display");
+					return false;
 				}
 			}
 			// show someone else's display
@@ -671,8 +681,13 @@ public class Client implements Runnable {
 					status += " (STUNNED)";
 				}
 				System.out.println(status);
-				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
-					outputText("Client: no cards in " + p.getName() + "'s display\n");
+				if (gameState.getTournament() != null) {
+					if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
+						outputText("Client: no cards in " + p.getName() + "'s display\n");
+					}
+				} else {
+					outputText("Client: no tournament running, you have no display");
+					return false;
 				}
 			}
 		}
@@ -681,6 +696,7 @@ public class Client implements Runnable {
 
 	// end your turn
 	public boolean cmdEnd() {
+		if (!this.player.isTurn) { return false; } // not your turn
 		if (gameState.getTournament() == null && this.player.hasValidDisplayCard(new Colour(Colour.c.NONE))) {
 			outputText("Client: You MUST start a tournament if able.");
 			return false;
@@ -755,7 +771,7 @@ public class Client implements Runnable {
 						|| gameState.getTournament().getColour().equals(((DisplayCard) c).getColour()))) {
 					outputText("Client: not a valid color for the current tournament");
 					return false;
-				} else if (c.toString().equals("maiden:6") && player.getDisplay().hasCard((DisplayCard) c)) {
+				} else if (c.toString().equalsIgnoreCase("Maiden:6") && player.getDisplay().hasCard((DisplayCard) c)) {
 					outputText("Client: you may not have more than one maiden in your Display.");
 					return false;
 				}
