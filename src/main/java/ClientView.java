@@ -40,6 +40,7 @@ import main.java.Display;
 import main.java.DisplayCard;
 import main.java.Player;
 import main.java.Tournament;
+import main.resources.Language;
 import main.resources.Trace;
 import net.miginfocom.swing.MigLayout;
 
@@ -97,7 +98,8 @@ public class ClientView extends JFrame {
 	//Public members
 	public CardPanel hand;												//Hand of cards for the user
 	public DisplayPanel arena;											//Main area where displays are shown
-	public JButton endTurn;
+	public JButton endTurn, translate, shutdown;
+	JToggleButton censor;
 	public ImagePanel banner;
 	public ImagePanel weaponIcon;
 	
@@ -206,6 +208,7 @@ public class ClientView extends JFrame {
 		endTurn.setText("End Turn");
 		endTurn.setOpaque(false);
 		endTurn.setBackground(DARK_SAND);
+		endTurn.setForeground(Color.black);
 		endTurn.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 		endTurn.setAlignmentX(CENTER_ALIGNMENT);
 		endTurn.addActionListener(new ActionListener() {
@@ -213,9 +216,62 @@ public class ClientView extends JFrame {
                 if(client != null)client.cmdEnd();
             }
         });      
-		
 		buttons.add(Box.createRigidArea(new Dimension(0, this.getHeight()/20)));
 		buttons.add(endTurn);
+		
+		censor = new JToggleButton();
+		censor.setText("Censor");
+		censor.setOpaque(false);
+		censor.setBackground(DARK_SAND);
+		censor.setForeground(Color.black);
+		censor.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+		censor.setAlignmentX(CENTER_ALIGNMENT);
+		censor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                if(client != null)client.cmdCensor();
+            }
+        });      
+		buttons.add(censor);
+		
+		translate = new JButton();
+		translate.setText("Translate");
+		translate.setOpaque(false);
+		translate.setBackground(DARK_SAND);
+		translate.setForeground(Color.black);
+		translate.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+		translate.setAlignmentX(CENTER_ALIGNMENT);
+		translate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+            	
+            	Language.Dialect choice = (Language.Dialect) JOptionPane.showInputDialog(null, 
+            			"Please choose a language:", 
+            			"Translate",
+            	        JOptionPane.QUESTION_MESSAGE, 
+            	        null,
+	            	    Language.Dialect.values(),
+            	        "none");
+            	System.out.println("Setting language to " + choice.toString());
+                if(client != null)client.cmdTranslate(choice.toString());
+            }
+        });      
+		buttons.add(translate);
+		
+		shutdown = new JButton();
+		shutdown.setText("Shutdown");
+		shutdown.setOpaque(false);
+		shutdown.setBackground(DARK_SAND);
+		shutdown.setForeground(Color.black);
+		shutdown.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+		shutdown.setAlignmentX(CENTER_ALIGNMENT);
+		shutdown.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+            	if(JOptionPane.showConfirmDialog(null, "Exit to desktop?", "Shutdown", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
+            		if(client != null)client.shutdown();
+            	}
+                
+            }
+        });      
+		buttons.add(shutdown);
 		
 		controls.add(buttons, "cell 0 0, grow");
 		controls.add(cardContext, "cell 1 0, grow");
