@@ -74,7 +74,7 @@ public class ServerInput extends Thread{
 		
 		// switch over command 
 		switch (cmd.getCmd()) {
-			case "/ban":
+			case "ban":
 				args = new Arguments("==", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -83,7 +83,7 @@ public class ServerInput extends Thread{
 				} 
 				server.ban(argJoin);
 				return true;
-			case "/censor": // toggle the bad word censor
+			case "censor": // toggle the bad word censor
 				args = new Arguments("!=", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -92,7 +92,7 @@ public class ServerInput extends Thread{
 				} 
 				server.cmdCensor();
 				break;
-			case "/display":
+			case "display":
 				if (cmd.getArgs().length == 0) { // show every player's display
 					for (Player p: server.getGameState().getPlayers()) {
 						server.printSingleDisplay(p);
@@ -106,7 +106,7 @@ public class ServerInput extends Thread{
 					}
 				}
 				break;
-			case "/end":
+			case "end":
 				args = new Arguments("!=", 1);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -115,10 +115,10 @@ public class ServerInput extends Thread{
 				} 
 				server.cmdEnd(argJoin);
 				break;
-			case "/gamestate":
+			case "gamestate":
 				if(!server.printGameState()){ System.out.println("Failed to find gamestate."); }
 				break;
-			case "/give":
+			case "give":
 				args = new Arguments("<", 2);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -133,7 +133,7 @@ public class ServerInput extends Thread{
 					server.updateGameStates();
 				}
 				break;
-			case "/hand":
+			case "hand":
 				args = new Arguments("==", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -142,7 +142,7 @@ public class ServerInput extends Thread{
 				} 
 				server.printHand(argJoin);
 				break;
-			case "/help":
+			case "help":
 				args = new Arguments("!=", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -154,7 +154,7 @@ public class ServerInput extends Thread{
 					System.out.println("\t/" + helpCmd + helpCmd.getSyntax());
 				}
                 break;
-			case "/kick":
+			case "kick":
 				args = new Arguments("==", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -168,7 +168,7 @@ public class ServerInput extends Thread{
 					server.removeThread(argJoin);
 				}
 				break;
-			case "/list":
+			case "list":
 				args = new Arguments("!=", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -177,7 +177,7 @@ public class ServerInput extends Thread{
 				} 
 				server.listClients();
 				break;
-			case "/max":
+			case "max":
 				args = new Arguments("!=", 1);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -186,7 +186,7 @@ public class ServerInput extends Thread{
 				} 
 				server.setMaxPlayers(Integer.parseInt(argJoin));
 				break;
-			case "/min":
+			case "min":
 				args = new Arguments("!=", 1);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -195,7 +195,7 @@ public class ServerInput extends Thread{
 				} 
 				server.setMinPlayers(Integer.parseInt(argJoin));
 				break;
-			case "/pardon":
+			case "pardon":
 				args = new Arguments("==", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -204,7 +204,7 @@ public class ServerInput extends Thread{
 				} 
 				server.unban(argJoin);
 				return true;
-			case "/port":  // change Server's port on which Clients connect
+			case "port":  // change Server's port on which Clients connect
 				args = new Arguments("!=", 1);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -217,7 +217,7 @@ public class ServerInput extends Thread{
 				} catch (NumberFormatException nfe) { return false; }
 				server.port = port;
 				break;
-			case "/shutdown":
+			case "shutdown":
 				args = new Arguments("!=", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -226,7 +226,7 @@ public class ServerInput extends Thread{
 				} 
 				server.shutdown();
 				break;
-			case "/start":
+			case "start":
 				args = new Arguments("!=", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -235,7 +235,7 @@ public class ServerInput extends Thread{
 				} 
 				server.startGame();
 				break;
-			case "/tokens":
+			case "tokens":
 				args = new Arguments("!=", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
@@ -244,7 +244,7 @@ public class ServerInput extends Thread{
 				} 
 				server.cmdTokens();
 				break;	
-			case "/translate":
+			case "translate":
 				args = new Arguments("!=", 1);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
