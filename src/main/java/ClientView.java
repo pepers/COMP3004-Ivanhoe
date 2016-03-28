@@ -1,6 +1,7 @@
 package main.java;
 
 
+import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,6 +14,8 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -143,6 +146,14 @@ public class ClientView extends JFrame {
 		this.setSize(900, 680);
 		this.setContentPane(lobbyView);
 		this.revalidate();
+	}
+	
+	public void updateComponents(GameState gameState, Player player){
+		endTurn.setForeground(player.isTurn ? Color.black : Color.lightGray);
+		endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
+		hand.update(gameState.getPlayer(player).getHand());
+		arena.update(gameState.getPlayers());
+		setBannerType( (gameState.getTournament() == null) ? new Colour("NONE") : gameState.getTournament().getColour());
 	}
 	
 	public void setupGameView(){
@@ -461,10 +472,7 @@ public class ClientView extends JFrame {
 			
 			addMouseListener(new MouseAdapter() {
 				@Override
-				public void mousePressed(MouseEvent e) {
-					//System.out.println(card.toString() + " pressed");
-				}
-				
+				public void mousePressed(MouseEvent e) {}	
 				//Clicking on a card (to play)
 				@Override
 				public void mouseReleased(MouseEvent e) {
@@ -494,13 +502,20 @@ public class ClientView extends JFrame {
 							}
 						}else{
 							ActionCard selected =(ActionCard)card;
-							ArrayList<Object> options = client.getGameState().getTargets(selected, client.getPlayer());
-							if ((options != null) && (options.size() > 0)) {
-								SelectionMenu menu = new SelectionMenu(selected, options);
-							    menu.show(e.getComponent(), e.getX(), e.getY());
+							
+							if(selected.hasTargets()){
+								ArrayList<Object> options = client.getGameState().getTargets(selected, client.getPlayer());
+								if ((options != null) && (options.size() > 0)) {
+									SelectionMenu menu = new SelectionMenu(selected, options);
+								    menu.show(e.getComponent(), e.getX(), e.getY());
+								}
+							}else{
+								client.send(new Play(selected, null, null, null));
 							}
+							
 						}
 					}
+					updateComponents(client.getGameState(), client.getPlayer());
 				}
 				@Override
 				public void mouseExited(MouseEvent e) {
@@ -1044,5 +1059,4 @@ public class ClientView extends JFrame {
 		header.add(banner, "grow");
 		header.repaint();
 	}
-
 }

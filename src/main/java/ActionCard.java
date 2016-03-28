@@ -88,5 +88,24 @@ public class ActionCard extends Card {
 		Card c = (Card) o;
 		return c.toString().equals(this.toString());
 	}
+
+	public boolean hasTargets() {
+		switch(name){
+		case("Adapt"):
+			return false;
+		case("Charge"):
+			return false;
+		case("Countercharge"):
+			return false;
+		case("Outmaneuver"):
+			return false;
+		case("Disgrace"):
+			return false;
+		case("Shield"):
+			return false;
+		default:
+			return true;
+		}
+	}
 	
 }
