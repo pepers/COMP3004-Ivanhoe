@@ -620,15 +620,34 @@ public class Client implements Runnable {
 	// print out displays
 	public boolean cmdDisplay(String[] arr) {
 		String args = String.join(" ", arr); // join arguments into one string
+		String status = "";
 
 		// show own display
 		if (arr.length == 0) {
-			if (!(this.player.getDisplay().print(gameState.getTournament().getColour()))) {
-				outputText("Client: no cards in your display");
+			if (this.player.getShielded()) { // show if shielded
+				status += " (SHIELD)"; 
+			}
+			if (this.player.getStunned()) { // show if stunned
+				status += " (STUNNED)";
+			}
+			System.out.println(status);
+			if (gameState.getTournament() != null) {
+				if (!(this.player.getDisplay().print(gameState.getTournament().getColour()))) {
+					outputText("Client: no cards in your display");
+				}
+			} else {
+				outputText("Client: no tournament running, you have no display");
 			}
 			// show all displays
 		} else if (args.equalsIgnoreCase("-a")) {
 			for (Player p : this.gameState.getPlayers()) {
+				if (p.getShielded()) { // show if shielded
+					status += " (SHIELD)"; 
+				}
+				if (p.getStunned()) { // show if stunned
+					status += " (STUNNED)";
+				}
+				System.out.println(status);
 				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
 					outputText("Client: no cards in " + p.getName() + "'s display\n");
 				}
@@ -640,6 +659,13 @@ public class Client implements Runnable {
 				outputText("Client: " + args + " doesn't exist.  Can't print their Display.");
 				return false;
 			} else {
+				if (p.getShielded()) { // show if shielded
+					status += " (SHIELD)"; 
+				}
+				if (p.getStunned()) { // show if stunned
+					status += " (STUNNED)";
+				}
+				System.out.println(status);
 				if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
 					outputText("Client: no cards in " + p.getName() + "'s display\n");
 				}

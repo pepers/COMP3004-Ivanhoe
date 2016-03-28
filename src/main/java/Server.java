@@ -777,6 +777,12 @@ public class Server implements Runnable, Serializable {
 		}
 		for (Player p : gameState.getPlayers()) {
 			String display = p.getName() + " (" + p.getDisplay().score(colour)	+ ")";
+			if (p.getShielded()) { // show if shielded
+				display += " (SHIELD)"; 
+			}
+			if (p.getStunned()) { // show if stunned
+				display += " (STUNNED)";
+			}
 			System.out.printf("%-20s", display);
 		}
 		System.out.println();
@@ -797,6 +803,18 @@ public class Server implements Runnable, Serializable {
 	 * print one player's display
 	 */
 	public boolean printSingleDisplay(Player p) {
+		if (gameState.getTournament() == null) {
+			System.out.println("Error: no tournament started, so no display");
+			return false;
+		}
+		String status = "";
+		if (p.getShielded()) { // show if shielded
+			status += " (SHIELD)"; 
+		}
+		if (p.getStunned()) { // show if stunned
+			status += " (STUNNED)";
+		}
+		System.out.println(status);
 		if (!(p.getDisplay().print(gameState.getTournament().getColour()))) {
 			System.out.println("No cards in " + p.getName() + "'s display\n");
 			Trace.getInstance().write(this, "Server: no cards in " + p.getName() + "'s display.");

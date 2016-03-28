@@ -94,8 +94,12 @@ public class ServerInput extends Thread{
 				break;
 			case "display":
 				if (cmd.getArgs().length == 0) { // show every player's display
-					for (Player p: server.getGameState().getPlayers()) {
-						server.printSingleDisplay(p);
+					if (server.getGameState() != null) {
+						for (Player p: server.getGameState().getPlayers()) {
+							server.printSingleDisplay(p);
+						}
+					} else {
+						System.out.println("Error: no game started");
 					}
 				} else {
 					Player p = server.getGameState().getPlayer(argJoin);
