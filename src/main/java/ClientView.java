@@ -620,25 +620,25 @@ public class ClientView extends JFrame {
 				}
 			}
 	    }
-	    
-	    private Color toRGB(Colour colour){
-	    	switch(colour.toString().toLowerCase()){
-	    		case "red":
-	    			return IVAN_RED;
-	    		case "blue":
-	    			return IVAN_BLUE;
-	    		case "yellow":
-	    			return IVAN_YELLOW;
-	    		case "green":
-	    			return IVAN_GREEN;
-	    		case "purple":
-	    			return IVAN_PURPLE;
-	    		default:
-	    			return Color.black;
-	    	}
-	    }
 	}
-	
+
+	private Color toRGB(Colour colour) {
+		switch (colour.toString().toLowerCase()) {
+		case "red":
+			return IVAN_RED;
+		case "blue":
+			return IVAN_BLUE;
+		case "yellow":
+			return IVAN_YELLOW;
+		case "green":
+			return IVAN_GREEN;
+		case "purple":
+			return IVAN_PURPLE;
+		default:
+			return Color.black;
+		}
+	}
+
 	class TransparentTextArea extends JTextArea {
 		private static final long serialVersionUID = 1L;
 
@@ -723,7 +723,7 @@ public class ClientView extends JFrame {
             g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
             g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
             
-            if(client != null)g2.setColor(client.getGameState().hasHighScore(player) ? IVAN_GOLD : SAND);
+            if(client != null)g2.setColor(client.getGameState().hasHighScore(player) ? toRGB(client.getGameState().getTournament().getColour()) : SAND);
             g2.fillRect(xm-width/2, 0, width, height);
             g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
             
