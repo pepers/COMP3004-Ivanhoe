@@ -236,9 +236,9 @@ public class Client implements Runnable {
 			if (view != null && view.inGame) {
 				view.endTurn.setForeground(player.isTurn ? Color.black : Color.lightGray);
 				view.endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
-
 				view.hand.update(gameState.getPlayer(player).getHand());
 				view.arena.update(gameState.getPlayers());
+				view.setBannerType( (gameState.getTournament() == null) ? new Colour("NONE") : gameState.getTournament().getColour());
 			}
 		}
 		if (!this.shutDown) {

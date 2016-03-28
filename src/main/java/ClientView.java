@@ -98,10 +98,33 @@ public class ClientView extends JFrame {
 	public CardPanel hand;												//Hand of cards for the user
 	public DisplayPanel arena;											//Main area where displays are shown
 	public JButton endTurn;
+	public ImagePanel banner;
+	public ImagePanel weaponIcon;
 	
+	//UI Images
+	private Image greyBanner, blueBanner, redBanner, greenBanner, yellowBanner, purpleBanner, 
+	stun;
+	
+			
 	public ClientView(Client c) {
-		client = c;
 		
+		//load some images
+		try {
+			greyBanner = ImageIO.read(new File("./res/banner_default.png"));
+			redBanner = ImageIO.read(new File("./res/banner_red2.png"));
+			blueBanner = ImageIO.read(new File("./res/banner_blue2.png"));
+			yellowBanner = ImageIO.read(new File("./res/banner_yellow2.png"));
+			greenBanner = ImageIO.read(new File("./res/banner_green2.png"));
+			purpleBanner = ImageIO.read(new File("./res/banner_purple2.png"));
+			
+			stun = ImageIO.read(new File("./res/stunned.png"));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		client = c;
 		this.setResizable(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
@@ -123,6 +146,7 @@ public class ClientView extends JFrame {
 	
 	public void setupGameView(){
 		
+		lobbyView = null;
 		inGame = true;
 		//Setup the parent JPanel and general layout of the view
 		this.setSize(1255, 685);
@@ -134,14 +158,16 @@ public class ClientView extends JFrame {
 		
 		//Setup header (stone wall that shows the tournament type
 		header = new ImagePanel("./res/cobblestone.png", ImagePanel.TILE);
-		header.setToolTipText("header");
+		header.setLayout(new MigLayout("fill", "", ""));
+		banner = new ImagePanel(greyBanner, ImagePanel.CENTER);
+		banner.setLayout(new BorderLayout());
+		header.add(banner, "grow");
 		gameView.add(header, "cell 0 0 4 1, grow");
 		//end header setup
 		
 		//Setup title card "Ivanhoe", top right corner
 		title = new ImagePanel("./res/title.png", ImagePanel.CENTER_SCALE);
 		title.setBackground(SAND);
-		title.setToolTipText("title");
 		gameView.add(title, "cell 4 0 2 1, grow");
 		//end title setup
 		
@@ -205,7 +231,7 @@ public class ClientView extends JFrame {
 		
 		
 		//Setup console for input output below the arena
-		console = new ConsoleView("./res/cloth2.png", ImagePanel.TILE);
+		console = new ConsoleView("./res/cloth2.png", ImagePanel.TILE, false);
 		gameView.add(console, "cell 0 4 4 1, grow");
 		//end console setup
 		
@@ -285,12 +311,13 @@ public class ClientView extends JFrame {
 			this.imgWidth = w;
 			this.imgHeight = h;
 		}
-		
+		public ImagePanel() {}
 		public void setImage(Image i){
 			img = i;
 		}
 		@Override
 		protected void paintComponent(Graphics g) {
+			this.setOpaque(false);
 			super.paintComponent(g);
 			switch (mode) {
 			case STRETCH:
@@ -673,6 +700,13 @@ public class ClientView extends JFrame {
             	}
             	g2.fillRect(xm-width/2 + (i * width/6), 20, 10, 10);
 			}
+            
+            if(player.getStunned()){
+            	g2.drawImage(stun, xm, height + 30, null);
+            }
+            if(player.getShielded()){
+            	
+            }
         }
 	}
 	
@@ -700,10 +734,12 @@ public class ClientView extends JFrame {
 					"20[600!]20"));
 			
 			if (!connected) {
+				bricks.removeAll();
 				login = new LoginView("./res/arena.png");
 				bricks.add(login);
 			} else {
-				console = new ConsoleView("./res/arena.png");
+				bricks.removeAll();
+				console = new ConsoleView("./res/arena.png", ImagePanel.TILE, true);
 				bricks.add(console, "grow");
 			}
 			
@@ -822,9 +858,9 @@ public class ClientView extends JFrame {
 		private JPanel bottom = new JPanel();
 		
 		public ConsoleView(String path){
-			this(path, ImagePanel.TILE);
+			this(path, ImagePanel.TILE, false);
 		}
-		public ConsoleView(String path, int style){
+		public ConsoleView(String path, int style, boolean showReady){
 			super(path, style);
 			this.setLayout(new BorderLayout());
 			this.bottom.setLayout(new BoxLayout(this.bottom, BoxLayout.X_AXIS));
@@ -845,20 +881,22 @@ public class ClientView extends JFrame {
 			areaScrollPane.setAutoscrolls(true);
 			this.add(areaScrollPane, BorderLayout.CENTER);
 			
-			// set the Ready button
-			this.ready.setFont(new Font("Book Antiqua", Font.BOLD, 20));
-			this.ready.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					client.cmdReady();
-					if (isReady) {
-						isReady = false;
-						ready.setText("Ready");
-					} else {
-						isReady = true;
-						ready.setText("Not Ready");
+			if(showReady){
+				// set the Ready button
+				this.ready.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+				this.ready.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						client.cmdReady();
+						if (isReady) {
+							isReady = false;
+							ready.setText("Ready");
+						} else {
+							isReady = true;
+							ready.setText("Not Ready");
+						}
 					}
-				}
-			});
+				});
+			}
 
 			input = new JTextField();
 			input.addActionListener(new ActionListener() {
@@ -879,8 +917,9 @@ public class ClientView extends JFrame {
 			input.setOpaque(false);
 			input.setForeground(Color.white);
 			input.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.bottom.setOpaque(false);
 			this.bottom.add(input); // add textfield to bottom
-			this.bottom.add(ready); // add Ready button beside textfield
+			if(showReady)this.bottom.add(ready); // add Ready button beside textfield
 			this.add(bottom, BorderLayout.SOUTH);
 		}
 	
@@ -920,6 +959,35 @@ public class ClientView extends JFrame {
 			return console;
 		}
 	}
-
 	
+	public void setBannerType(Colour c){
+		System.out.println("Setting to " + c.toString());
+		switch(c.toString()){
+		case("None"):
+			banner.setImage(greyBanner);
+			break;
+		case("Red"):
+			banner.setImage(redBanner);
+			break;
+		case("Blue"):
+			banner.setImage(blueBanner);
+			break;
+		case("Yellow"):
+			banner.setImage(yellowBanner);
+			break;
+		case("Green"):
+			banner.setImage(greenBanner);
+			break;
+		case("Purple"):
+			banner.setImage(purpleBanner);
+			break;
+		default:
+			System.out.println("ERROR");
+			break;
+		}
+		header.removeAll();
+		header.add(banner, "grow");
+		header.repaint();
+	}
+
 }
