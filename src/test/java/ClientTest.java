@@ -34,6 +34,7 @@ public class ClientTest {
 	@Before
 	public void TestSetup() {
 		c = new Client();
+		c.setGui(false); // start in CLI mode
 		pnum += 1;
 		String[] arr = {"TEST PLAYER " + pnum};
 		p = new Player(String.join(" ", arr));
@@ -46,6 +47,7 @@ public class ClientTest {
 	
 	@After
 	public void TestTearDown () {
+		System.out.println(c.getPlayer().getName() + " is leaving...");
 		c.shutdown();
 	}
 	
@@ -55,18 +57,20 @@ public class ClientTest {
 		Trace.getInstance().test(this, "@Test(): connect to Server");
 		
 		c2 = new Client(); // for connect() test
-		
+		c2.setGui(false); // start in CLI mode
+
 		String[] arr2 = {"CONNECT TEST PLAYER"};
 		Player p2 = new Player(String.join(" ", arr2));
 		GameState g2 = new GameState();
 				
 		c2.initialize(p2, g2);
-		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c2.cmdSetname(arr2);
 
 		// attempt to connect (should fail if Server is not reachable)
 		assertTrue(c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT));
 		
+		c2.cmdSetname(arr2);
+
+		System.out.println(c2.getPlayer().getName() + " is leaving...");
 		c2.shutdown();
 	}
 	
@@ -115,6 +119,7 @@ public class ClientTest {
 
 		// for shutdown() test
 		c3 = new Client(); 
+		c3.setGui(false); // start in CLI mode
 		
 		String[] arr3 = {"SHUTDOWN TEST PLAYER"};
 		Player p3 = new Player(String.join(" ", arr3));
@@ -161,6 +166,8 @@ public class ClientTest {
 		Trace.getInstance().test(this, "@Test(): /display [player name ('-a' for all, or leave empty for own display)]");
 		
 		String pname = p.getName();
+		Tournament t = new Tournament(new Colour(Colour.c.RED));
+		c.getGameState().startTournament(t);
 		if (!p.getParticipation()) {
 			p.toggleTnmt(); // adds them to tournament
 		}
