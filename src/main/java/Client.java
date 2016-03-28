@@ -425,15 +425,25 @@ public class Client implements Runnable {
 		if (input.length() == 0) {
 			return false;
 		}
-		if (validCmd(input)) { // process valid commands
-			processCmd(input);
-			Trace.getInstance().write(this, getPlayer().getName() + ": command processed: " + input);
-		} else if (input.charAt(0) == '/') { // process invalid commands
-			outputText("Client: invalid command, try typing '/help' for more info.");
-		} else { // process chat
+		// GUI mode
+		if (view != null) { 
+			// send everything as chat
 			String translated = language.translate(input);
 			send(new Chat(translated));
 			Trace.getInstance().write(this, getPlayer().getName() + ": " + "chat sent: " + input);
+			
+		// CLI mode
+		} else {
+			if (validCmd(input)) { // process valid commands
+				processCmd(input);
+				Trace.getInstance().write(this, getPlayer().getName() + ": command processed: " + input);
+			} else if (input.charAt(0) == '/') { // process invalid commands
+				outputText("Client: invalid command, try typing '/help' for more info.");
+			} else { // process chat
+				String translated = language.translate(input);
+				send(new Chat(translated));
+				Trace.getInstance().write(this, getPlayer().getName() + ": " + "chat sent: " + input);
+			}
 		}
 		return true;
 	}
