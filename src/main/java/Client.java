@@ -775,26 +775,38 @@ public class Client implements Runnable {
 			}
 			// is player's turn
 		} else {
+			int errorCode = gameState.canPlay(c, player);
 			if (c instanceof DisplayCard) {
-				if (gameState.getTournament() == null) {
-					outputText("Client: no tournament is running, start one with /tournament");
-					return false;
-				} else if (!(((DisplayCard) c).getColour().equals("none")
-						|| gameState.getTournament().getColour().equals(((DisplayCard) c).getColour()))) {
-					outputText("Client: not a valid color for the current tournament");
-					return false;
-				} else if (c.toString().equalsIgnoreCase("Maiden:6") && player.getDisplay().hasCard((DisplayCard) c)) {
-					outputText("Client: you may not have more than one maiden in your Display.");
+				if(errorCode > 0){
+					switch(errorCode){
+					case GameState.NO_TOURNAMENT:
+						outputText("Client: no tournament is running, start one with /tournament");
+						break;
+					case GameState.INVALID_COLOUR:
+						outputText("Client: not a valid color for the current tournament");
+						break;
+					case GameState.MULTIPLE_MAIDEN:
+						outputText("Client: you may not have more than one maiden in your Display.");
+						break;
+					}
 					return false;
 				}
 				gameState.addDisplay(player, (DisplayCard) c);
 				gameState.removeHand(player, c);
 				// action card
 			} else {
-				if (gameState.getTournament() == null) {
-					outputText("Client: no tournament is running, start one with /tournament");
+				if(errorCode > 0){
+					switch(errorCode){
+					case GameState.NO_TOURNAMENT:
+						outputText("Client: no tournament is running, start one with /tournament");
+						break;
+					case GameState.NO_TARGETS:
+						outputText("Client: no targets available.");
+						break;
+					}
 					return false;
 				}
+				gameState.removeHand(player, c);
 			}
 		}
 		

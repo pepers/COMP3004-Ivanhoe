@@ -16,6 +16,11 @@ public class GameState implements Serializable{
 	private int numPlayers;
 	private int highScore = 0;
 	
+	public static final int NO_TOURNAMENT = 1;
+	public static final int  INVALID_COLOUR = 2;
+	public static final int  NO_TARGETS = 3;
+	public static final int  MULTIPLE_MAIDEN = 4;
+	
 	public static Deck getDeck() {return deck;}
 	public Tournament getTournament(){return tnmt;}
 	public int getHighScore(){return highScore;}
@@ -645,5 +650,31 @@ public class GameState implements Serializable{
 				return null;
 		}	
 		return targets;		
+	}
+	
+	public int canPlay(Card card, Player player){
+		if (getTournament() == null) {
+			return NO_TOURNAMENT;
+		}
+		if(card instanceof DisplayCard){
+
+			if (!(((DisplayCard) card).getColour().equals("none")
+					|| getTournament().getColour().equals(((DisplayCard) card).getColour()))) {
+				return INVALID_COLOUR;
+			} else if (card.toString().equalsIgnoreCase("Maiden:6") && player.getDisplay().hasCard((DisplayCard) card)) {
+				return MULTIPLE_MAIDEN;
+			}
+			return 0;
+		}else{
+			if (((ActionCard) card).hasTargets()){
+				if(getTargets((ActionCard) card, player).isEmpty()){
+					return NO_TARGETS;
+				}else{
+					return 0;
+				}
+			}else{
+				return 0;
+			}
+		}
 	}
 }
