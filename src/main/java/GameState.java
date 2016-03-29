@@ -410,11 +410,15 @@ public class GameState implements Serializable{
 				break;
 			case "Outmaneuver":
 				// shielded players aren't affected
-				ps = removeShielded(getTournamentParticipants(), c);
+				ps = removeShielded(getOpponents(action.origin), c);
+				if (ps == null) { 
+					System.out.println("No valid opponents of " + action.origin.getName() + " were found.");
+					return false;
+				}
 				for (Player p: ps) {
 					p.getDisplay().removeLast();
 				}
-				System.out.println("All players remove the last card played on their Display.");
+				System.out.println("All opponents of " + action.origin.getName() + " remove the last card of their Display.");
 				break;
 			case "Outwit":
 				DisplayCard dc2 = null; // second display card retrieved
