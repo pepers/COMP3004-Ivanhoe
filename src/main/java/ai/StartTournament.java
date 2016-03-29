@@ -51,14 +51,8 @@ public class StartTournament implements CommandInterface {
 	 * choose a colour to start tournament
 	 */
 	private Colour chooseColour() {
-		ArrayList<Colour> clist = new ArrayList<Colour>();
-		clist.add(new Colour(Colour.c.BLUE));
-		clist.add(new Colour(Colour.c.GREEN));
-		clist.add(new Colour(Colour.c.RED));
-		clist.add(new Colour(Colour.c.YELLOW));
-		if (!this.g.getLastColour().equals(new Colour(Colour.c.PURPLE))) {
-			clist.add(new Colour(Colour.c.PURPLE));
-		}
+		// valid colours to start tournament with
+		ArrayList<Colour> clist = g.validTournamentColours();
 		
 		// basic possible choices
 		ArrayList<Colour> cChoices = new ArrayList<Colour>();

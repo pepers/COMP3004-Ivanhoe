@@ -185,6 +185,21 @@ public class GameState implements Serializable{
 	}
 	
 	/*
+	 * return arraylist of valid colours to start tournament with
+	 */
+	public ArrayList<Colour> validTournamentColours() {
+		ArrayList<Colour> alist = new ArrayList<Colour>();
+		if (!this.lastColour.equals(new Colour(Colour.c.PURPLE))) {
+			alist.add(new Colour(Colour.c.PURPLE));
+		}
+		alist.add(new Colour(Colour.c.BLUE));
+		alist.add(new Colour(Colour.c.GREEN));
+		alist.add(new Colour(Colour.c.RED));
+		alist.add(new Colour(Colour.c.YELLOW));
+		return alist;
+	}
+	
+	/*
 	 * remove shielded from Player list
 	 * (to be used when executing Action cards)
 	 */

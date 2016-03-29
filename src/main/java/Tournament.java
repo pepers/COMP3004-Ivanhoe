@@ -1,6 +1,7 @@
 package main.java;
 
 import java.io.Serializable;
+
 import main.resources.MedievalNames;
 
 public class Tournament implements Serializable{
@@ -34,4 +35,5 @@ public class Tournament implements Serializable{
 			return true;
 		}
 	}
+	
 }
