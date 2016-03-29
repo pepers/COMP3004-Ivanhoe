@@ -231,6 +231,17 @@ public class Player implements Serializable{
 		return false;
 	}
 	
+	/*
+	 * check if player has any display card in hand
+	 */
+	public boolean hasDisplayCardInHand () {
+		if (this.hand.size() == 0) { return false; }
+		for (Card c : this.hand) {
+			if (c instanceof DisplayCard) { return true; }
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean equals(Object o){
 		if (o == null){return false;}

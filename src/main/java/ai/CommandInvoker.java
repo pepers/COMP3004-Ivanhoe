@@ -5,7 +5,7 @@ package main.java.ai;
  * to run AI commands
  */
 public class CommandInvoker {
-	public String execute (CommandInterface cmd) {
+	public boolean execute (CommandInterface cmd) {
 		return cmd.execute();
 	}
 }

@@ -36,8 +36,9 @@ public class Config {
 	}
 	
 	public enum ServerCommand { 
-		censor(""),
+		ai(" [Tournament Skill] [Display Skill] [Action Skill] [Withdraw Skill] (-1 to 1 for each option)"),
 		ban(" [ip address]"),
+		censor(""),
 		display(" [player name (leave empty for all)]"),
 		end(" [-t (for tournament) or -g (for game)]"), 
 		gamestate(""),

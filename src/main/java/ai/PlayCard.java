@@ -7,9 +7,9 @@ package main.java.ai;
 public class PlayCard implements CommandInterface {
 
 	@Override
-	public String execute() {
+	public boolean execute() {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 }

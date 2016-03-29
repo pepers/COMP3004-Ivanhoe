@@ -74,6 +74,15 @@ public class ServerInput extends Thread{
 		
 		// switch over command 
 		switch (cmd.getCmd()) {
+			case "ai":
+				args = new Arguments("!=", 4);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.startAI(cmd.getArgs());
+				break;
 			case "ban":
 				args = new Arguments("==", 0);
 				args.isValid(cmd);
@@ -82,7 +91,7 @@ public class ServerInput extends Thread{
 					return false;
 				} 
 				server.ban(argJoin);
-				return true;
+				break;
 			case "censor": // toggle the bad word censor
 				args = new Arguments("!=", 0);
 				args.isValid(cmd);
@@ -207,7 +216,7 @@ public class ServerInput extends Thread{
 					return false;
 				} 
 				server.unban(argJoin);
-				return true;
+				break;
 			case "port":  // change Server's port on which Clients connect
 				args = new Arguments("!=", 1);
 				args.isValid(cmd);

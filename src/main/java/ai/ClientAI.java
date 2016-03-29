@@ -2,10 +2,18 @@ package main.java.ai;
 
 import main.java.Client;
 
-public class ClientAI implements Runnable {
+public class ClientAI extends Thread {
 	CommandInterface cmd; 
 	CommandInvoker invoker;
+	
+	// Client info:
 	Client client;
+	String name;
+	static int nameNum = 0;
+	
+	// Server info:
+	String address;
+	int port;
 	
 	// skills:
 	double tournamentSkill;
@@ -18,24 +26,82 @@ public class ClientAI implements Runnable {
 	 * low value = bad decisions
 	 * high value = good decisions
 	 */
-	public ClientAI(double tournamentSkill, 
+	public ClientAI(String address,
+					int port,
+					String name,
+					double tournamentSkill, 
 					double displaySkill,
 					double actionSkill,
 					double withdrawSkill) {
+		this.address = address;
+		this.port = port;
+		this.name = name;
 		this.tournamentSkill = inRange(tournamentSkill);
 		this.displaySkill = inRange(displaySkill);
 		this.actionSkill = inRange(actionSkill);
 		this.withdrawSkill = inRange(withdrawSkill);
 		this.invoker = new CommandInvoker();
 		this.client = new Client();
+		
+		// start Client connection
+		client.setGui(false);
+		client.initialize(this.name);
+		if (client.connect(this.address, this.port)) {
+			client.processCmd("/setname " + client.getPlayer().getName());
+		} else {
+			System.out.println("Error: " + this.name + " could not connect to Server");
+			client.shutdown();
+		}
+	}
+	
+	// without a name, generic name is given
+	public ClientAI(String address,
+					int port,
+					double tournamentSkill, 
+					double displaySkill,
+					double actionSkill,
+					double withdrawSkill) {
+		this(address, port, "AIplayer" + (++nameNum), tournamentSkill, displaySkill, actionSkill, withdrawSkill);
 	}
 	
 	public void run() {
-		/* example:
-			cmd = new StartTournament(ARGUMENTS);
+		// start new thread to receive from Server
+		client.receiveThread = new Thread(client);
+		client.receiveThread.start();
+	
+		// get ready for game
+		client.processInput("Prepare for battle!");
+		client.processCmd("/ready");
+		
+		while (true) {
+			try {
+				this.sleep(100);
+			} catch (InterruptedException e) {}
+			
+			cmd = new StartTournament(this.client, this.tournamentSkill);
 			invoker.execute(cmd);
-	 	*/
-		// maybe start ClientAI only from Server as a Server command instead
+
+			try {
+				this.sleep(100);
+			} catch (InterruptedException e) {}
+			
+			cmd = new PlayCard();
+			invoker.execute(cmd);
+			
+			try {
+				this.sleep(100);
+			} catch (InterruptedException e) {}
+			
+			cmd = new EndTurn();
+			invoker.execute(cmd);
+
+			try {
+				this.sleep(100);
+			} catch (InterruptedException e) {}
+			
+			cmd = new Withdraw();
+			invoker.execute(cmd);
+		}
 	}
 	
 	/*

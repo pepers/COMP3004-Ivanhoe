@@ -11,7 +11,7 @@ import main.resources.Trace;
 
 public class Client implements Runnable {
 
-	private Thread receiveThread; // Client thread to receive from Server
+	public Thread receiveThread; // Client thread to receive from Server
 	public ClientInput inputThread = null; // thread to input Client commands
 	private boolean stop = false; // use to stop the Client
 	private boolean shutDown = false; // shutdown() has been called

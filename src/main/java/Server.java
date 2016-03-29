@@ -24,6 +24,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import main.java.ai.ClientAI;
 import main.resources.Config;
 import main.resources.Language;
 import main.resources.Trace;
@@ -86,7 +87,7 @@ public class Server implements Runnable, Serializable {
 		try {
 			serverSocket = new ServerSocket(port);
 			serverSocket.setReuseAddress(true);
-			address = InetAddress.getLocalHost().toString();
+			address = InetAddress.getLocalHost().getHostAddress();
 		} catch (BindException e) {
 			System.out.println("Error: There is already a running server on this port.");
 			return false;
@@ -1034,6 +1035,32 @@ public class Server implements Runnable, Serializable {
 		} catch (IOException e) {
 			System.out.println("Error reading bannedPlayers (IOException)");
 		}
+	}
+	
+	/*
+	 * start an AI Client
+	 */
+	public boolean startAI(String[] strArgs) {
+		double tournamentSkill;
+		double displaySkill;
+		double actionSkill;
+		double withdrawSkill;
+		
+		try {
+			tournamentSkill = Double.parseDouble(strArgs[0]);
+			displaySkill = Double.parseDouble(strArgs[1]);
+			actionSkill = Double.parseDouble(strArgs[2]);
+			withdrawSkill = Double.parseDouble(strArgs[3]);
+		} catch (NumberFormatException nfe) {
+			Trace.getInstance().exception(this, nfe);
+			System.out.println("Error: arguments were not numbers, AI Client could not start");
+			return false;
+		}
+		
+		Thread ai = new ClientAI(this.address, this.port, tournamentSkill, displaySkill, actionSkill, withdrawSkill);
+		ai.start();
+		
+		return true;
 	}
 	
 	/*

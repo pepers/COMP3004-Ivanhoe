@@ -4,6 +4,6 @@ package main.java.ai;
  * to run AI commands
  */
 public interface CommandInterface {
-	String execute();
+	boolean execute(); // determine how to execute command, and do it
 }
 
