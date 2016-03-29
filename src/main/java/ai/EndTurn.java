@@ -15,6 +15,11 @@ public class EndTurn implements CommandInterface {
 	double skill;
 	Randoms r;
 	
+	/*
+	 * absolute skill:
+	 * 1 = will end turn if winning
+	 * 0 = won't end turn 
+	 */
 	public EndTurn (Client c, double skill) {
 		this.c = c;
 		this.g = c.getGameState();
@@ -25,7 +30,36 @@ public class EndTurn implements CommandInterface {
 	
 	@Override
 	public boolean execute() {
-		// TODO Auto-generated method stub
+		// not your turn
+		if (!this.p.isTurn) { return false;	}
+		
+		// not in tournament
+		if (this.g.getTournament() == null) {
+			// can't start tournament
+			if (!this.p.hasDisplayCardInHand()) {
+				this.c.processCmd("/end");
+				return true;
+				
+			// can start tournament
+			} else {
+				return false;
+			}
+		}
+		
+		// no cards left to play TODO: add action cards 
+		if (!this.p.hasValidDisplayCard(this.g.getTournament().getColour())) {
+			this.c.processCmd("/end");
+			return true;
+		}
+		
+		// choose to end turn if in the lead
+		if (this.r.makeChoice(this.skill)) {
+			if (this.g.hasHighScore(this.p)) {
+				this.c.processCmd("/end");
+				return true;
+			}
+		}
+		
 		return false;
 	}
 

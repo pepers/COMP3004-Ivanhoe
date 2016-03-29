@@ -79,18 +79,14 @@ public class ClientAI extends Thread {
 			} catch (InterruptedException e) {}
 			
 			cmd = new StartTournament(this.client, this.tournamentSkill);
-			if (invoker.execute(cmd)) {
-				System.out.println(this.name + ": " + this.client.getPlayer().getHand().toString());
-			}
+			invoker.execute(cmd);
 
 			try {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
 			cmd = new PlayCard(this.client, this.displaySkill, this.actionSkill);
-			if (invoker.execute(cmd)) {
-				System.out.println(this.name + ": " + this.client.getPlayer().getHand().toString());
-			}
+			invoker.execute(cmd);
 			
 			try {
 				this.sleep(100);
