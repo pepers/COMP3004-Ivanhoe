@@ -670,7 +670,8 @@ public class GameState implements Serializable{
 				return NO_TOURNAMENT;
 			}
 			if (((ActionCard) card).hasTargets()){
-				if(getTargets((ActionCard) card, player).isEmpty()){
+				ArrayList<Object> targets = getTargets((ActionCard) card, player);
+				if(targets == null || targets.isEmpty()){
 					return NO_TARGETS;
 				}else{
 					return 0;

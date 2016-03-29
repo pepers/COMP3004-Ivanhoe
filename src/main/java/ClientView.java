@@ -712,7 +712,8 @@ public class ClientView extends JFrame {
             		: 150;
             
             
-            if(client != null)g2.setColor((player.equals(client.getPlayer())) ? Color.lightGray : Color.black);
+            //if(client != null)g2.setColor((player.equals(client.getPlayer())) ? Color.lightGray : Color.black);
+            if(client != null)g2.setColor(player.getColor());
             g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
             g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
             
@@ -720,9 +721,12 @@ public class ClientView extends JFrame {
             g2.fillRect(xm-width/2, 0, width, height);
             g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
             
-            g2.setColor(Color.black);
+            g2.setColor(Color.darkGray);
+            g2.fillRect(xm-width/2, 0, width, 55);
+            
+            g2.setColor(Color.white);
             g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
-            g2.drawString(player.getName(), xm - player.getName().length()*5, 50);
+            g2.drawString(player.getName(), xm - player.getName().length()*5, 25);
             int i = 1;
             for (Card c : display.elements()){
             	BufferedImage img = getImage(c);
@@ -746,7 +750,7 @@ public class ClientView extends JFrame {
             	}else {
             		g2.setColor(Color.black);
             	}
-            	g2.fillRect(xm-width/2 + (i * width/6), 20, 10, 10);
+            	g2.fillRect(xm-width/2 + (i * width/6), 35, 10, 10);
 			}
             
             if(player.getStunned()){

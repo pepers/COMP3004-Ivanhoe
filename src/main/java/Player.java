@@ -1,11 +1,14 @@
 package main.java;
 
+import java.awt.Color;
+
 /*
  * info about one player
  */
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Player implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -21,10 +24,12 @@ public class Player implements Serializable{
 	private boolean isShielded = false;
 	private ArrayList<Token> tokens = new ArrayList<Token>();  // tokens won for tournament wins
 	private int id;
+	private Color playerColor = Color.black;
 	
 	public boolean isTurn = false;
 	public int ready = 0;
 	
+	public Color getColor(){return this.playerColor;}
 	public int getHandSize(){return this.handSize;}
 	public boolean getShielded(){return this.isShielded;}
 	public void setShielded(boolean shield) { this.isShielded = shield; } 
@@ -50,13 +55,13 @@ public class Player implements Serializable{
 	}
 	
 	public Player(String u, int id){
-		username = u;
-		hand = new ArrayList<Card>();
-		tokens = new ArrayList<Token>();
+		this(u);
 		this.id = id;
 	}
 	
 	public Player(String u){
+		Random r = new Random();
+		playerColor = new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255));
 		username = u;
 		hand = new ArrayList<Card>();
 		tokens = new ArrayList<Token>();
