@@ -1,7 +1,6 @@
 package main.java;
 
 
-import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,8 +13,6 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -38,7 +35,6 @@ import javax.swing.text.StyledDocument;
 import main.java.ActionCard;
 import main.java.Card;
 import main.java.Client;
-import main.java.Deck;
 import main.java.Display;
 import main.java.DisplayCard;
 import main.java.Player;
@@ -49,30 +45,6 @@ import net.miginfocom.swing.MigLayout;
 
 public class ClientView extends JFrame {
 	private static final long serialVersionUID = 1L;
-	
-	// TODO remove main
-	public static void main(String args[]) throws InterruptedException {
-	
-		
-		ClientView c = new ClientView(null);
-		/*
-		Deck d = new Deck();
-		d.initialize();
-		ArrayList<Card> cards = new ArrayList<Card>();
-		ArrayList<Player> players = new ArrayList<Player>();
-		Player khalil = new Player("khalil");
-		khalil.addToDisplay(d.draw());
-		players.add(new Player("khalil"));
-		
-		c.arena.update(players);
-		while(cards.size()<7){
-			cards.add(d.draw());
-			c.hand.update(cards);
-		}
-		*/
-		
-		
-	}
 
 	//Private members
 	private static Image cardback;										//The image of the cardback
@@ -92,7 +64,6 @@ public class ClientView extends JFrame {
 	private static final Color IVAN_YELLOW = new Color(230, 197, 67);
 	private static final Color IVAN_GREEN = new Color(94, 171, 90);
 	private static final Color IVAN_PURPLE = new Color(153, 99, 156);
-	private static final Color IVAN_GOLD = new Color(255, 217, 64);
 	
 	public static final int INFO = 0;
 	public static final int CHAT = 1;

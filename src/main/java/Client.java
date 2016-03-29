@@ -1,9 +1,7 @@
 package main.java;
 
-import java.awt.Color;
 import java.io.*;
 import java.net.*;
-
 import main.java.ClientView;
 import main.java.ClientView.ConsoleView;
 import main.resources.Config;
@@ -238,11 +236,7 @@ public class Client implements Runnable {
 			}
 			
 			if (view != null && view.inGame) {
-				view.endTurn.setForeground(player.isTurn ? Color.black : Color.lightGray);
-				view.endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
-				view.hand.update(gameState.getPlayer(player).getHand());
-				view.arena.update(gameState.getPlayers());
-				view.setBannerType( (gameState.getTournament() == null) ? new Colour("NONE") : gameState.getTournament().getColour());
+				view.updateComponents(gameState, player);
 			}
 		}
 		if (!this.shutDown) {
@@ -712,6 +706,14 @@ public class Client implements Runnable {
 			return false;
 		} else {
 			this.player.isTurn = false;
+			if (gameState.hasHighScore(player) == false) {
+				player.setParticipation(false);
+				player.getDisplay().clear();
+			}
+			if(gameState.getTournamentParticipants().size() == 1){
+				gameState.endTournament();
+			}
+			if(view != null)view.updateComponents(gameState, player);
 			send(new EndTurn());
 			return true;
 		}
@@ -785,6 +787,8 @@ public class Client implements Runnable {
 					outputText("Client: you may not have more than one maiden in your Display.");
 					return false;
 				}
+				gameState.addDisplay(player, (DisplayCard) c);
+				gameState.removeHand(player, c);
 				// action card
 			} else {
 				if (gameState.getTournament() == null) {
@@ -793,7 +797,9 @@ public class Client implements Runnable {
 				}
 			}
 		}
+		
 		send(new Play(c));
+		if(view != null)view.updateComponents(gameState, player);
 		return true;
 	}
 
@@ -901,7 +907,11 @@ public class Client implements Runnable {
 				return false;
 			}
 		}
+		gameState.addDisplay(player, displayCard);
+		gameState.removeHand(player, displayCard);
+		gameState.startTournament(new Tournament(colour));
 		send(new StartTournament(colour, displayCard));
+		if(view != null)view.updateComponents(gameState, player);
 		return true;
 	}
 
@@ -927,9 +937,12 @@ public class Client implements Runnable {
 
 	// withdraw from the current tournament
 	public boolean cmdWithdraw() {
+		
+		player.setParticipation(false);
+		player.isTurn = false;
+		player.getDisplay().clear();
 		send(new Withdraw());
-		this.player.setParticipation(false);
-		this.player.isTurn = false;
+		if(view != null)view.updateComponents(gameState, player);
 		return true;
 	}
 
