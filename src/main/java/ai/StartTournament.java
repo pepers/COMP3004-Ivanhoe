@@ -54,12 +54,13 @@ public class StartTournament implements CommandInterface {
 		// valid colours to start tournament with
 		ArrayList<Colour> clist = g.validTournamentColours();
 		
-		// basic possible choices
+		// choices to return a random element from at end of method
 		ArrayList<Colour> cChoices = new ArrayList<Colour>();
+		
+		// basic possible choices (if supporter in hand, pChoices == clist)
 		ArrayList<Colour> pChoices = new ArrayList<Colour>();
 		for (Colour c : clist) {
 			if (p.hasValidDisplayCard(c)) {
-				cChoices.add(c);
 				pChoices.add(c);
 			}
 		}
@@ -86,34 +87,98 @@ public class StartTournament implements CommandInterface {
 		}		
 		
 		// bad skill
-		// chance to start tournament of colour you already have
 		if (this.skill < 0) { 
+			// chance to use colour of token you have
 			if (!cTokens.isEmpty()) {
-				for (int i=0; i<(Math.abs(this.skill)*10); i++) {
-					for (Colour c : cTokens) {
-						cChoices.add(c);
+				for (Card c : p.getHand()) {
+					if (c instanceof DisplayCard) {
+						if (r.makeChoice(this.skill)) {
+							Colour col = ((DisplayCard) c).getColour();
+							if (col.equals(new Colour(Colour.c.NONE))) {
+								cChoices.add(r.get(cTokens));
+							} else {
+								cChoices.add(col);
+							}
+						} else {
+							cChoices.add(r.get(pChoices));
+						}
+					}
+				}
+				
+			// chance to use colour of lowest number of cards in your hand
+			} else {
+				int blue = 0;
+				int green = 0;
+				int purple = 0;
+				int red = 0;
+				int yellow = 0;
+				for (Card c : this.p.getHand()) {
+					if (c instanceof DisplayCard) {
+						Colour col = ((DisplayCard) c).getColour();
+						switch (col.toString()) {
+							case "Blue": blue += 1;
+								break;
+							case "Green": green += 1;
+								break;
+							case "Purple": purple += 1;
+								break;
+							case "red": red += 1;
+								break;
+							case "yellow": yellow += 1;
+								break;
+							default:
+								break;
+						}
+					}
+					
+					int lowest = blue;
+					if ((green < lowest) && (green > 0)) { lowest = green;
+					} else if ((purple < lowest) && (purple > 0)) { lowest = purple;
+					} else if ((red < lowest) && (red > 0)) { lowest = red;
+					} else if ((yellow < lowest) && (yellow > 0)) { lowest = yellow; }
+					
+					ArrayList<Colour> cLowest = new ArrayList<Colour>();
+					
+					if (blue == lowest) { cLowest.add(new Colour(Colour.c.BLUE)); }
+					if (green == lowest) { cLowest.add(new Colour(Colour.c.GREEN)); }
+					if (purple == lowest) { cLowest.add(new Colour(Colour.c.PURPLE)); }
+					if (red == lowest) { cLowest.add(new Colour(Colour.c.RED)); }
+					if (yellow == lowest) { cLowest.add(new Colour(Colour.c.YELLOW)); }
+					
+					for (Card dc : p.getHand()) {
+						if (dc instanceof DisplayCard) {
+							if (r.makeChoice(this.skill)) {
+								cChoices.add(r.get(cLowest));
+							} else {
+								cChoices.add(r.get(pChoices));
+							}
+						}
 					}
 				}
 			}
 			
 		// good skill
-		// chance to start tournament of colour you don't have
 		} else {
-			if (!cNeedTokens.isEmpty()) {
-				for (int i=0; i<(Math.abs(this.skill)*10); i++) {
-					for (Colour c : cNeedTokens) {
-						cChoices.add(c);
+			// chance to use colour of token you don't have
+			for (Card dc : p.getHand()) {
+				if (dc instanceof DisplayCard) {
+					if (!cNeedTokens.isEmpty()) {
+						if (r.makeChoice(this.skill)) {
+							cChoices.add(r.get(cNeedTokens));
+						} else {
+							cChoices.add(r.get(pChoices));
+						}
+					} else {
+						cChoices.add(r.get(pChoices));
 					}
 				}
 			}
-			
-			
 		}
 		
 		if (cChoices.isEmpty()) {
-			return null;
+			return r.get(pChoices); // return random possible colour
 		} else {
-			return r.get(cChoices); // return random colour
+			return r.get(cChoices); // return random colour based on skill
 		}
 	}
 	
