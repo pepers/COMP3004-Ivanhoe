@@ -707,7 +707,9 @@ public class ClientView extends JFrame {
             }
             
             //Draw a crude banner
-            int height = (tournament != null) ? 180 + 15 * display.score(tournament.getColour()) : 150;
+            int height = (tournament != null) ? 
+            		180 + 15 * display.size()
+            		: 150;
             
             
             if(client != null)g2.setColor((player.equals(client.getPlayer())) ? Color.lightGray : Color.black);

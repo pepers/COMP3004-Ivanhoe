@@ -923,7 +923,6 @@ public class Client implements Runnable {
 		gameState.removeHand(player, displayCard);
 		gameState.startTournament(new Tournament(colour));
 		send(new StartTournament(colour, displayCard));
-		if(view != null)view.updateComponents(gameState, player);
 		return true;
 	}
 
