@@ -525,10 +525,15 @@ public class ClientView extends JFrame {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
 			g2.drawImage(img,0,0, w, h, null);
-			if(mouseOver){
-				g2.setColor(new Color(0, 0, 0, 70));
-				g2.setStroke(new BasicStroke(w/2));
-				g2.drawRect(0, 0, w, h);
+			if(client.getGameState().canPlay(card, client.getPlayer()) == 0){
+				if (mouseOver) {
+					g2.setColor(new Color(0, 0, 0, 70));
+					g2.setStroke(new BasicStroke(w / 2));
+					g2.drawRect(0, 0, w, h);
+				}
+			}else{
+				g2.setColor(new Color(0, 0, 0, 100));
+				g2.fillRect(0, 0, w, h);
 			}
 		}
 
@@ -1002,7 +1007,6 @@ public class ClientView extends JFrame {
 	}
 	
 	public void setBannerType(Colour c){
-		System.out.println("Setting to " + c.toString());
 		switch(c.toString()){
 		case("None"):
 			banner.setImage(greyBanner);

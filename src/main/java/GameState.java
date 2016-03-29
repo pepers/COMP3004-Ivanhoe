@@ -653,11 +653,11 @@ public class GameState implements Serializable{
 	}
 	
 	public int canPlay(Card card, Player player){
-		if (getTournament() == null) {
-			return NO_TOURNAMENT;
-		}
+		
 		if(card instanceof DisplayCard){
-
+			if (getTournament() == null) {
+				return 0;
+			}
 			if (!(((DisplayCard) card).getColour().equals("none")
 					|| getTournament().getColour().equals(((DisplayCard) card).getColour()))) {
 				return INVALID_COLOUR;
@@ -666,6 +666,9 @@ public class GameState implements Serializable{
 			}
 			return 0;
 		}else{
+			if (getTournament() == null) {
+				return NO_TOURNAMENT;
+			}
 			if (((ActionCard) card).hasTargets()){
 				if(getTargets((ActionCard) card, player).isEmpty()){
 					return NO_TARGETS;
