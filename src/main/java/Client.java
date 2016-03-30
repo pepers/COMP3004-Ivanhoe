@@ -402,8 +402,7 @@ public class Client implements Runnable {
 			return true;
 			// Prompt
 		} else if (o instanceof Prompt) {
-			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName()
-					+ " was prompted: " + ((Prompt) o).getMessage());
+			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " was prompted: " + ((Prompt) o).getMessage());
 			this.promptOptions = ((Prompt) o).getOptions();
 			String s = null;
 			if (ai) { // Client is run by AI	
@@ -416,7 +415,24 @@ public class Client implements Runnable {
 				}
 				aiPrompt = null;
 			} else {  // Client is human player
-				s = userInput(((Prompt) o).getMessage());
+				if(view == null){
+					this.input = new BufferedReader(new InputStreamReader(System.in));
+					String strInput = "";
+					try {
+						strInput = this.input.readLine();
+					} catch (IOException e) {
+						Trace.getInstance().exception(this, e);
+					}
+					Trace.getInstance().write(this, ((Prompt) o).getMessage() + strInput);
+					s = strInput;
+				}else{
+					Prompt prompt = (Prompt) o;
+					ArrayList<String> optionNames = new ArrayList<String>();
+					for (Object object : prompt.getOptions()){
+						optionNames.add(object.toString());
+					}
+					s = view.showPromptOptions(optionNames, prompt.getMessage(), "Ser " + player.getName() + "...");
+				}
 			}
 			this.promptOptions = null;
 			send(new Prompt(s));

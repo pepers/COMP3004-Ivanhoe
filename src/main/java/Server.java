@@ -466,6 +466,9 @@ public class Server implements Runnable, Serializable {
 				colours.add(new Colour(Colour.c.BLUE));
 				colours.add(new Colour(Colour.c.YELLOW));
 				colours.add(new Colour(Colour.c.GREEN));
+				for (Token t : winner.getTokens()){
+					colours.remove(t.getColour());
+				}
 				strCol = prompt("Your deeds merit a token of your choice. What colour do you seek?", winner, colours);
 				
 				while(!Colour.getValid(strCol)){
