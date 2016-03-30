@@ -409,7 +409,7 @@ public class Server implements Runnable, Serializable {
 				// player is stunned, and has already played DisplayCard
 				if (action.origin.getStunned() &&
 						action.origin.getAddedToDisplay()) { 
-					messageExcept("You are Stunned, and can't play another Display Card this turn.", gameState.getPlayer(action.origin.getName()));
+					message("You are Stunned, and can't play another Display Card this turn.", gameState.getPlayer(action.origin.getId()));
 					return false;
 				} else {
 					broadcast(action.origin.getName() + " plays a " + c.toString());

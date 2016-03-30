@@ -83,7 +83,7 @@ public class ClientView extends JFrame {
 	
 	//UI Images
 	private Image greyBanner, blueBanner, redBanner, greenBanner, yellowBanner, purpleBanner, 
-	stun;
+	stun, shield;
 	
 			
 	public ClientView(Client c) {
@@ -97,6 +97,7 @@ public class ClientView extends JFrame {
 			purpleBanner = ImageIO.read(new File("./res/banner_purple2.png"));
 			
 			stun = ImageIO.read(new File("./res/stunned.png"));
+			shield = ImageIO.read(new File("./res/shield.png"));
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -711,12 +712,13 @@ public class ClientView extends JFrame {
             }
             
             //Draw a crude banner
-            int height = (tournament != null) ? 
-            		180 + 15 * display.size()
-            		: 150;
+            int height = (tournament != null) ? 200 + 15 * display.size(): 150;
             
-            
-            //if(client != null)g2.setColor((player.equals(client.getPlayer())) ? Color.lightGray : Color.black);
+            if(player.equals(client.getPlayer())){
+	            g2.setColor(Color.black);
+	            g2.fillRect(xm-15-width/2, 0, width + 30, height + 20); 
+	            g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height + 20, height + 45, height+20}, 3);
+            }
             if(client != null)g2.setColor(player.getColor());
             g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
             g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
@@ -735,7 +737,7 @@ public class ClientView extends JFrame {
             for (Card c : display.elements()){
             	BufferedImage img = getImage(c);
             	i++;
-            	g2.drawImage(img, xm-37, 40 + (20 * i), 75, 106, null);
+            	g2.drawImage(img, xm-37, 30 + (20 * i), 75, 106, null);
 			}
             i = 0;
             for (Token t : player.getTokens()){
@@ -758,10 +760,10 @@ public class ClientView extends JFrame {
 			}
             
             if(player.getStunned()){
-            	g2.drawImage(stun, xm - 30, height - 25, 60, 60, null);
+            	g2.drawImage(stun, xm - 20, height - 30, 40, 40, null);
             }
             if(player.getShielded()){
-            	
+            	g2.drawImage(shield, xm - 20, height - 30, 40, 40, null);
             }
         }
 	}
