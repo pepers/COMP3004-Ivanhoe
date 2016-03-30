@@ -77,7 +77,7 @@ public class Client implements Runnable {
 
 	// initialize the player and game states
 	public void initialize(String name) {
-		Player p = new Player(name);
+		Player p = new Player(name, 0);
 		GameState g = new GameState();
 		initialize(p, g);
 	}
@@ -103,7 +103,7 @@ public class Client implements Runnable {
 	public boolean guiStartUp(String address, int port) {
 		// attempt to connect to Server
 		if (connect(address, port)) {
-			send(new SetName(this.player.getName())); // send user's name to Server
+			send(player); // send user's name to Server
 			player = (Player) receive();
 			// start new thread to get Client commands
 			this.inputThread = new ClientInput(this, System.in);
@@ -168,8 +168,7 @@ public class Client implements Runnable {
 
 			// attempt to connect to Server
 			if (connect(address, port)) {
-				send(new SetName(this.player.getName())); // send user's name to
-															// Server
+				send(player); // send user
 				player = (Player) receive();
 				// start new thread to get Client commands
 				this.inputThread = new ClientInput(this, System.in);

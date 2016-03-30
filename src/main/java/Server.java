@@ -145,12 +145,11 @@ public class Server implements Runnable, Serializable {
 		// Check if there is space
 		if (numClients < maxPlayers) {
 			serverThread = new ServerThread(this, socket);
-			String name = ((SetName) serverThread.receive()).getName();
-			Player newPlayer = new Player("Knight " + serverThread.getID(), serverThread.getID());
+			Player requestedPlayer = ((Player) serverThread.receive());
+			String name = requestedPlayer.getName();
+			Player newPlayer = new Player(requestedPlayer.getName(), serverThread.getID(), requestedPlayer.getColor());
 			if(!checkNewName(newPlayer, name)){
 				newPlayer.setName(name + serverThread.getID());
-			}else{
-				newPlayer.setName(name);
 			}
 			clients.put(serverThread, newPlayer);
 			serverThread.send(newPlayer);

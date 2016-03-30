@@ -55,16 +55,18 @@ public class Player implements Serializable{
 	}
 	
 	public Player(String u, int id){
-		this(u);
+		this.username = u;
+		this.hand = new ArrayList<Card>();
+		this.tokens = new ArrayList<Token>();
 		this.id = id;
+	}
+	public Player(String u, int id, Color c){
+		this(u, id);
+		this.playerColor = c;
 	}
 	
 	public Player(String u){
-		Random r = new Random();
-		playerColor = new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255));
-		username = u;
-		hand = new ArrayList<Card>();
-		tokens = new ArrayList<Token>();
+		this(u, 0);
 	}
 
 	public void reset(){
@@ -259,5 +261,8 @@ public class Player implements Serializable{
 	}
 	public ArrayList<Token> getTokens() {
 		return tokens;
+	}
+	public void setColor(Color color) {
+		this.playerColor = color;
 	}
 }

@@ -10,6 +10,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -24,6 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -703,7 +707,7 @@ public class ClientView extends JFrame {
             	tournament = client.getGameState().getTournament();
             }
             if (player == null){
-            	player = new Player("NULL");
+            	player = new Player("NULL", 0);
             }
             
             //Draw a crude banner
@@ -807,9 +811,11 @@ public class ClientView extends JFrame {
 		private JLabel lname    = new JLabel("Your Name: ");
 		private JLabel laddress = new JLabel("Server Address: ");
 		private JLabel lport    = new JLabel("Server Port: ");
+		private JLabel lcolor    = new JLabel("Color: ");
 		private JTextField tname = new JTextField(10);
 		private JTextField taddress = new JTextField(10);
 		private JTextField tport = new JTextField(10);
+		private JButton tcolor = new JButton("Choose");
 		private JButton connect = new JButton("Connect");
 		private JPanel labels = new JPanel();
 		private JPanel textfields = new JPanel();
@@ -825,41 +831,73 @@ public class ClientView extends JFrame {
 			this.labels.setLayout(new BoxLayout(this.labels, BoxLayout.Y_AXIS));
 			this.labels.setOpaque(false);
 			
-			this.textfields.setLayout(new BoxLayout(this.textfields, BoxLayout.Y_AXIS));
+			this.textfields.setLayout(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			this.textfields.setOpaque(false);
 
-			// add labels and textareas
-			this.labels.add(this.lname);
-			this.textfields.add(this.tname);
-			
-			this.labels.add(this.laddress);
-			this.textfields.add(this.taddress);
-			
-			this.labels.add(this.lport);
-			this.textfields.add(this.tport);
-			
-			// set properties of labels
+			// add labels
 			this.lname.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 			this.lname.setForeground(Color.WHITE);
 			this.lname.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			this.labels.add(this.lname);
 			
 			this.laddress.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 			this.laddress.setForeground(Color.WHITE);
 			this.laddress.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
+			this.labels.add(this.laddress);
+			
 			this.lport.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 			this.lport.setForeground(Color.WHITE);
 			this.lport.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			this.labels.add(this.lport);
 			
-			// set properties of textfields
+			this.lcolor.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.lcolor.setForeground(Color.WHITE);
+			this.lcolor.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			this.labels.add(this.lcolor);
+			
+			// add textfields
 			this.tname.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 			this.tname.setText("Player");
+			gbc.gridy++;
+			this.textfields.add(this.tname, gbc);
 			
 			this.taddress.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 			this.taddress.setText("127.0.0.1");
+			gbc.gridy++;
+			this.textfields.add(this.taddress, gbc);
 			
 			this.tport.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 			this.tport.setText("5050");
+			gbc.gridy++;
+			this.textfields.add(this.tport, gbc);
+			
+			this.tcolor.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			Random r = new Random();
+			Color c = new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255));
+			this.tcolor.setBackground(c);
+			if ((c.getBlue() + c.getRed() + c.getGreen()) / 3 < 125) {
+				tcolor.setForeground(Color.white);
+			} else {
+				tcolor.setForeground(Color.black);
+			}
+			this.tcolor.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Color c = JColorChooser.showDialog(null, "Choose a Color", tcolor.getForeground());
+				      if (c != null){
+				    	  tcolor.setBackground(c);
+				    	  if((c.getBlue() + c.getRed() + c.getGreen()) / 3 < 125){
+				    		  tcolor.setForeground(Color.white);
+				    	  }else{
+				    		  tcolor.setForeground(Color.black);
+				    	  }
+				      }
+				}
+			});
+			gbc.gridy++;
+			this.textfields.add(this.tcolor, gbc);
 			
 			// set properties of Connect button
 			this.connect.setFont(new Font("Book Antiqua", Font.BOLD, 20));
@@ -875,6 +913,7 @@ public class ClientView extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					if (client != null) {
 						client.initialize(getName());
+						client.getPlayer().setColor(getColor());
 						int port;
 						try {
 							port = Integer.parseInt(getPort());
@@ -893,6 +932,7 @@ public class ClientView extends JFrame {
 		public String getName() { return this.tname.getText(); }
 		public String getAddress() { return this.taddress.getText(); }
 		public String getPort() { return this.tport.getText(); }
+		public Color getColor() { return this.tcolor.getBackground(); }
 	}
 	
 	class ConsoleView extends ImagePanel{
