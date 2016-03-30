@@ -52,7 +52,7 @@ public class ClientAI extends Thread {
 		client.ai = true;
 		client.initialize(this.name);
 		if (client.connect(this.address, this.port)) {
-			client.processCmd("/setname " + client.getPlayer().getName());
+			client.send(client.getPlayer());
 		} else {
 			System.out.println("Error: " + this.name + " could not connect to Server");
 			client.shutdown();
