@@ -2,6 +2,8 @@ package main.java;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+
 import main.java.ClientView;
 import main.java.ClientView.ConsoleView;
 import main.resources.Config;
@@ -27,9 +29,10 @@ public class Client implements Runnable {
 	
 	public Prompt lastPrompt = null;
 	
-	public Player getPlayer() {
-		return player;
-	}
+	// AI Client
+	public boolean ai = false;
+	public String aiPrompt = null;
+	public ArrayList<Object> promptOptions = null;
 	
 	// testing methods
 	public void setGui(boolean b) {
@@ -39,6 +42,10 @@ public class Client implements Runnable {
 	public void setGameState(GameState g) {
 		gameState = g;
 		this.player = gameState.getPlayer(this.player.getName());
+	}
+	
+	public Player getPlayer() {
+		return player;
 	}
 	
 	public GameState getGameState() {
@@ -397,7 +404,21 @@ public class Client implements Runnable {
 		} else if (o instanceof Prompt) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName()
 					+ " was prompted: " + ((Prompt) o).getMessage());
-			String s = userInput(((Prompt) o).getMessage());
+			this.promptOptions = ((Prompt) o).getOptions();
+			String s = null;
+			if (ai) { // Client is run by AI	
+				while (aiPrompt == null) { // wait for AI to answer prompt
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) { }
+					s = aiPrompt;
+					//if (s != null) { break; }
+				}
+				aiPrompt = null;
+			} else {  // Client is human player
+				s = userInput(((Prompt) o).getMessage());
+			}
+			this.promptOptions = null;
 			send(new Prompt(s));
 			return true;
 
@@ -413,7 +434,10 @@ public class Client implements Runnable {
 			return false;
 		}
 	}
-
+	
+	/*
+	 * process user's input (commands and chat)
+	 */
 	public boolean processInput(String input) {
 		
 		if (input.length() == 0) {

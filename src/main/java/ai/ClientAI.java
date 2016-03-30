@@ -1,10 +1,13 @@
 package main.java.ai;
 
+import java.util.ArrayList;
+
 import main.java.Client;
 
 public class ClientAI extends Thread {
 	CommandInterface cmd; 
 	CommandInvoker invoker;
+	Randoms r;
 	
 	// Client info:
 	Client client;
@@ -42,9 +45,11 @@ public class ClientAI extends Thread {
 		this.withdrawSkill = inRange(withdrawSkill);
 		this.invoker = new CommandInvoker();
 		this.client = new Client();
+		this.r = new Randoms();
 		
 		// start Client connection
 		client.setGui(false);
+		client.ai = true;
 		client.initialize(this.name);
 		if (client.connect(this.address, this.port)) {
 			client.processCmd("/setname " + client.getPlayer().getName());
@@ -92,7 +97,17 @@ public class ClientAI extends Thread {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			cmd = new EndTurn(this.client, this.displaySkill);
+			// deal with prompt
+			if (this.client.promptOptions != null) {
+				this.client.aiPrompt = processPrompt(this.client.promptOptions);
+				this.client.promptOptions = null;
+			}
+			
+			try {
+				this.sleep(100);
+			} catch (InterruptedException e) {}
+			
+			cmd = new EndTurn(this.client, this.withdrawSkill);
 			invoker.execute(cmd);
 
 			try {
@@ -102,6 +117,15 @@ public class ClientAI extends Thread {
 			cmd = new Withdraw(this.client, this.withdrawSkill);
 			invoker.execute(cmd);
 		}
+	}
+	
+	/*
+	 * deal with prompts
+	 */
+	private String processPrompt(ArrayList<Object> options) {
+		String response = "";
+		response =  r.get(options).toString();
+		return response;
 	}
 	
 	/*
