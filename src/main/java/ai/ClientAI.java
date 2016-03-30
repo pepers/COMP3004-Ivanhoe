@@ -83,15 +83,25 @@ public class ClientAI extends Thread {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			cmd = new StartTournament(this.client, this.tournamentSkill);
-			invoker.execute(cmd);
+			if (this.client.getGameState() != null) {
+				cmd = new StartTournament(this.client, this.tournamentSkill);
+				invoker.execute(cmd);
+			} else {
+				this.client.processInput("Good game! Fair thee well!");
+				this.client.shutdown();
+			}
 
 			try {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			cmd = new PlayCard(this.client, this.displaySkill, this.actionSkill);
-			invoker.execute(cmd);
+			if (this.client.getGameState() != null) {
+				cmd = new PlayCard(this.client, this.displaySkill, this.actionSkill);
+				invoker.execute(cmd);
+			} else {
+				this.client.processInput("Good game! Fair thee well!");
+				this.client.shutdown();
+			}
 			
 			try {
 				this.sleep(100);
@@ -107,15 +117,25 @@ public class ClientAI extends Thread {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			cmd = new EndTurn(this.client, this.withdrawSkill);
-			invoker.execute(cmd);
+			if (this.client.getGameState() != null) {
+				cmd = new EndTurn(this.client, this.withdrawSkill);
+				invoker.execute(cmd);
+			} else {
+				this.client.processInput("Good game! Fair thee well!");
+				this.client.shutdown();
+			}
 
 			try {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			cmd = new Withdraw(this.client, this.withdrawSkill);
-			invoker.execute(cmd);
+			if (this.client.getGameState() != null) {
+				cmd = new Withdraw(this.client, this.withdrawSkill);
+				invoker.execute(cmd);
+			} else {
+				this.client.processInput("Good game! Fair thee well!");
+				this.client.shutdown();
+			}
 		}
 	}
 	
