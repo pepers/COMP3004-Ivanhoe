@@ -25,8 +25,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -452,22 +454,13 @@ public class ClientView extends JFrame {
 				//Clicking on a card (to play)
 				@Override
 				public void mouseReleased(MouseEvent e) {
-		
-					if (client != null) {
+					if (client.getGameState().canPlay(card, client.getPlayer()) == 0){
 						if (card instanceof DisplayCard) {
 							DisplayCard selected =(DisplayCard)card;
 							if (client.getGameState().getTournament() == null) {
 								//Auto start a tournament
 								if(selected.getColour().equals("none")){
-									ArrayList<Object> possibleColours = new ArrayList<Object>();
-									possibleColours.add(new Colour(Colour.c.RED));
-									possibleColours.add(new Colour(Colour.c.BLUE));
-									possibleColours.add(new Colour(Colour.c.YELLOW));
-									possibleColours.add(new Colour(Colour.c.GREEN));
-									if(!client.getGameState().getLastColour().equals("purple")){
-										possibleColours.add(new Colour(Colour.c.PURPLE));
-									}
-									SelectionMenu menu = new SelectionMenu(selected, possibleColours);
+									SelectionMenu menu = new SelectionMenu(selected);
 								    menu.show(e.getComponent(), e.getX(), e.getY());
 								}else{
 									client.cmdTournament(new String[]{selected.getColour().toString(), selected.toString()});
@@ -482,7 +475,7 @@ public class ClientView extends JFrame {
 							if(selected.hasTargets()){
 								ArrayList<Object> options = client.getGameState().getTargets(selected, client.getPlayer());
 								if ((options != null) && (options.size() > 0)) {
-									SelectionMenu menu = new SelectionMenu(selected, options);
+									SelectionMenu menu = new SelectionMenu(selected);
 								    menu.show(e.getComponent(), e.getX(), e.getY());
 								}
 							}else{
@@ -554,66 +547,214 @@ public class ClientView extends JFrame {
 		static final int PLAYERS = 1;
 		static final int CARDS = 2;
 		
-	    public SelectionMenu(Card card, ArrayList<Object> options){
-	    	MouseListener mouseListener = (new MouseAdapter() {
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					if (card instanceof DisplayCard) {
-						client.cmdTournament(new String[] { ((JMenuItem) e.getComponent()).getText().toLowerCase(),
-								((DisplayCard) card).toString() });
-					} else {
-						if(options.get(0) instanceof Colour){
-							ArrayList<Colour> param = new ArrayList<Colour>();
-							param.add(new Colour(((JMenuItem) e.getComponent()).getText()));
-							client.send(new Play(card, param, null, null));
-						}else if(options.get(0) instanceof Player){
-							ArrayList<Player> param = new ArrayList<Player>();
-							param.add(client.getGameState().getPlayer(((JMenuItem) e.getComponent()).getText()));
-							client.send(new Play(card, null, param, null));
-						}else if(options.get(0) instanceof Card){
-							ArrayList<Card> param = new ArrayList<Card>();
-							param.add(new DisplayCard(((JMenuItem) e.getComponent()).getText()));
-							client.send(new Play(card, null, null, param));
-						}
-
-					}
-
-				}
-			});
+	    public SelectionMenu(Card card){
 	    	
-	    	if(options.get(0) instanceof Colour){
-				JLabel title = new JLabel("Pick a color");
+	    	if(card instanceof DisplayCard){
+	    		JLabel title = new JLabel("Pick a color");
 				add(title);
-				for (Object t : options) {
+				ArrayList<Object> possibleColours = new ArrayList<Object>();
+				possibleColours.add(new Colour(Colour.c.RED));
+				possibleColours.add(new Colour(Colour.c.BLUE));
+				possibleColours.add(new Colour(Colour.c.YELLOW));
+				possibleColours.add(new Colour(Colour.c.GREEN));
+				if(!client.getGameState().getLastColour().equals("purple")){
+					possibleColours.add(new Colour(Colour.c.PURPLE));
+				}
+				for (Object t : possibleColours) {
 					Colour colour = (Colour) t;
 					JMenuItem item = new JMenuItem(colour.toString());
 					item.setBackground(toRGB(colour));
 					item.setForeground(Color.white);
-					item.addMouseListener(mouseListener);
+					item.addMouseListener(new MouseAdapter(){
+						@Override
+						public void mouseReleased(MouseEvent e) {
+							client.cmdTournament(new String[] { ((JMenuItem) e.getComponent()).getText().toLowerCase(),
+									((DisplayCard) card).toString() });
+						}	
+					});
 					add(item);
 				}
-			}else if(options.get(0) instanceof Player){
-				JLabel title = new JLabel("Choose a player");
-				add(title);
-				for (Object t : options) {
-					Player p = (Player) t;
-					JMenuItem item = new JMenuItem(p.getName());
-					item.setBackground(Color.black);
-					item.setForeground(Color.white);
-					item.addMouseListener(mouseListener);
-					add(item);
+	    	}else{
+	    		ActionCard actionCard = (ActionCard) card;
+	    		ArrayList<Object> options = client.getGameState().getTargets(actionCard, client.getPlayer());
+	    		
+		    	switch(card.toString()){
+				case "Adapt":
+					
+					JMenuItem chooseTargets = new JMenuItem("Choose Targets");
+					add(chooseTargets);
+					chooseTargets.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseReleased(MouseEvent e) {
+							
+							JPanel optionPane = new JPanel();
+							optionPane.setLayout(new BoxLayout(optionPane, BoxLayout.X_AXIS));
+							
+							
+							for (Integer i: client.getPlayer().getDisplay().getValues()){
+								JList list = new JList(new String[] {"foo", "bar", "gah"});
+								optionPane.add(list);
+							}
+							JOptionPane.showMessageDialog( null, optionPane, "Multi-Select Example", JOptionPane.PLAIN_MESSAGE);
+							//System.out.println(Arrays.toString(list.getSelectedIndices()));
+						}
+					});
+					
+					break;
+				case "Break Lance":
+					addPlayerOptions(actionCard, options);
+					break;
+				case "Change Weapon":				
+					addColorOptions(actionCard, options);
+					break;
+				case "Dodge":
+					JLabel title = new JLabel("Choose a player");
+					add(title);
+					for (Object t : options) {
+						Player p = (Player) t;
+						JMenu submenu = new JMenu(p.getName());
+						submenu.setOpaque(true);
+						submenu.setBackground(Color.black);
+						submenu.setForeground(Color.white);
+						title = new JLabel("Their cards");
+						submenu.add(title);
+						for (Card c : p.getDisplay().elements()){
+							JMenuItem item = new JMenuItem(c.toString());
+							
+							ArrayList<Player> players = new ArrayList<Player>();
+							players.add(p);
+							ArrayList<Card> cards = new ArrayList<Card>();
+							cards.add(c);
+							item.addMouseListener(commandGenerator(actionCard, null, players, cards));
+							
+							submenu.add(item);
+						}
+						add(submenu);
+					}
+					break;
+				case "Drop Weapon":
+					addColorOptions(actionCard, options);
+					break;
+				case "Outwit":
+					title = new JLabel("Choose a player");
+					add(title);
+					for (Object t : options) {
+						Player p = (Player) t;
+						JMenu submenu = new JMenu(p.getName());
+						submenu.setOpaque(true);
+						submenu.setBackground(Color.black);
+						submenu.setForeground(Color.white);
+						title = new JLabel("Their cards");
+						submenu.add(title);
+						for (Card theirCard : p.getDisplay().elements()){
+							JMenu theirItem = new JMenu(theirCard.toString());
+							theirItem.setOpaque(true);
+							theirItem.setBackground(toRGB(theirCard.getColour()));
+							theirItem.setForeground(Color.white);
+							title = new JLabel("Your cards");
+							theirItem.add(title);
+							for (Card yourCard : client.getPlayer().getDisplay().elements()){
+								JMenuItem yourItem = new JMenuItem(yourCard.toString());
+								yourItem.setOpaque(true);
+								yourItem.setBackground(toRGB(theirCard.getColour()));
+								yourItem.setForeground(Color.white);
+								ArrayList<Player> players = new ArrayList<Player>();
+								players.add(p);
+								ArrayList<Card> cards = new ArrayList<Card>();
+								cards.add(theirCard);
+								cards.add(yourCard);
+								yourItem.addMouseListener(commandGenerator(actionCard, null, players, cards));
+								theirItem.add(yourItem);
+							}
+							submenu.add(theirItem);
+						}
+						if(p.getShielded()){
+							JMenuItem item = new JMenuItem("Shield");
+							ArrayList<Player> players = new ArrayList<Player>();
+							players.add(p);
+							ArrayList<Card> cards = new ArrayList<Card>();
+							cards.add(new ActionCard("Shield"));
+							item.addMouseListener(commandGenerator(actionCard, null, players, cards));
+							submenu.add(item);
+						}
+						if(p.getStunned()){
+							JMenuItem item = new JMenuItem("Stunned");
+							ArrayList<Player> players = new ArrayList<Player>();
+							players.add(p);
+							ArrayList<Card> cards = new ArrayList<Card>();
+							cards.add(new ActionCard("Stunned"));
+							item.addMouseListener(commandGenerator(actionCard, null, players, cards));
+							submenu.add(item);
+						}
+						add(submenu);
+					}
+					break;
+				case "Retreat":
+					addCardOptions(actionCard, options);
+					break;
+				case "Stunned":
+					addPlayerOptions(actionCard, options);
+					break;
+				case "Unhorse":
+					addColorOptions(actionCard, options);
+					break;
+				default:
+	
+		    	}
+	    	}
+	    }
+	    public MouseListener commandGenerator(Card actionCard, ArrayList<Colour> colours, ArrayList<Player> players, ArrayList<Card> cards){
+	    	MouseListener listener = (new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					client.send(new Play(actionCard, colours, players, cards));
 				}
-			}else if(options.get(0) instanceof Card){
-				JLabel title = new JLabel("Choose a card");
-				add(title);
-				for (Object t : options) {
-					Card c = (Card) t;
-					JMenuItem item = new JMenuItem(c.toString());
-					item.setBackground(Color.black);
-					item.setForeground(Color.white);
-					item.addMouseListener(mouseListener);
-					add(item);
-				}
+			});
+	    	return listener;
+	    }
+    	
+	    public void addColorOptions(ActionCard card, ArrayList<Object> options){
+	    	JLabel title = new JLabel("Pick a color");
+			add(title);
+	    	for (Object t : options) {
+				Colour colour = (Colour) t;
+				JMenuItem item = new JMenuItem(colour.toString());
+				item.setBackground(toRGB(colour));
+				item.setForeground(Color.white);
+				ArrayList<Colour> selectedColour = new ArrayList<Colour>();
+				selectedColour.add(colour);
+				item.addMouseListener(commandGenerator(card, selectedColour, null, null));
+				add(item);
+			}
+	    }
+	    
+	    public void addPlayerOptions(ActionCard card, ArrayList<Object> options){
+	    	JLabel title = new JLabel("Choose a player");
+			add(title);
+	    	for (Object t : options) {
+				Player p = (Player) t;
+				JMenuItem item = new JMenuItem(p.getName());
+				item.setBackground(Color.black);
+				item.setForeground(Color.white);
+				ArrayList<Player> selectedPlayer = new ArrayList<Player>();
+				selectedPlayer.add(p);
+				item.addMouseListener(commandGenerator(card, null, selectedPlayer, null));
+				add(item);
+			}
+	    }
+	    
+	    public void addCardOptions(ActionCard card, ArrayList<Object> options){
+	    	JLabel title = new JLabel("Choose a card");
+			add(title);
+	    	for (Object t : options) {
+				Card c = (Card) t;
+				JMenuItem item = new JMenuItem(c.toString());
+				item.setBackground(Color.black);
+				item.setForeground(Color.white);
+				ArrayList<Card> selectedCard = new ArrayList<Card>();
+				selectedCard.add(c);
+				item.addMouseListener(commandGenerator(card, null, null, selectedCard));
+				add(item);
 			}
 	    }
 	}
@@ -683,10 +824,49 @@ public class ClientView extends JFrame {
 		//The data members needed to populate the display
 		Player player;
 		Display display;
+		int height;
+		int xm;
+		int width = 150;
 		
 		public DisplayView(Player p){		
 			display = new Display();
 			setOpaque(false);
+			addMouseListener(new MouseListener(){
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					if(e.getX() > xm-37 && e.getX() < xm+37){
+						if(e.getY()>30 && e.getY() < (20 * display.size()) + 75){
+							System.out.println("WIthin card area " + e.getX()  + " . " + e.getY());
+						}
+					}
+				}
+				
+			});
 			update(p);
 		}
 		
@@ -700,8 +880,8 @@ public class ClientView extends JFrame {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
 			
-			int width = 150;
-            int xm = this.getWidth()/2;
+			
+            xm = this.getWidth()/2;
             
             Tournament tournament = null;
             if(client != null){
@@ -712,7 +892,7 @@ public class ClientView extends JFrame {
             }
             
             //Draw a crude banner
-            int height = (tournament != null) ? 200 + 15 * display.size(): 150;
+            height = (tournament != null) ? 200 + 15 * display.size(): 150;
             
             if(player.equals(client.getPlayer())){
 	            g2.setColor(Color.black);
@@ -1005,9 +1185,8 @@ public class ClientView extends JFrame {
 							input.setText("");
 							break;
 					}
-					
-				}
-			});
+				}});
+			
 			input.setOpaque(false);
 			input.setForeground(Color.white);
 			input.setFont(new Font("Book Antiqua", Font.BOLD, 20));

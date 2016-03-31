@@ -91,8 +91,6 @@ public class ActionCard extends Card {
 
 	public boolean hasTargets() {
 		switch(name){
-		case("Adapt"):
-			return false;
 		case("Charge"):
 			return false;
 		case("Countercharge"):
@@ -106,5 +104,10 @@ public class ActionCard extends Card {
 		default:
 			return true;
 		}
+	}
+
+	@Override
+	public Colour getColour() {
+		return new Colour(Colour.c.NONE);
 	}
 }

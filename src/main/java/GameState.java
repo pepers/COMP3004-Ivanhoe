@@ -415,6 +415,7 @@ public class GameState implements Serializable{
 					}
 				}else{
 					target = getPlayer(play.getOpponents().get(0).getName());
+					dc = (DisplayCard) play.getCards().get(0);
 				}
 				target.getDisplay().remove(dc);
 				System.out.println(dc.toString() + " was removed from " + target.getName() + "'s Display.");
@@ -526,8 +527,8 @@ public class GameState implements Serializable{
 					}
 				}else{
 					target = getPlayer(play.getOpponents().get(0).getName());
-					given = play.getCards().get(0);
-					taken = play.getCards().get(1);
+					taken = play.getCards().get(0);
+					given = play.getCards().get(1);
 				}
 				
 				
@@ -660,6 +661,11 @@ public class GameState implements Serializable{
 		ArrayList<Object> targets = new ArrayList<Object>();
 		ArrayList<Player> unshielded = new ArrayList<Player>();
 		switch(ac.toString()){
+			case "Adapt":
+				// shielded players aren't affected
+				unshielded = removeShielded(getOpponents(controller), ac);
+				targets.addAll(unshielded);
+			break;
 			case "Break Lance":
 				// shielded players aren't affected
 				unshielded = removeShielded(getOpponents(controller), ac);
@@ -710,32 +716,35 @@ public class GameState implements Serializable{
 	}
 	
 	public int canPlay(Card card, Player player){
-		
-		if(card instanceof DisplayCard){
-			if (getTournament() == null) {
+		if(player.isTurn() && card.toString().equalsIgnoreCase("ivanhoe")){
+			if(card instanceof DisplayCard){
+				if (getTournament() == null) {
+					return 0;
+				}
+				if (!(((DisplayCard) card).getColour().equals("none")
+						|| getTournament().getColour().equals(((DisplayCard) card).getColour()))) {
+					return INVALID_COLOUR;
+				} else if (card.toString().equalsIgnoreCase("Maiden:6") && player.getDisplay().hasCard((DisplayCard) card)) {
+					return MULTIPLE_MAIDEN;
+				}
 				return 0;
-			}
-			if (!(((DisplayCard) card).getColour().equals("none")
-					|| getTournament().getColour().equals(((DisplayCard) card).getColour()))) {
-				return INVALID_COLOUR;
-			} else if (card.toString().equalsIgnoreCase("Maiden:6") && player.getDisplay().hasCard((DisplayCard) card)) {
-				return MULTIPLE_MAIDEN;
-			}
-			return 0;
-		}else{
-			if (getTournament() == null) {
-				return NO_TOURNAMENT;
-			}
-			if (((ActionCard) card).hasTargets()){
-				ArrayList<Object> targets = getTargets((ActionCard) card, player);
-				if(targets == null || targets.isEmpty()){
-					return NO_TARGETS;
+			}else{
+				if (getTournament() == null) {
+					return NO_TOURNAMENT;
+				}
+				if (((ActionCard) card).hasTargets()){
+					ArrayList<Object> targets = getTargets((ActionCard) card, player);
+					if(targets == null || targets.isEmpty()){
+						return NO_TARGETS;
+					}else{
+						return 0;
+					}
 				}else{
 					return 0;
 				}
-			}else{
-				return 0;
 			}
+		}else{
+			return 0;
 		}
 	}
 }
