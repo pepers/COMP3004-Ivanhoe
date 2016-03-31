@@ -136,6 +136,10 @@ public class ClientAI extends Thread {
 				this.client.processInput("Good game! Fair thee well!");
 				this.client.shutdown();
 			}
+			
+			try {
+				this.sleep(100);
+			} catch (InterruptedException e) {}
 		}
 	}
 	

@@ -83,6 +83,32 @@ public class GameState implements Serializable{
 	}
 	
 	public Player nextTurn(){
+		
+		boolean switcher = false;
+		Player nextPlayer = null;
+		for (Player p : getTournamentParticipants()){
+			System.out.println("Participant : " + p.getName() + " = " + p.isTurn);
+			if(p.isTurn){
+				p.isTurn = false;
+				switcher = true;
+			}else{
+				if(switcher){
+					p.isTurn = true;
+					nextPlayer = p;
+					switcher = false;
+				}
+			}
+		}
+		if (nextPlayer == null){
+			nextPlayer = getTournamentParticipants().get(0);
+			nextPlayer.isTurn = true;
+		}
+		return nextPlayer;
+		/*
+		for (Player p : players){
+			System.out.println("Index : " + turnIndex + " - " + p.getName() + " : " + p.isTurn);
+		}
+		
 		if(tnmt == null){
 			players.get(turnIndex).isTurn = false;
 			turnIndex++;
@@ -91,6 +117,7 @@ public class GameState implements Serializable{
 			}
 		}else{
 			do{
+				
 				players.get(turnIndex).isTurn = false;
 				turnIndex++;
 				if(turnIndex >= players.size()){
@@ -99,7 +126,9 @@ public class GameState implements Serializable{
 			}while(!players.get(turnIndex).getParticipation());
 		}
 		players.get(turnIndex).isTurn=true;
+		System.out.println("END = Index : " + turnIndex + " - " + players.get(turnIndex).getName() + " : " + players.get(turnIndex).isTurn);
 		return players.get(turnIndex);
+		*/
 	}
 
 	public boolean addDisplay(Player player, DisplayCard card) {
@@ -119,7 +148,7 @@ public class GameState implements Serializable{
 	}
 	
 	public boolean startTournament(Tournament t){
-		if(lastColour.equals(t.getColour())){
+		if(lastColour.equals(new Colour(Colour.c.PURPLE)) && t.getColour().equals(new Colour(Colour.c.PURPLE))){
 			System.out.println("A purple tournament was just played.");
 			return false;
 		}
@@ -639,7 +668,6 @@ public class GameState implements Serializable{
 				// shielded players aren't affected
 				unshielded = removeShielded(getOpponents(controller), ac);
 				targets.addAll(unshielded);
-				targets.addAll(getOpponents(controller));
 				break;
 			case "Knock Down":
 				targets.addAll(getOpponents(controller));

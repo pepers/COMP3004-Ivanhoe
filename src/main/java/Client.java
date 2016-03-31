@@ -942,7 +942,7 @@ public class Client implements Runnable {
 		}
 
 		// last tournament was purple (another colour must be chosen)
-		if ((gameState.getLastColour().toString().equalsIgnoreCase("purple")) && (colour.equals(Colour.c.PURPLE))) {
+		if ((gameState.getLastColour().equals(Colour.c.PURPLE)) && (colour.equals(Colour.c.PURPLE))) {
 			outputText("Client: the last tournament was Jousting (purple). "
 					+ "\n A tournament of a different colour must be started.");
 			return false;

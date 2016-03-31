@@ -760,10 +760,10 @@ public class ClientView extends JFrame {
 			}
             
             if(player.getStunned()){
-            	g2.drawImage(stun, xm - 20, height - 30, 40, 40, null);
+            	g2.drawImage(stun, xm - 20, height - 27, 40, 40, null);
             }
             if(player.getShielded()){
-            	g2.drawImage(shield, xm - 20, height - 30, 40, 40, null);
+            	g2.drawImage(shield, xm - 20, height - 27, 40, 40, null);
             }
         }
 	}

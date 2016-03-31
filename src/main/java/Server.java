@@ -380,7 +380,7 @@ public class Server implements Runnable, Serializable {
 			return true;
 		}
 		if (action.object instanceof Withdraw) {
-			Player p = gameState.getPlayer(action.origin.getName());
+			Player p = gameState.getPlayer(action.origin.getId());
 			p.setAddedToDisplay(false); // if stunned, can add a card next turn 
 			if (p != null) {
 				p.setParticipation(false);
@@ -451,7 +451,8 @@ public class Server implements Runnable, Serializable {
 	private boolean endTurn(){
 		// check if tournament has a winner
 		ArrayList<Player> a = gameState.getTournamentParticipants();
-		if (a.size() == 1) {
+		Player next = null;
+		if (a.size() <= 1) {
 			Player winner = a.get(0);
 			message("YOU have been VICTORIOUS in " + gameState.getTournament().getName() + "!", winner);
 			messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.getTournament().getName() + "!", winner);
@@ -493,19 +494,18 @@ public class Server implements Runnable, Serializable {
 				endGame();
 				return true;
 			}
+			next = winner;
+			gameState.getPlayer(next).setTurn();
+		}else{
+			next = gameState.nextTurn();
 		}
-		
-		Player next = gameState.nextTurn();
 		Card drew = gameState.drawFromDeck();
 		gameState.addHand(next, drew);
-		
-		
 		for (ServerThread s : clients.keySet()){
 			if (clients.get(s).equals(next)){
 				s.send(new EndTurn());
 			}
 		}
-		
 		message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
 		messageExcept(next.getName() + " has begun their turn!", next);
 		return false;
@@ -619,7 +619,6 @@ public class Server implements Runnable, Serializable {
 		int startIndex = (new Random()).nextInt(gameState.getNumPlayers());
 		Player startPlayer = gameState.getPlayers().get(startIndex);
 		startPlayer.isTurn = true;
-		gameState.setTurnIndex(startIndex);
 		Card drew = gameState.drawFromDeck();
 		gameState.addHand(startPlayer, drew); 
 		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);

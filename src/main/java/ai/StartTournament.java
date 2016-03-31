@@ -32,12 +32,18 @@ public class StartTournament implements CommandInterface {
 	@Override
 	public boolean execute() {
 		// not player's turn, or tournament is running, or no DisplayCard in hand
-		if ((!p.isTurn) || 
-			(g.getTournament() != null) ||
-			(!p.hasDisplayCardInHand())) { 
+		if (!p.isTurn) { 
+			//System.out.println("Not my turn");
 			return false; 
 		}
-		
+		if (!p.hasDisplayCardInHand()) { 
+			//System.out.println("No cards");
+			return false; 
+		}
+		if (g.getTournament() != null){
+			//System.out.println("Tournament is running");
+			return false;
+		}
 		Colour colour = chooseColour();
 		if (colour == null) { return false; }
 		DisplayCard d = chooseCard(colour); 
