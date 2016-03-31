@@ -831,6 +831,22 @@ public class ClientView extends JFrame {
 		public DisplayView(Player p){		
 			display = new Display();
 			setOpaque(false);
+			addMouseMotionListener(new MouseMotionAdapter() {
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					ImagePanel panel = ((ImagePanel) ((ImagePanel) controls).getComponent(1));
+					if(e.getX() > xm-37 && e.getX() < xm+37 && e.getY()>70 && e.getY() < 70 + (20 * display.size()-1) + 106){
+						int i = (e.getY() - 70) / 20;
+						if (i > display.size() - 1)i = display.size() - 1;
+						
+						panel.setImage(getImage(display.get(i)));
+						controls.repaint();
+					}else{
+						panel.setImage(cardback);
+						controls.repaint();
+					}
+				}
+			});
 			addMouseListener(new MouseListener(){
 
 				@Override
@@ -860,8 +876,10 @@ public class ClientView extends JFrame {
 				@Override
 				public void mouseReleased(MouseEvent e) {
 					if(e.getX() > xm-37 && e.getX() < xm+37){
-						if(e.getY()>30 && e.getY() < (20 * display.size()) + 75){
-							System.out.println("WIthin card area " + e.getX()  + " . " + e.getY());
+						if(e.getY()>70 && e.getY() < 70 + (20 * display.size()-1) + 106){
+							int i = (e.getY() - 70)/20;
+							if(i>display.size()-1)i=display.size()-1;
+							System.out.println(i + " : " + display.get(i).toString());
 						}
 					}
 				}
@@ -913,11 +931,13 @@ public class ClientView extends JFrame {
             g2.setColor(Color.white);
             g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
             g2.drawString(player.getName(), xm - player.getName().length()*5, 25);
-            int i = 1;
+            
+            int i = 0;
             for (Card c : display.elements()){
             	BufferedImage img = getImage(c);
+            	
+            	g2.drawImage(img, xm-37, 70 + (20 * i), 75, 106, null);
             	i++;
-            	g2.drawImage(img, xm-37, 30 + (20 * i), 75, 106, null);
 			}
             i = 0;
             for (Token t : player.getTokens()){
