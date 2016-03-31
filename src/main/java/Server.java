@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -59,6 +60,11 @@ public class Server implements Runnable, Serializable {
 	private BufferedWriter banWriter;						// writer for ban list
 	private BufferedReader banReader;						// reader for ban list
 
+	// Read AI Client Profiles from file:
+	private ArrayList<String[]> profiles;
+	private File aiprofiles;
+	private BufferedReader aiReader;
+	
 	public GameState getGameState(){return gameState;}
 	public int getConnected() {return numClients;}
 	
@@ -68,6 +74,7 @@ public class Server implements Runnable, Serializable {
 		clients = new ConcurrentHashMap<ServerThread, Player>();
 		actions = new LinkedList<ActionWrapper>();
 		language = new Language(Language.Dialect.none, false);
+		profiles = new ArrayList<String[]>();
 	}
 
 	public static void main(String[] args) {
@@ -119,6 +126,52 @@ public class Server implements Runnable, Serializable {
 		} catch (IOException e) {
 			System.out.println("Error read/writing banlist.");
 		}
+		
+		// Setup AI Client profiles
+		if (readAIProfiles("aiprofiles.txt")) {
+			if (!profiles.isEmpty()) {
+				System.out.println("AI Client Profiles read: ");
+				for (String[] profile : profiles) {
+					System.out.println("\t" + String.join(" ", profile));
+				}
+			} else {
+				System.out.println("No AI Client Profiles to read.");
+			}
+		} else {
+			System.out.println("Error reading AI Profiles list (aiprofiles.txt).");
+		}
+		
+		return true;
+	}
+	
+	/*
+	 * read AI Client profiles from file
+	 */
+	public boolean readAIProfiles (String file) {
+		aiprofiles = new File(file);
+		if (!aiprofiles.exists()) { return false; } // file can't be opened
+		try {
+			aiReader = new BufferedReader(new FileReader(aiprofiles));
+		} catch (FileNotFoundException e) { return false; } // file not found
+		
+		String line; // one line = one client ai profile
+		try {
+			while ((line = aiReader.readLine()) != null) {
+				String[] split = line.split("\\s+");
+				if (split.length > 4) { // need at least one word name + 4 skill numbers
+					String[] skills = Arrays.copyOfRange(split, split.length-4, split.length);
+					// check if skills are formatted correctly
+					for (String skill : skills) {
+						int num;
+						try {
+							num = Integer.parseInt(skill);
+						} catch (NumberFormatException nfe) { return false; }
+						if ((num < -1) || (num > 1)) { return false; }
+					}
+					this.profiles.add(split); // add ai profile
+				}
+			}
+		} catch (IOException e) { return false; } // could not read
 		return true;
 	}
 
@@ -210,6 +263,9 @@ public class Server implements Runnable, Serializable {
 		return false;
 	}
 
+	/* 
+	 * list out connected Clients
+	 */
 	public void listClients() {
 
 		System.out.println("Connected Players:");
@@ -695,6 +751,7 @@ public class Server implements Runnable, Serializable {
 		try {
 			banWriter.close();
 			banReader.close();
+			aiReader.close();
 		} catch (IOException e) {
 
 		}
@@ -1047,6 +1104,37 @@ public class Server implements Runnable, Serializable {
 		double actionSkill;
 		double withdrawSkill;
 		
+		// check if strArgs matches a profile name
+		for (String[] profile : this.profiles) {
+			if ((String.join(" ", (Arrays.copyOfRange(profile, 0, profile.length-4)))).equals(String.join(" ", strArgs))) {
+				try {
+					tournamentSkill = Double.parseDouble(profile[profile.length-4]);
+					displaySkill = Double.parseDouble(profile[profile.length-3]);
+					actionSkill = Double.parseDouble(profile[profile.length-2]);
+					withdrawSkill = Double.parseDouble(profile[profile.length-1]);
+				} catch (NumberFormatException nfe) {
+					Trace.getInstance().exception(this, nfe);
+					System.out.println("Error: skills for this profile did not load correctly. AI Client could not start.");
+					return false;
+				}
+				Thread ai = new ClientAI(this.address, this.port, 
+						String.join(" ", strArgs),
+						tournamentSkill, 
+						displaySkill, 
+						actionSkill, 
+						withdrawSkill);
+				ai.start();
+				return true;
+			}
+		}
+		
+		// not enough skills in args
+		if (strArgs.length != 4) { 
+			System.out.println("Error: arguments did not match a profile, and were not enough skills for new AI. AI Client could not start.");
+			return false; 
+		}
+		
+		// get skills from arguments
 		try {
 			tournamentSkill = Double.parseDouble(strArgs[0]);
 			displaySkill = Double.parseDouble(strArgs[1]);
@@ -1054,11 +1142,15 @@ public class Server implements Runnable, Serializable {
 			withdrawSkill = Double.parseDouble(strArgs[3]);
 		} catch (NumberFormatException nfe) {
 			Trace.getInstance().exception(this, nfe);
-			System.out.println("Error: arguments were not numbers, AI Client could not start");
+			System.out.println("Error: arguments were not numbers, and did not match a profile. AI Client could not start.");
 			return false;
 		}
 		
-		Thread ai = new ClientAI(this.address, this.port, tournamentSkill, displaySkill, actionSkill, withdrawSkill);
+		Thread ai = new ClientAI(this.address, this.port, 
+				tournamentSkill, 
+				displaySkill, 
+				actionSkill, 
+				withdrawSkill);
 		ai.start();
 		
 		return true;
@@ -1095,5 +1187,30 @@ public class Server implements Runnable, Serializable {
 			System.out.println("Error: incorrect argument for /end command. Type /help.");
 			return false;
 		}
+	}
+	
+	/* 
+	 * list AI Client Profiles that were read in
+	 */
+	public boolean listAIProfiles() {
+		// no profiles were read on startup
+		if (profiles.isEmpty()) { 
+			System.out.println("No AI Client Profiles were read in on startup.");
+			return false;
+		}
+
+		// list out the profiles
+		System.out.println("AI Client Profiles:");
+		System.out.printf(" %-20s %3s \n", "Name:", "Skills:");
+		System.out.println(" ======================ST===D===A===W===");
+		for (String[] profile : profiles) {
+			System.out.printf(" %-20s %3s %3s %3s %3s\n", 
+					String.join(" ", Arrays.copyOfRange(profile, 0, profile.length-4)), 
+					profile[profile.length-4], 
+					profile[profile.length-3], 
+					profile[profile.length-2], 
+					profile[profile.length-1]);
+		}
+		return true;
 	}
 }
