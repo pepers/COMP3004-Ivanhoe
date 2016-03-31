@@ -75,7 +75,7 @@ public class ServerInput extends Thread{
 		// switch over command 
 		switch (cmd.getCmd()) {
 			case "ai":
-				args = new Arguments("!=", 4);
+				args = new Arguments("==", 0);
 				args.isValid(cmd);
 				if (!cmd.isValid()) { 
 					System.out.println("Error: " + cmd.getMessage());
@@ -189,6 +189,15 @@ public class ServerInput extends Thread{
 					return false;
 				} 
 				server.listClients();
+				break;
+			case "listai":
+				args = new Arguments("!=", 0);
+				args.isValid(cmd);
+				if (!cmd.isValid()) { 
+					System.out.println("Error: " + cmd.getMessage());
+					return false;
+				} 
+				server.listAIProfiles();
 				break;
 			case "max":
 				args = new Arguments("!=", 1);

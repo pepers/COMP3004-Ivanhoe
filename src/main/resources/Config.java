@@ -36,7 +36,7 @@ public class Config {
 	}
 	
 	public enum ServerCommand { 
-		ai(" [Tournament Skill] [Display Skill] [Action Skill] [Withdraw Skill] (-1 to 1 for each option)"),
+		ai(" [profile name ('/listai' to view)] or [Tournament Skill] [Display Skill] [Action Skill] [Withdraw Skill] (-1 to 1 for each option)"),
 		ban(" [ip address]"),
 		censor(""),
 		display(" [player name (leave empty for all)]"),
@@ -47,6 +47,7 @@ public class Config {
 		help(""),
 		kick(" [player name (or player number)]"),
 		list(""),
+		listai(""),
 		max(" [maximum # of players]"),
 		min(" [minimum # of players]"),
 		pardon(" [ip address]"),
