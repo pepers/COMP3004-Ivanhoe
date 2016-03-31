@@ -110,28 +110,39 @@ public class ClientView extends JFrame {
 		this.setResizable(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
-		lobbyView = new LobbyView();
-		this.setSize(900, 680);
-		this.getContentPane().add(lobbyView);
-		this.revalidate();
+		
+		enterLobby();
 		
 		// hacky way to wait until connected to server
 		while (!connected) {
 			System.out.println("");
 		}
 		
-		lobbyView = new LobbyView();
+		enterLobby();
+
+	}
+	
+	/*
+	 * go to the lobby
+	 */
+	public boolean enterLobby() {
+		this.lobbyView = new LobbyView();
 		this.setSize(900, 680);
-		this.setContentPane(lobbyView);
+		this.setContentPane(this.lobbyView);
 		this.revalidate();
+		return true;
 	}
 	
 	public void updateComponents(GameState gameState, Player player){
-		endTurn.setForeground(player.isTurn()? Color.black : Color.lightGray);
-		endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
-		hand.update(gameState.getPlayer(player).getHand());
-		arena.update(gameState.getPlayers());
-		setBannerType( (gameState.getTournament() == null) ? new Colour("NONE") : gameState.getTournament().getColour());
+		if (gameState != null) {
+			endTurn.setForeground(player.isTurn()? Color.black : Color.lightGray);
+			endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
+			hand.update(gameState.getPlayer(player).getHand());
+			arena.update(gameState.getPlayers());
+			setBannerType( (gameState.getTournament() == null) ? new Colour("NONE") : gameState.getTournament().getColour());
+		} else { // game has ended
+			player.reset(); // go from ready to waiting
+		}
 	}
 	
 	public void setupGameView(){
@@ -1158,7 +1169,7 @@ public class ClientView extends JFrame {
 			super(path, style);
 			this.setLayout(new BorderLayout());
 			this.bottom.setLayout(new BoxLayout(this.bottom, BoxLayout.X_AXIS));
-
+			
 			textArea = new JTextPane();
 			textArea.setSize(this.getSize());
 			textArea.setOpaque(false);

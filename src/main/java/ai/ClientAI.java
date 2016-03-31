@@ -89,6 +89,7 @@ public class ClientAI extends Thread {
 			} else {
 				this.client.processInput("Good game! Fair thee well!");
 				this.client.shutdown();
+				break;
 			}
 
 			try {
@@ -101,6 +102,7 @@ public class ClientAI extends Thread {
 			} else {
 				this.client.processInput("Good game! Fair thee well!");
 				this.client.shutdown();
+				break;
 			}
 			
 			try {
@@ -123,6 +125,7 @@ public class ClientAI extends Thread {
 			} else {
 				this.client.processInput("Good game! Fair thee well!");
 				this.client.shutdown();
+				break;
 			}
 
 			try {
@@ -135,6 +138,7 @@ public class ClientAI extends Thread {
 			} else {
 				this.client.processInput("Good game! Fair thee well!");
 				this.client.shutdown();
+				break;
 			}
 			
 			try {
