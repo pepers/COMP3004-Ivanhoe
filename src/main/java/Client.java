@@ -739,12 +739,12 @@ public class Client implements Runnable {
 
 	// end your turn
 	public boolean cmdEnd() {
-		if (!this.player.isTurn) { return false; } // not your turn
+		if (!this.player.isTurn()) { return false; } // not your turn
 		if (gameState.getTournament() == null && this.player.hasValidDisplayCard(new Colour(Colour.c.NONE))) {
 			outputText("Client: You MUST start a tournament if able.");
 			return false;
 		} else {
-			this.player.isTurn = false;
+			this.player.setTurn(false);
 			if (gameState.hasHighScore(player) == false) {
 				player.setParticipation(false);
 				player.getDisplay().clear();
@@ -803,7 +803,7 @@ public class Client implements Runnable {
 			outputText("Client: you don't have the card: " + card + "\n\t Type '/hand' to view the cards in your hand.");
 			return false;
 			// not the player's turn
-		} else if (!this.player.isTurn) {
+		} else if (!this.player.isTurn()) {
 			if (c.toString().equalsIgnoreCase("ivanhoe")) {
 				// card to be player is the Ivanhoe action card:
 				send(new Play(c));
@@ -899,7 +899,7 @@ public class Client implements Runnable {
 			return false;
 		}
 		// Check if its their turn
-		if (!(this.player.isTurn)) {
+		if (!(this.player.isTurn())) {
 			outputText("Client: you may not start a tournament when it is not your turn");
 			return false;
 		}
@@ -989,7 +989,7 @@ public class Client implements Runnable {
 	public boolean cmdWithdraw() {
 		
 		player.setParticipation(false);
-		player.isTurn = false;
+		player.setTurn(false);
 		player.getDisplay().clear();
 		send(new Withdraw());
 		if(view != null)view.updateComponents(gameState, player);
@@ -1007,7 +1007,7 @@ public class Client implements Runnable {
 		}
 		for (Player p : g.getPlayers()) {
 			outputText(p.getName() + ":" + p.getId());
-			outputText("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
+			outputText("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn() + "\n  TOUR:" + p.getParticipation() + "\n  ");
 		}
 		return true;
 	}

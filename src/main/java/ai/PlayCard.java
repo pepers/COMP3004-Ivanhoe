@@ -37,7 +37,7 @@ public class PlayCard implements CommandInterface {
 		if (this.g.getTournament() == null) { return false; }
 		
 		// not your turn (TODO: can only play Ivanhoe)
-		if (!this.p.isTurn) {
+		if (!this.p.isTurn()) {
 			return false;
 		}
 		

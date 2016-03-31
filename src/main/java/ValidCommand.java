@@ -87,7 +87,7 @@ class OneOrTwoArguments extends ValidCommand {
 class IsTurn extends ValidCommand {
 	@Override
 	public void isValid(Command command) {
-		if (!command.getPlayer().isTurn) {
+		if (!command.getPlayer().isTurn()) {
 			command.setMessage("can't perform that action when not your turn");
 			command.notValid();
 		} else if (successor != null) {

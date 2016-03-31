@@ -32,7 +32,7 @@ public class StartTournament implements CommandInterface {
 	@Override
 	public boolean execute() {
 		// not player's turn, or tournament is running, or no DisplayCard in hand
-		if (!p.isTurn) { 
+		if (!p.isTurn()) { 
 			//System.out.println("Not my turn");
 			return false; 
 		}

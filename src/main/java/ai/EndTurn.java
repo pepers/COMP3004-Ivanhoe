@@ -31,7 +31,7 @@ public class EndTurn implements CommandInterface {
 	@Override
 	public boolean execute() {
 		// not your turn
-		if (!this.p.isTurn) { return false;	}
+		if (!this.p.isTurn()) { return false;	}
 		
 		// not in tournament
 		if (this.g.getTournament() == null) {

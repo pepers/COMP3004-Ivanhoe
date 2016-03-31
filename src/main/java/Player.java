@@ -2,16 +2,15 @@ package main.java;
 
 import java.awt.Color;
 
-/*
- * info about one player
- */
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Player implements Serializable{
 	private static final long serialVersionUID = 1L;
+	
+	public static final int WAITING = 0;
+	public static final int READY = 1;
+	public static final int IN_GAME = 2;
 	
 	private String username;
 	private int handSize = 0;
@@ -25,9 +24,8 @@ public class Player implements Serializable{
 	private ArrayList<Token> tokens = new ArrayList<Token>();  // tokens won for tournament wins
 	private int id;
 	private Color playerColor = Color.black;
-	
-	public boolean isTurn = false;
-	public int ready = 0;
+	private boolean isTurn = false;
+	private int ready = WAITING;
 	
 	public Color getColor(){return this.playerColor;}
 	public int getHandSize(){return this.handSize;}
@@ -42,8 +40,13 @@ public class Player implements Serializable{
 	public int getId() { return this.id;	}
 	public String getName() { return this.username; }
 	public Display getDisplay() { return this.display; }
-
+	public Boolean isTurn(){return isTurn;}
+	public int getReadyValue(){return ready;}
+	
 	public void setParticipation(boolean b){inTournament = b;}
+	public void setTurn(boolean isTurn){this.isTurn = isTurn;}
+	public void setReady(int value){ready = value;}
+	
 	public int hasToken(Token token){
 		int count = 0;
 		for (Token t: tokens){
@@ -97,11 +100,11 @@ public class Player implements Serializable{
 	 * toggle whether the player is ready to start a game or not
 	 */
 	public boolean toggleReady() {
-		if(ready == 0){
-			ready = 1;
+		if(ready == WAITING){
+			ready = READY;
 			return true;
-		}else if(ready == 1){
-			ready = 0;
+		}else if(ready == READY){
+			ready = WAITING;
 			return false;
 		}
 		return false;
@@ -112,9 +115,9 @@ public class Player implements Serializable{
 	 */
 	public String getReadyState() {
 		switch (ready) {
-			case 0: return "waiting";
-			case 1: return "ready";
-			case 2: return "in game";
+			case WAITING: return "waiting";
+			case READY: return "ready";
+			case IN_GAME: return "in game";
 			default: return "unknown";
 		}
 	}
@@ -250,15 +253,9 @@ public class Player implements Serializable{
 		if (this.id == ((Player) o).id){
 			return true;
 		}
-		if (this.username.equals(((Player) o).username)){
-			return true;
-		}
 		return false;
 	}
-
-	public void setTurn() {
-		isTurn = true;
-	}
+	
 	public ArrayList<Token> getTokens() {
 		return tokens;
 	}

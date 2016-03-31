@@ -31,7 +31,7 @@ public class Withdraw implements CommandInterface {
 	@Override
 	public boolean execute() {
 		// not in tournament, or not your turn
-		if ((this.g.getTournament() == null) || (!this.p.isTurn)) { return false; }
+		if ((this.g.getTournament() == null) || (!this.p.isTurn())) { return false; }
 		
 		// determine if going to lose hand, withdraw if so
 		Colour tcol = this.g.getTournament().getColour(); // tournament colour

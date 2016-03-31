@@ -125,7 +125,7 @@ public class ClientView extends JFrame {
 	}
 	
 	public void updateComponents(GameState gameState, Player player){
-		endTurn.setForeground(player.isTurn ? Color.black : Color.lightGray);
+		endTurn.setForeground(player.isTurn()? Color.black : Color.lightGray);
 		endTurn.setText(gameState.hasHighScore(player) ? "End Turn" : "Withdraw");
 		hand.update(gameState.getPlayer(player).getHand());
 		arena.update(gameState.getPlayers());

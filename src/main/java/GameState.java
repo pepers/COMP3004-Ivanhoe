@@ -82,18 +82,28 @@ public class GameState implements Serializable{
 		return null; // player doesn't exist, return null
 	}
 	
+	public void setTurn(Player nextPlayer){
+		for (Player player: players) {
+			if (player.equals(nextPlayer)){
+				player.setTurn(true);
+			}else{
+				player.setTurn(false);
+			}
+		}
+	}
+	
 	public Player nextTurn(){
 		
 		boolean switcher = false;
 		Player nextPlayer = null;
 		for (Player p : getTournamentParticipants()){
-			System.out.println("Participant : " + p.getName() + " = " + p.isTurn);
-			if(p.isTurn){
-				p.isTurn = false;
+			System.out.println("Participant : " + p.getName() + " = " + p.isTurn());
+			if(p.isTurn()){
+				p.setTurn(false);
 				switcher = true;
 			}else{
 				if(switcher){
-					p.isTurn = true;
+					p.setTurn(true);
 					nextPlayer = p;
 					switcher = false;
 				}
@@ -101,7 +111,7 @@ public class GameState implements Serializable{
 		}
 		if (nextPlayer == null){
 			nextPlayer = getTournamentParticipants().get(0);
-			nextPlayer.isTurn = true;
+			nextPlayer.setTurn(true);
 		}
 		return nextPlayer;
 		/*

@@ -202,12 +202,12 @@ public class ClientTest {
 		
 		assertFalse(c.cmdEnd()); // not your turn
 		
-		p.setTurn();
+		s.getGameState().setTurn(p);
 		assertTrue(c.cmdEnd()); // is your turn
 		
 		Card card = new DisplayCard(3, purple);
 		p.addToHand(card);
-		p.setTurn();
+		s.getGameState().setTurn(p);
 		assertFalse(c.cmdEnd()); // not in tournament, and have card to start tournament with
 	}
 	 
@@ -268,7 +268,7 @@ public class ClientTest {
 		
 		assertTrue(c.cmdPlay("ivanhoe")); // can play Ivanhoe when not your turn
 		
-		p.setTurn(); 
+		s.getGameState().setTurn(p);
 		assertFalse(c.cmdPlay("purple:3")); // is turn, but no tournament running
 		assertFalse(c.cmdPlay("Drop Weapon"));  // is turn, but no tournament running
 		
@@ -345,7 +345,7 @@ public class ClientTest {
 		assertFalse(c.cmdTournament(args1)); // can't start, not your turn 
 		assertFalse(c.cmdTournament(args2));
 		
-		p.setTurn();
+		s.getGameState().setTurn(p);;
 		assertFalse(c.cmdTournament(args1)); // can't start, don't have card in hand
 		assertFalse(c.cmdTournament(args2));
 		

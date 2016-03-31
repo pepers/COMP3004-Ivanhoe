@@ -305,7 +305,7 @@ public class Server implements Runnable, Serializable {
 
 				Player p = clients.get(t);
 				if (p != null) {
-					readyPlayers = readyPlayers + (p.ready == 1 ? 1 : 0);
+					readyPlayers = readyPlayers + (p.getReadyValue() == Player.READY ? 1 : 0);
 				}
 				Object o = t.actions.poll(); // get an action from the thread
 				if (o != null) {
@@ -551,7 +551,7 @@ public class Server implements Runnable, Serializable {
 				return true;
 			}
 			next = winner;
-			gameState.getPlayer(next).setTurn();
+			gameState.setTurn(winner);
 		}else{
 			next = gameState.nextTurn();
 		}
@@ -661,8 +661,8 @@ public class Server implements Runnable, Serializable {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if (clients.get(t).ready == 1) {
-				clients.get(t).ready = 2;
+			if (clients.get(t).getReadyValue() == Player.READY) {
+				clients.get(t).setReady(Player.IN_GAME);
 				
 				for (int j = 0; j < 8; j++) {
 					clients.get(t).addToHand(gameState.drawFromDeck());
@@ -674,7 +674,7 @@ public class Server implements Runnable, Serializable {
 
 		int startIndex = (new Random()).nextInt(gameState.getNumPlayers());
 		Player startPlayer = gameState.getPlayers().get(startIndex);
-		startPlayer.isTurn = true;
+		gameState.setTurn(startPlayer);
 		Card drew = gameState.drawFromDeck();
 		gameState.addHand(startPlayer, drew); 
 		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
@@ -694,7 +694,7 @@ public class Server implements Runnable, Serializable {
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			Player p = clients.get(t);
-			if (p.ready == 2) {
+			if (p.getReadyValue() == Player.IN_GAME) {
 				if (t.update(gameState))
 					c++;
 			}
@@ -710,7 +710,7 @@ public class Server implements Runnable, Serializable {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			if (clients.get(t).ready == 2) {
+			if (clients.get(t).getReadyValue() == Player.IN_GAME) {
 				clients.get(t).reset();
 			}
 		}
@@ -819,7 +819,7 @@ public class Server implements Runnable, Serializable {
 		}
 		for (Player p : gameState.getPlayers()) {
 			System.out.println(p.getName() + ":" + p.getId());
-			System.out.println("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn + "\n  TOUR:" + p.getParticipation() + "\n  ");
+			System.out.println("  HAND:" + p.getHandSize() + "\n  TURN:" + p.isTurn() + "\n  TOUR:" + p.getParticipation() + "\n  ");
 		}
 		return true;
 	}
@@ -923,7 +923,7 @@ public class Server implements Runnable, Serializable {
 		}
 		if (p != null) { // found player
 			// check if player in game
-			if (p.ready != 2) {
+			if (p.getReadyValue()!= Player.IN_GAME) {
 				Trace.getInstance().write(this,
 						"Could not give card. " + p.getName() + " is not yet in the game. Try /list");
 				System.out.println("Could not give card. " + p.getName() + " is not yet in the game. Try /list");
