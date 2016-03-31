@@ -114,29 +114,29 @@ public class GameState implements Serializable{
 			nextPlayer.setTurn(true);
 		}
 		return nextPlayer;
+		
 		/*
 		for (Player p : players){
-			System.out.println("Index : " + turnIndex + " - " + p.getName() + " : " + p.isTurn);
+			System.out.println("Index : " + turnIndex + " - " + p.getName() + " : " + p.isTurn());
 		}
 		
 		if(tnmt == null){
-			players.get(turnIndex).isTurn = false;
+			players.get(turnIndex).setTurn(false);
 			turnIndex++;
 			if(turnIndex >= players.size()){
 				turnIndex = 0;
 			}
 		}else{
 			do{
-				
-				players.get(turnIndex).isTurn = false;
+				players.get(turnIndex).setTurn(false);
 				turnIndex++;
 				if(turnIndex >= players.size()){
 					turnIndex = 0;
 				}
 			}while(!players.get(turnIndex).getParticipation());
 		}
-		players.get(turnIndex).isTurn=true;
-		System.out.println("END = Index : " + turnIndex + " - " + players.get(turnIndex).getName() + " : " + players.get(turnIndex).isTurn);
+		players.get(turnIndex).setTurn(true);
+		System.out.println("END = Index : " + turnIndex + " - " + players.get(turnIndex).getName() + " : " + players.get(turnIndex).isTurn());
 		return players.get(turnIndex);
 		*/
 	}

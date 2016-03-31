@@ -421,7 +421,7 @@ public class Server implements Runnable, Serializable {
 									tokens.add(obj);
 								}
 								String strTok = prompt("You had a Maiden in your Display, please choose a token to return: ", p, tokens);
-								Colour colour = new Colour(strTok);
+								Colour colour = new Colour(strTok.split(" ")[0]);
 								Token token = new Token(colour, "token to remove");
 								p.removeToken(token);
 							}
