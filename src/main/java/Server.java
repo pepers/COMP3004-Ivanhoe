@@ -540,6 +540,7 @@ public class Server implements Runnable, Serializable {
 						+ " token, but you still get the satisfaction of winning.", winner);
 			}
 			gameState.endTournament();
+			updateGameStates();
 			//check if the game is done
 			if (gameState.getNumPlayers() < 4 && winner.getNumTokens() == Config.MIN_PLAYER_TOKENS){
 				broadcast(winner.getName() + " has won the game. Play again soon!");
@@ -703,10 +704,6 @@ public class Server implements Runnable, Serializable {
 	}
 
 	public boolean endGame(Player winner) {
-
-		gameState.setNumPlayers(0);
-		updateGameStates();
-		
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
@@ -715,9 +712,11 @@ public class Server implements Runnable, Serializable {
 				clients.get(t).reset();
 			}
 		}
-
-		broadcast("Game is finished");
+		gameState.setNumPlayers(0);
 		gameState = null;
+		updateGameStates();
+		broadcast("Game is finished");
+		
 		return true;
 	}
 	

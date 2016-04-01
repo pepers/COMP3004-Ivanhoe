@@ -26,11 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.Set;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -46,12 +43,12 @@ import main.java.Display;
 import main.java.DisplayCard;
 import main.java.Player;
 import main.java.Tournament;
-import main.java.ClientView2.ImagePanel;
 import main.resources.Language;
 import main.resources.Trace;
 import net.miginfocom.swing.MigLayout;
 
 public class ClientView extends JFrame {
+	
 	private static final long serialVersionUID = 1L;
 
 	//Private members
@@ -65,13 +62,13 @@ public class ClientView extends JFrame {
 	private boolean connected = false; // connected to server
 	
 	//Colors
-	private static final Color SAND = new Color(235, 210, 165);
-	private static final Color DARK_SAND = new Color(133, 113, 72);		
-	private static final Color IVAN_RED = new Color(194, 73, 49);
-	private static final Color IVAN_BLUE =  new Color(79, 131, 176);
-	private static final Color IVAN_YELLOW = new Color(230, 197, 67);
-	private static final Color IVAN_GREEN = new Color(94, 171, 90);
-	private static final Color IVAN_PURPLE = new Color(153, 99, 156);
+	public static final Color SAND = new Color(235, 210, 165);
+	public static final Color DARK_SAND = new Color(133, 113, 72);		
+	public static final Color IVAN_RED = new Color(194, 73, 49);
+	public static final Color IVAN_BLUE =  new Color(79, 131, 176);
+	public static final Color IVAN_YELLOW = new Color(230, 197, 67);
+	public static final Color IVAN_GREEN = new Color(94, 171, 90);
+	public static final Color IVAN_PURPLE = new Color(153, 99, 156);
 	
 	public static final int INFO = 0;
 	public static final int CHAT = 1;
@@ -87,7 +84,7 @@ public class ClientView extends JFrame {
 	
 	//UI Images
 	private Image greyBanner, blueBanner, redBanner, greenBanner, yellowBanner, purpleBanner, 
-	stun, shield;
+	stun, shield, redToken, blueToken, greenToken, yellowToken, purpleToken;
 	
 			
 	public ClientView(Client c) {
@@ -99,6 +96,12 @@ public class ClientView extends JFrame {
 			yellowBanner = ImageIO.read(new File("./res/banner_yellow2.png"));
 			greenBanner = ImageIO.read(new File("./res/banner_green2.png"));
 			purpleBanner = ImageIO.read(new File("./res/banner_purple2.png"));
+			
+			redToken = ImageIO.read(new File("./res/token_red.png"));
+			greenToken = ImageIO.read(new File("./res/token_green.png"));
+			yellowToken = ImageIO.read(new File("./res/token_yellow.png"));
+			purpleToken = ImageIO.read(new File("./res/token_purple.png"));
+			blueToken = ImageIO.read(new File("./res/token_blue.png"));
 			
 			stun = ImageIO.read(new File("./res/stunned.png"));
 			shield = ImageIO.read(new File("./res/shield.png"));
@@ -348,12 +351,18 @@ public class ClientView extends JFrame {
 		public static final int FILL = 3;
 		public static final int CENTER_SCALE = 4;
 		public static final int CENTER = 5;
+		public static final int FIT = 6;
 
 		Image img;
 		int mode = 0;
 		int imgWidth = 0;
 		int imgHeight = 0;
 
+		public void setImageSize(int width, int height){
+			imgWidth = width;
+			imgHeight = height;
+		}
+		
 		public ImagePanel(Image i) {img = i;}
 		public ImagePanel(Image i, int m) {img = i; mode = m;}
 		public ImagePanel(String i) {
@@ -411,6 +420,11 @@ public class ClientView extends JFrame {
 			case CENTER:
 				g.drawImage(img, (this.getWidth() - img.getWidth(null)) / 2,
 						(this.getHeight() - img.getHeight(null)) / 2, null);
+				break;
+			case FIT:
+				r = (double) this.getWidth() / img.getWidth(null);
+				x = (this.getWidth() - img.getWidth(null) * r) / 2;
+				g.drawImage(img, (int) x, (int) -((img.getHeight(null) - this.getHeight())/2 * r), (int) (img.getWidth(null) * r), (int) (img.getHeight(null) * r), null);
 				break;
 			default:
 				g.drawImage(img, 0, 0, null);
@@ -596,28 +610,6 @@ public class ClientView extends JFrame {
 	    		ArrayList<Object> options = client.getGameState().getTargets(actionCard, client.getPlayer());
 	    		
 		    	switch(card.toString()){
-				case "Adapt":
-					
-					JMenuItem chooseTargets = new JMenuItem("Choose Targets");
-					add(chooseTargets);
-					chooseTargets.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseReleased(MouseEvent e) {
-							
-							JPanel optionPane = new JPanel();
-							optionPane.setLayout(new BoxLayout(optionPane, BoxLayout.X_AXIS));
-							
-							
-							for (Integer i: client.getPlayer().getDisplay().getValues()){
-								JList list = new JList(new String[] {"foo", "bar", "gah"});
-								optionPane.add(list);
-							}
-							JOptionPane.showMessageDialog( null, optionPane, "Multi-Select Example", JOptionPane.PLAIN_MESSAGE);
-							//System.out.println(Arrays.toString(list.getSelectedIndices()));
-						}
-					});
-					
-					break;
 				case "Break Lance":
 					addPlayerOptions(actionCard, options);
 					break;
@@ -852,7 +844,7 @@ public class ClientView extends JFrame {
 				@Override
 				public void mouseMoved(MouseEvent e) {
 					ImagePanel panel = ((ImagePanel) ((ImagePanel) controls).getComponent(1));
-					if(inGame && e.getX() > xm-37 && e.getX() < xm+37 && e.getY()>70 && e.getY() < 70 + (20 * display.size()-1) + 106){
+					if(display.size() > 0 && inGame && e.getX() > xm-37 && e.getX() < xm+37 && e.getY()>70 && e.getY() < 70 + (20 * display.size()-1) + 106){
 						int i = (e.getY() - 70) / 20;
 						if (i > display.size() - 1)i = display.size() - 1;
 						
@@ -863,44 +855,6 @@ public class ClientView extends JFrame {
 						controls.repaint();
 					}
 				}
-			});
-			addMouseListener(new MouseListener(){
-
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void mousePressed(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					if(e.getX() > xm-37 && e.getX() < xm+37){
-						if(e.getY()>70 && e.getY() < 70 + (20 * display.size()-1) + 106){
-							int i = (e.getY() - 70)/20;
-							if(i>display.size()-1)i=display.size()-1;
-							System.out.println(i + " : " + display.get(i).toString());
-						}
-					}
-				}
-				
 			});
 			update(p);
 		}
@@ -915,73 +869,68 @@ public class ClientView extends JFrame {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
 			
-			
-            xm = this.getWidth()/2;
-            
-            Tournament tournament = null;
-            if(client != null){
-            	tournament = client.getGameState().getTournament();
-            }
-            if (player == null){
-            	player = new Player("NULL", 0);
-            }
-            
-            //Draw a crude banner
-            height = (tournament != null) ? 200 + 15 * display.size(): 150;
-            
-            if(player.equals(client.getPlayer())){
-	            g2.setColor(Color.black);
-	            g2.fillRect(xm-15-width/2, 0, width + 30, height + 20); 
-	            g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height + 20, height + 45, height+20}, 3);
-            }
-            if(client != null)g2.setColor(player.getColor());
-            g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
-            g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
-            
-            if(client != null)g2.setColor(client.getGameState().hasHighScore(player) ? toRGB(client.getGameState().getTournament().getColour()) : SAND);
-            g2.fillRect(xm-width/2, 0, width, height);
-            g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
-            
-            g2.setColor(Color.darkGray);
-            g2.fillRect(xm-width/2, 0, width, 55);
-            
-            g2.setColor(Color.white);
-            g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
-            g2.drawString(player.getName(), xm - player.getName().length()*5, 25);
-            
-            int i = 0;
-            for (Card c : display.elements()){
-            	BufferedImage img = getImage(c);
-            	
-            	g2.drawImage(img, xm-37, 70 + (20 * i), 75, 106, null);
-            	i++;
-			}
-            i = 0;
-            for (Token t : player.getTokens()){
-            	i++;
-            	
-            	if(t.getColour().equals("red")){
-            		g2.setColor(IVAN_RED);
-            	}else if(t.getColour().equals("blue")){
-            		g2.setColor(IVAN_BLUE);
-            	}else if(t.getColour().equals("yellow")){
-            		g2.setColor(IVAN_YELLOW);
-            	}else if(t.getColour().equals("green")){
-            		g2.setColor(IVAN_GREEN);
-            	}else if(t.getColour().equals("purple")){
-            		g2.setColor(IVAN_PURPLE);
-            	}else {
-            		g2.setColor(Color.black);
-            	}
-            	g2.fillRect(xm-width/2 + (i * width/6), 35, 10, 10);
-			}
-            
-            if(player.getStunned()){
-            	g2.drawImage(stun, xm - 20, height - 27, 40, 40, null);
-            }
-            if(player.getShielded()){
-            	g2.drawImage(shield, xm - 20, height - 27, 40, 40, null);
-            }
+	            xm = this.getWidth()/2;
+	            
+	            Tournament tournament = null;
+	            if(client != null){
+	            	tournament = client.getGameState().getTournament();
+	            }
+	            if (player == null){
+	            	player = new Player("NULL", 0);
+	            }
+	            
+	            //Draw a crude banner
+	            height = (tournament != null) ? 200 + 15 * display.size(): 150;
+	            
+	            if(player.equals(client.getPlayer())){
+		            g2.setColor(Color.black);
+		            g2.fillRect(xm-15-width/2, 0, width + 30, height + 20); 
+		            g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height + 20, height + 45, height+20}, 3);
+	            }
+	            if(client != null)g2.setColor(player.getColor());
+	            g2.fillRect(xm-10-width/2, 0, width + 20, height + 10); 
+	            g2.fillPolygon(new int[]{xm-10-width/2, xm, xm+10+width/2}, new int[]{height+10, height + 35, height+10}, 3);
+	            
+	            if(client != null)g2.setColor(client.getGameState().hasHighScore(player) ? toRGB(client.getGameState().getTournament().getColour()) : SAND);
+	            g2.fillRect(xm-width/2, 0, width, height);
+	            g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
+	            
+	            g2.setColor(Color.darkGray);
+	            g2.fillRect(xm-width/2, 0, width, 55);
+	            
+	            g2.setColor(Color.white);
+	            g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+	            g2.drawString(player.getName(), xm - player.getName().length()*5, 25);
+	            
+	            int i = 0;
+	            for (Card c : display.elements()){
+	            	BufferedImage img = getImage(c);
+	            	
+	            	g2.drawImage(img, xm-37, 70 + (20 * i), 75, 106, null);
+	            	i++;
+				}
+	            i = 0;
+	            for (Token t : player.getTokens()){
+	            	i++;
+	            	if(t.getColour().equals("red")){
+	            		g2.drawImage(redToken, xm-width/2 + (i * width/7), 35, 20, 20, null);
+	            	}else if(t.getColour().equals("blue")){
+	            		g2.drawImage(blueToken, xm-width/2 + (i * width/7), 35, 20, 20, null);
+	            	}else if(t.getColour().equals("yellow")){
+	            		g2.drawImage(yellowToken, xm-width/2 + (i * width/7), 35, 20, 20, null);
+	            	}else if(t.getColour().equals("green")){
+	            		g2.drawImage(greenToken, xm-width/2 + (i * width/7), 35, 20, 20, null);
+	            	}else if(t.getColour().equals("purple")){
+	            		g2.drawImage(purpleToken, xm-width/2 + (i * width/7), 35, 20, 20, null);
+	            	}
+				}
+	            
+	            if(player.getStunned()){
+	            	g2.drawImage(stun, xm - 20, height - 27, 40, 40, null);
+	            }
+	            if(player.getShielded()){
+	            	g2.drawImage(shield, xm - 20, height - 27, 40, 40, null);
+	            }
         }
 	}
 	
@@ -1309,20 +1258,63 @@ public class ClientView extends JFrame {
 	public void endGame(Player winner) {
 		inGame = false;
 		JFrame victoryFrame = new JFrame("End Game");
-		victoryFrame.setSize(400, 500);
+		victoryFrame.setSize(600, 800);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		victoryFrame.setLocation(dim.width/2-victoryFrame.getSize().width/2, dim.height/2-victoryFrame.getSize().height/2);
 		victoryFrame.setAlwaysOnTop(true);
 		victoryFrame.setAutoRequestFocus(true);
-
-		JPanel parent = new JPanel(new MigLayout("fill"));
 		
-		JLabel text = new JLabel(winner.getName() + " has won the game.");
-		parent.add(text, "wrap");
+		JPanel parent = new JPanel(new MigLayout("fill", "[]", "[][][][][]"));
+		parent.setBackground(DARK_SAND);
 		
-		ImagePanel img = new ImagePanel("./res/victory.png", ImagePanel.CENTER);
-		parent.add(img);
+		ImagePanel top = new ImagePanel("./res/wood.png", ImagePanel.TILE);
+		top.setLayout(new MigLayout("fill"));
+		parent.add(top, "grow, cell 0 0 1 2");
 		
+		ImagePanel scroll = new ImagePanel("./res/scroll2.png", ImagePanel.STRETCH);
+		scroll.setLayout(new MigLayout("fill", "80[][][][]80", "20[][][][][]20"));
+		top.add(scroll, "grow");
+		
+		JLabel text = new JLabel(winner.getName() + " has been victorious!", SwingConstants.CENTER);
+		text.setFont(new Font("Book Antiqua", Font.BOLD, 24));
+		scroll.add(text, "grow, cell 0 0 4 1");
+		
+		JPanel tokens = new JPanel();
+		tokens.setOpaque(false);
+		tokens.setLayout(new BoxLayout(tokens, BoxLayout.Y_AXIS));
+		for (Token t : winner.getTokens()){
+			JPanel panel = new JPanel(new MigLayout("fill"));
+			panel.setOpaque(false);
+			JLabel tokenLabel = new JLabel(t.toString());
+			ImagePanel tokenIcon = null;
+			
+			
+			if(t.getColour().equals("red")){
+				tokenIcon = new ImagePanel(redToken, ImagePanel.CENTER_SCALE);
+        	}else if(t.getColour().equals("blue")){
+        		tokenIcon = new ImagePanel(blueToken, ImagePanel.CENTER_SCALE);
+        	}else if(t.getColour().equals("yellow")){
+        		tokenIcon = new ImagePanel(yellowToken, ImagePanel.CENTER_SCALE);
+        	}else if(t.getColour().equals("green")){
+        		tokenIcon = new ImagePanel(greenToken, ImagePanel.CENTER_SCALE);
+        	}else if(t.getColour().equals("purple")){
+        		tokenIcon = new ImagePanel(purpleToken, ImagePanel.CENTER_SCALE);
+        	}
+			tokenLabel.setFont(new Font("Book Antiqua", Font.BOLD, 16));
+			panel.add(tokenIcon, "grow");
+			panel.add(tokenLabel, "grow");
+			tokens.add(panel);
+		}
+		scroll.add(tokens, "grow, cell 0 1 4 3");
+		
+		JButton back = new JButton("Return To Lobby");
+		back.setFont(new Font("Book Antiqua", Font.ITALIC, 18));
+		back.setOpaque(false);
+		back.setBackground(DARK_SAND);
+		scroll.add(back, "grow, cell 0 4 4 1");
+		
+		ImagePanel img = new ImagePanel("./res/victory.png", ImagePanel.STRETCH);
+		parent.add(img, "grow, cell 0 2 1 3");
 		
 		victoryFrame.add(parent);
 		victoryFrame.setVisible(true);
