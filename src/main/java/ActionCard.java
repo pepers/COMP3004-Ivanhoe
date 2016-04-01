@@ -91,15 +91,21 @@ public class ActionCard extends Card {
 
 	public boolean hasTargets() {
 		switch(name){
+		case("Adapt"):
+			return false;
 		case("Charge"):
 			return false;
 		case("Countercharge"):
+			return false;
+		case("Knock Down"):
 			return false;
 		case("Outmaneuver"):
 			return false;
 		case("Disgrace"):
 			return false;
 		case("Shield"):
+			return false;
+		case("Ivanhoe"):
 			return false;
 		default:
 			return true;

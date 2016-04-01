@@ -84,7 +84,7 @@ public class ClientView extends JFrame {
 	
 	//UI Images
 	private Image greyBanner, blueBanner, redBanner, greenBanner, yellowBanner, purpleBanner, 
-	stun, shield, redToken, blueToken, greenToken, yellowToken, purpleToken;
+	stun, shield, redToken, blueToken, greenToken, yellowToken, purpleToken, handIcon, displayIcon;
 	
 			
 	public ClientView(Client c) {
@@ -102,6 +102,9 @@ public class ClientView extends JFrame {
 			yellowToken = ImageIO.read(new File("./res/token_yellow.png"));
 			purpleToken = ImageIO.read(new File("./res/token_purple.png"));
 			blueToken = ImageIO.read(new File("./res/token_blue.png"));
+			
+			handIcon = ImageIO.read(new File("./res/hand_icon.png"));
+			displayIcon = ImageIO.read(new File("./res/display_icon.png"));
 			
 			stun = ImageIO.read(new File("./res/stunned.png"));
 			shield = ImageIO.read(new File("./res/shield.png"));
@@ -658,6 +661,9 @@ public class ClientView extends JFrame {
 				case "Drop Weapon":
 					addColorOptions(actionCard, options);
 					break;
+				case "Knock DOwn":
+					addPlayerOptions(actionCard, options);
+					break;
 				case "Outwit":
 					title = new JLabel("Choose a player");
 					add(title);
@@ -910,11 +916,22 @@ public class ClientView extends JFrame {
 	            g2.fillPolygon(new int[]{xm-width/2, xm, xm + width/2}, new int[]{height, height + 20, height}, 3);
 	            
 	            g2.setColor(Color.darkGray);
-	            g2.fillRect(xm-width/2, 0, width, 55);
+	            g2.fillRect(xm-width/2, 0, width, 60);
 	            
 	            g2.setColor(Color.white);
 	            g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
 	            g2.drawString(player.getName(), xm - player.getName().length()*5, 25);
+	            
+	            g2.drawImage(handIcon, xm+10-width/2, 70, 20, 20, null);
+	            g2.drawImage(displayIcon, xm-30+width/2, 70, 20, 20, null);
+	            
+	            g2.setColor(Color.black);
+	            g2.drawString(String.valueOf(player.getHand().size()), xm+14-width/2, 110);
+	            int score = 0;
+	            if(client.getGameState().getTournament() != null){
+	            	 score = display.score(client.getGameState().getTournament().getColour());
+	            }
+	            g2.drawString(String.valueOf(score), xm-26+width/2, 110);
 	            
 	            int i = 0;
 	            for (Card c : display.elements()){

@@ -479,8 +479,8 @@ public class Server implements Runnable, Serializable {
 			if (c instanceof ActionCard) {
 				if (c.toString().equalsIgnoreCase("Ivanhoe")) {
 					if (blockedAction != null) {
-						broadcast(action.origin.getName() + " blocks a " + blockedAction.object.toString() + " card with Ivanhoe!");
-						System.out.println(action.origin.getName() + " blocks a " + blockedAction.object.toString() + " card with Ivanhoe!");
+						broadcast(action.origin.getName() + " blocks a " + ((Play)blockedAction.object).getAction().toString() + " card with Ivanhoe!");
+						System.out.println(action.origin.getName() + " blocks a " + ((Play)blockedAction.object).getAction().toString() + " card with Ivanhoe!");
 					} else {
 						broadcast(action.origin.getName() + " plays a useless Ivanhoe.");
 						System.out.println(action.origin.getName() + " plays a useless Ivanhoe.");

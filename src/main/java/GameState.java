@@ -20,6 +20,7 @@ public class GameState implements Serializable{
 	public static final int  INVALID_COLOUR = 2;
 	public static final int  NO_TARGETS = 3;
 	public static final int  MULTIPLE_MAIDEN = 4;
+	public static final int  TIMING = 5;
 	
 	public static Deck getDeck() {return deck;}
 	public Tournament getTournament(){return tnmt;}
@@ -716,7 +717,7 @@ public class GameState implements Serializable{
 	}
 	
 	public int canPlay(Card card, Player player){
-		if(player.isTurn() || card.toString().equalsIgnoreCase("ivanhoe")){
+		if(player.isTurn()){
 			if(card instanceof DisplayCard){
 				if (getTournament() == null) {
 					return 0;
@@ -744,7 +745,11 @@ public class GameState implements Serializable{
 				}
 			}
 		}else{
-			return 0;
+			if (card.toString().equalsIgnoreCase("ivanhoe")){
+				return 0;
+			}else{
+				return TIMING;
+			}
 		}
 	}
 }
