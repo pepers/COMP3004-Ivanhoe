@@ -48,14 +48,14 @@ public class ClientAI extends Thread {
 		this.r = new Randoms();
 		
 		// start Client connection
-		client.setGui(false);
-		client.ai = true;
-		client.initialize(this.name);
-		if (client.connect(this.address, this.port)) {
-			client.send(client.getPlayer());
+		this.client.setGui(false);
+		this.client.ai = true;
+		this.client.initialize(this.name);
+		if (this.client.connect(this.address, this.port)) {
+			this.client.send(client.getPlayer());
 		} else {
 			System.out.println("Error: " + this.name + " could not connect to Server");
-			client.shutdown();
+			this.client.shutdown();
 		}
 	}
 	
@@ -71,39 +71,29 @@ public class ClientAI extends Thread {
 	
 	public void run() {
 		// start new thread to receive from Server
-		client.receiveThread = new Thread(client);
-		client.receiveThread.start();
+		this.client.receiveThread = new Thread(client);
+		this.client.receiveThread.start();
 	
 		// get ready for game
-		client.processInput("Prepare for battle!");
-		client.processCmd("/ready");
+		this.client.processInput("Prepare for battle!");
+		this.client.processCmd("/ready");
 		
 		while (true) {
 			try {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			if (this.client.getGameState() != null) {
-				cmd = new StartTournament(this.client, this.tournamentSkill);
-				invoker.execute(cmd);
-			} else {
-				this.client.processInput("Good game! Fair thee well!");
-				this.client.shutdown();
-				break;
-			}
+			cmd = new StartTournament(this.client, this.tournamentSkill);
+			invoker.execute(cmd);
+			if (shutdown()) { break; }
 
 			try {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			if (this.client.getGameState() != null) {
-				cmd = new PlayCard(this.client, this.displaySkill, this.actionSkill);
-				invoker.execute(cmd);
-			} else {
-				this.client.processInput("Good game! Fair thee well!");
-				this.client.shutdown();
-				break;
-			}
+			cmd = new PlayCard(this.client, this.displaySkill, this.actionSkill);
+			invoker.execute(cmd);
+			if (shutdown()) { break; }
 			
 			try {
 				this.sleep(100);
@@ -119,32 +109,37 @@ public class ClientAI extends Thread {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			if (this.client.getGameState() != null) {
-				cmd = new EndTurn(this.client, this.withdrawSkill);
-				invoker.execute(cmd);
-			} else {
-				this.client.processInput("Good game! Fair thee well!");
-				this.client.shutdown();
-				break;
-			}
+			cmd = new EndTurn(this.client, this.withdrawSkill);
+			invoker.execute(cmd);
+			if (shutdown()) { break; }
 
 			try {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			if (this.client.getGameState() != null) {
-				cmd = new Withdraw(this.client, this.withdrawSkill);
-				invoker.execute(cmd);
-			} else {
-				this.client.processInput("Good game! Fair thee well!");
-				this.client.shutdown();
-				break;
-			}
+			cmd = new Withdraw(this.client, this.withdrawSkill);
+			invoker.execute(cmd);
+			if (shutdown()) { break; }
 			
 			try {
 				this.sleep(100);
 			} catch (InterruptedException e) {}
 		}
+	}
+	
+	/*
+	 * shut down Client AI
+	 */
+	private boolean shutdown() {
+		if ((this.client.getGameState().getNumPlayers() == 0) || 
+				(this.client.getGameState() == null)) {
+			//this.client.processInput("Good game! Fair thee well!");
+			this.client.receiveThread = null;
+			if (this.client.shutdown()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/*
