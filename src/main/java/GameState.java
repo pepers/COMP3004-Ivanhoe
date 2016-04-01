@@ -2,8 +2,8 @@ package main.java;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class GameState implements Serializable{
 	private static final long serialVersionUID = 1L;	
@@ -440,7 +440,8 @@ public class GameState implements Serializable{
 				}else{
 					target = getPlayer(play.getOpponents().get(0).getName());
 				}
-				int random = ThreadLocalRandom.current().nextInt(0, target.getHand().size());
+				Random r = new Random();
+				int random = r.nextInt(target.getHand().size());
 				card = target.getHand().get(random);
 				target.getHand().remove(card);
 				action.origin.addToHand(card);
@@ -703,9 +704,11 @@ public class GameState implements Serializable{
 				targets.addAll(getOpponents(controller));
 				break;
 			case "Unhorse":
-				targets.add(new Colour(Colour.c.RED));
-				targets.add(new Colour(Colour.c.BLUE));
-				targets.add(new Colour(Colour.c.YELLOW));
+				if (this.getTournament().getColour().equals(new Colour(Colour.c.PURPLE))) {
+					targets.add(new Colour(Colour.c.RED));
+					targets.add(new Colour(Colour.c.BLUE));
+					targets.add(new Colour(Colour.c.YELLOW));
+				}
 				break;
 			default:
 				return null;

@@ -672,7 +672,7 @@ public class ClientView extends JFrame {
 				case "Drop Weapon":
 					addColorOptions(actionCard, options);
 					break;
-				case "Knock DOwn":
+				case "Knock Down":
 					addPlayerOptions(actionCard, options);
 					break;
 				case "Outwit":
@@ -742,7 +742,7 @@ public class ClientView extends JFrame {
 					addColorOptions(actionCard, options);
 					break;
 				default:
-	
+					break;	
 		    	}
 	    	}
 	    }
