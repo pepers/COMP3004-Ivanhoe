@@ -241,6 +241,7 @@ public class Client implements Runnable {
 				process(o);
 			}
 			
+			// GUI Mode, and game running
 			if (view != null && view.inGame) {
 				view.updateComponents(gameState, player);
 			}
@@ -353,11 +354,12 @@ public class Client implements Runnable {
 			// GameState
 		} else if (o instanceof GameState) {
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " received");
-			gameState = (GameState) o;
+			this.gameState = (GameState) o;
+			
 			// this signals that the game is done
 			if (gameState.getNumPlayers() == 0) {
 				this.gameState = null;
-				this.player.reset();
+				this.player.reset();				
 				return true;
 			}
 			this.player = gameState.getPlayer(this.player.getId());
@@ -437,7 +439,6 @@ public class Client implements Runnable {
 			send(new Prompt(s));
 			return true;
 
-			// unrecognized object
 		} else if (o instanceof EndTurn) {
 			if(view != null)view.toFront();
 			return true;
@@ -445,7 +446,8 @@ public class Client implements Runnable {
 		} else if (o instanceof EndGame) {
 			if(view != null)view.endGame(((EndGame) o).getWinner());
 			return true;
-			// unrecognized object
+			
+		// unrecognized object
 		} else {
 			Exception e = new Exception(this.player.getName() + ": unrecognized object received");
 			Trace.getInstance().exception(this, e);
@@ -644,6 +646,8 @@ public class Client implements Runnable {
 			break;
 		case "withdraw":
 			args = new Arguments("!=", 0);
+			turn = new IsTurn();
+			args.setSuccessor(turn);
 			args.isValid(cmd);
 			if (!cmd.isValid()) { 
 				outputText("Client: " + cmd.getMessage());
@@ -990,13 +994,17 @@ public class Client implements Runnable {
 
 	// withdraw from the current tournament
 	public boolean cmdWithdraw() {
-		
-		player.setParticipation(false);
-		player.setTurn(false);
-		player.getDisplay().clear();
-		send(new Withdraw());
-		if(view != null)view.updateComponents(gameState, player);
-		return true;
+		if (this.gameState.getTournament() == null) {
+			System.out.println("Client: can not withdraw from tournament when no tournament is running.");
+			return false;
+		} else {
+			player.setParticipation(false);
+			player.setTurn(false);
+			player.getDisplay().clear();
+			send(new Withdraw());
+			if(view != null)view.updateComponents(gameState, player);
+			return true;
+		}
 	}
 
 	// print a modicum of gamestate

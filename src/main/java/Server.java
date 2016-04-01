@@ -495,6 +495,9 @@ public class Server implements Runnable, Serializable {
 					GameState.getDeck().discard(c);
 					this.time = System.currentTimeMillis();
 					blockedAction = action;
+					for (ServerThread t : clients.keySet()){
+						t.send(new Play(c, null, null, null));
+					}
 					return true;
 				} else {
 					messageExcept("Your Action Card cooldown is " + (System.currentTimeMillis() - time)/1000 + " seconds.", gameState.getPlayer(action.origin.getName()));

@@ -58,8 +58,11 @@ public class ClientView extends JFrame {
 	private Client client;												//Reference to the parent client
 	private HashMap<Card, BufferedImage> images;						//Map to hold card images
 	private LobbyView lobbyView;
-	boolean inGame = false;
+	public boolean inGame = false;
+	private boolean isCountdown = false;
 	private boolean connected = false; // connected to server
+	private double elapsedPercentage;
+	private Timer timer;
 	
 	//Colors
 	public static final Color SAND = new Color(235, 210, 165);
@@ -86,7 +89,6 @@ public class ClientView extends JFrame {
 	private Image greyBanner, blueBanner, redBanner, greenBanner, yellowBanner, purpleBanner, 
 	stun, shield, redToken, blueToken, greenToken, yellowToken, purpleToken, handIcon, displayIcon;
 	
-			
 	public ClientView(Client c) {
 		//load some images
 		try {
@@ -374,7 +376,8 @@ public class ClientView extends JFrame {
 		int mode = 0;
 		int imgWidth = 0;
 		int imgHeight = 0;
-
+		double timePercentage = 0;
+		
 		public void setImageSize(int width, int height){
 			imgWidth = width;
 			imgHeight = height;
@@ -447,6 +450,15 @@ public class ClientView extends JFrame {
 				g.drawImage(img, 0, 0, null);
 				break;
 			}
+			if(timePercentage > 0){
+				g.setColor(new Color(0, 0, 0, 70));
+				g.fillRect(0, 0, this.getWidth(), (int) (this.getHeight() * timePercentage));
+			}
+			
+		}
+
+		public void setTimePercentage(double d) {
+			this.timePercentage = d;
 		}
 	}
 
@@ -532,12 +544,11 @@ public class ClientView extends JFrame {
 							
 						}
 					}
-					updateComponents(client.getGameState(), client.getPlayer());
 				}
 				@Override
 				public void mouseExited(MouseEvent e) {
 					ImagePanel i = ((ImagePanel)((ImagePanel)controls).getComponent(1));
-					i.setImage(cardback);
+					if(!isCountdown)i.setImage(cardback);
 					mouseOver = false;
 					((JTextArea)i.getComponent(0)).setText("");
 					((JTextArea)i.getComponent(0)).setVisible(false);
@@ -547,9 +558,9 @@ public class ClientView extends JFrame {
 				@Override
 				public void mouseEntered(MouseEvent e) {
 					ImagePanel i = ((ImagePanel)((ImagePanel)controls).getComponent(1));
-					i.setImage(img);
+					if(!isCountdown)i.setImage(img);
 					mouseOver = true;
-					if(c instanceof ActionCard){
+					if(c instanceof ActionCard && !isCountdown){
 						((JTextArea)i.getComponent(0)).setText(((ActionCard)card).getDescription());
 						((JTextArea)i.getComponent(0)).setVisible(true);
 					}
@@ -627,6 +638,7 @@ public class ClientView extends JFrame {
 	    		ArrayList<Object> options = client.getGameState().getTargets(actionCard, client.getPlayer());
 	    		
 		    	switch(card.toString()){
+		    	//TODO Adapt
 				case "Break Lance":
 					addPlayerOptions(actionCard, options);
 					break;
@@ -720,6 +732,9 @@ public class ClientView extends JFrame {
 					break;
 				case "Retreat":
 					addCardOptions(actionCard, options);
+					break;
+				case "Riposte":
+					addPlayerOptions(actionCard, options);
 					break;
 				case "Stunned":
 					addPlayerOptions(actionCard, options);
@@ -868,10 +883,10 @@ public class ClientView extends JFrame {
 						int i = (e.getY() - 70) / 20;
 						if (i > display.size() - 1)i = display.size() - 1;
 						
-						panel.setImage(getImage(display.get(i)));
+						if(!isCountdown)panel.setImage(getImage(display.get(i)));
 						controls.repaint();
 					}else{
-						panel.setImage(cardback);
+						if(!isCountdown)panel.setImage(cardback);
 						controls.repaint();
 					}
 				}
@@ -1357,5 +1372,31 @@ public class ClientView extends JFrame {
 		
 		victoryFrame.add(parent);
 		victoryFrame.setVisible(true);
+	}
+
+	public void startCountdown(Card c) {
+		ImagePanel i = ((ImagePanel)((ImagePanel)controls).getComponent(1));
+		
+		isCountdown = true;
+		elapsedPercentage = 0;
+		i.setImage(getImage(c));
+		timer = new Timer(20, null);
+		timer.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent evt) {
+		    	elapsedPercentage += 0.01;
+		    	i.setTimePercentage(elapsedPercentage);
+		    	i.repaint();
+		    	if(elapsedPercentage > 2.0){
+		    		stopCountdown();
+		    	}
+		    }
+		});
+		timer.start();
+	}
+	
+	public void stopCountdown() {
+		isCountdown = false;
+		elapsedPercentage = 0;
+		timer.stop();
 	}
 }
