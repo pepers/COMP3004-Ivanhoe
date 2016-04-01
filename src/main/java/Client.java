@@ -48,6 +48,10 @@ public class Client implements Runnable {
 		return player;
 	}
 	
+	public ClientView getView() {
+		return view;
+	}
+	
 	public GameState getGameState() {
 		return gameState;
 	}

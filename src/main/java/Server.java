@@ -664,7 +664,6 @@ public class Server implements Runnable, Serializable {
 		broadcast("Preparing to start a game...");
 
 		gameState = new GameState();
-		
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
@@ -678,7 +677,7 @@ public class Server implements Runnable, Serializable {
 				gameState.addPlayer(clients.get(t));
 			}
 		}
-
+		updateGameStates();
 		int startIndex = (new Random()).nextInt(gameState.getNumPlayers());
 		Player startPlayer = gameState.getPlayers().get(startIndex);
 		gameState.setTurn(startPlayer);
