@@ -495,8 +495,10 @@ public class Server implements Runnable, Serializable {
 					GameState.getDeck().discard(c);
 					this.time = System.currentTimeMillis();
 					blockedAction = action;
+					ArrayList<Player> originator = new ArrayList<Player>();
+					originator.add(action.origin);
 					for (ServerThread t : clients.keySet()){
-						t.send(new Play(c, null, null, null));
+						t.send(new Play(c, null, originator, null));
 					}
 					return true;
 				} else {

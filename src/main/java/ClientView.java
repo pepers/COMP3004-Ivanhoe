@@ -53,7 +53,8 @@ public class ClientView extends JFrame {
 
 	//Private members
 	private static Image cardback;										//The image of the cardback
-	private JPanel gameView, header, title, controls;
+	private JPanel gameView;
+	private ImagePanel header, title, controls, cardContext;
 	private ConsoleView console;	
 	private Client client;												//Reference to the parent client
 	private HashMap<Card, BufferedImage> images;						//Map to hold card images
@@ -203,7 +204,7 @@ public class ClientView extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		ImagePanel cardContext = new ImagePanel(cardback, ImagePanel.CENTER_SCALE);
+		cardContext = new ImagePanel(cardback, ImagePanel.CENTER_SCALE);
 		cardContext.setOpaque(false);
 		cardContext.setLayout(new MigLayout("", "5[200::]5", "5[120::][120::]5"));
 		TransparentTextArea cardDescription = new TransparentTextArea();
@@ -452,7 +453,7 @@ public class ClientView extends JFrame {
 			}
 			if(timePercentage > 0){
 				g.setColor(new Color(0, 0, 0, 70));
-				g.fillRect(0, 0, this.getWidth(), (int) (this.getHeight() * timePercentage));
+				g.fillRect(0, 0, (int) (this.getWidth() * timePercentage), this.getHeight());
 			}
 			
 		}
@@ -547,22 +548,20 @@ public class ClientView extends JFrame {
 				}
 				@Override
 				public void mouseExited(MouseEvent e) {
-					ImagePanel i = ((ImagePanel)((ImagePanel)controls).getComponent(1));
-					if(!isCountdown)i.setImage(cardback);
+					if(!isCountdown)cardContext.setImage(cardback);
 					mouseOver = false;
-					((JTextArea)i.getComponent(0)).setText("");
-					((JTextArea)i.getComponent(0)).setVisible(false);
+					((JTextArea)cardContext.getComponent(0)).setText("");
+					((JTextArea)cardContext.getComponent(0)).setVisible(false);
 					controls.repaint();
 					repaint();
 				}
 				@Override
 				public void mouseEntered(MouseEvent e) {
-					ImagePanel i = ((ImagePanel)((ImagePanel)controls).getComponent(1));
-					if(!isCountdown)i.setImage(img);
+					if(!isCountdown)cardContext.setImage(img);
 					mouseOver = true;
 					if(c instanceof ActionCard && !isCountdown){
-						((JTextArea)i.getComponent(0)).setText(((ActionCard)card).getDescription());
-						((JTextArea)i.getComponent(0)).setVisible(true);
+						((JTextArea)cardContext.getComponent(0)).setText(((ActionCard)card).getDescription());
+						((JTextArea)cardContext.getComponent(0)).setVisible(true);
 					}
 					controls.repaint();
 					repaint();
@@ -736,9 +735,6 @@ public class ClientView extends JFrame {
 				case "Riposte":
 					addPlayerOptions(actionCard, options);
 					break;
-				case "Riposte":
-					addPlayerOptions(actionCard, options);
-					break;
 				case "Stunned":
 					addPlayerOptions(actionCard, options);
 					break;
@@ -881,15 +877,14 @@ public class ClientView extends JFrame {
 			addMouseMotionListener(new MouseMotionAdapter() {
 				@Override
 				public void mouseMoved(MouseEvent e) {
-					ImagePanel panel = ((ImagePanel) ((ImagePanel) controls).getComponent(1));
 					if(display.size() > 0 && inGame && e.getX() > xm-37 && e.getX() < xm+37 && e.getY()>70 && e.getY() < 70 + (20 * display.size()-1) + 106){
 						int i = (e.getY() - 70) / 20;
 						if (i > display.size() - 1)i = display.size() - 1;
 						
-						if(!isCountdown)panel.setImage(getImage(display.get(i)));
+						if(!isCountdown)cardContext.setImage(getImage(display.get(i)));
 						controls.repaint();
 					}else{
-						if(!isCountdown)panel.setImage(cardback);
+						if(!isCountdown)cardContext.setImage(cardback);
 						controls.repaint();
 					}
 				}
@@ -1377,19 +1372,20 @@ public class ClientView extends JFrame {
 		victoryFrame.setVisible(true);
 	}
 
-	public void startCountdown(Card c) {
-		ImagePanel i = ((ImagePanel)((ImagePanel)controls).getComponent(1));
+	public void startCountdown(Card c, String message) {
 		
 		isCountdown = true;
 		elapsedPercentage = 0;
-		i.setImage(getImage(c));
+		cardContext.setImage(getImage(c));
 		timer = new Timer(20, null);
 		timer.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent evt) {
 		    	elapsedPercentage += 0.01;
-		    	i.setTimePercentage(elapsedPercentage);
-		    	i.repaint();
-		    	if(elapsedPercentage > 2.0){
+		    	cardContext.setTimePercentage(elapsedPercentage);
+		    	((JTextArea)cardContext.getComponent(0)).setText(message);
+				((JTextArea)cardContext.getComponent(0)).setVisible(true);
+		    	cardContext.repaint();
+		    	if(elapsedPercentage >= 2.0){
 		    		stopCountdown();
 		    	}
 		    }
@@ -1400,6 +1396,12 @@ public class ClientView extends JFrame {
 	public void stopCountdown() {
 		isCountdown = false;
 		elapsedPercentage = 0;
+		cardContext.setTimePercentage(elapsedPercentage);
+		((JTextArea)cardContext.getComponent(0)).setText("");
+		((JTextArea)cardContext.getComponent(0)).setVisible(false);
 		timer.stop();
+		cardContext.setImage(cardback);
+		cardContext.revalidate();
+		cardContext.repaint();
 	}
 }
