@@ -12,7 +12,6 @@ public class GameState implements Serializable{
 	private Tournament tnmt = null;
 	private Colour lastColour = new Colour(); // initialized as NONE
 	private ArrayList<Player> players;
-	private int turnIndex = 0;
 	private int numPlayers;
 	private int highScore = 0;
 	
@@ -26,12 +25,10 @@ public class GameState implements Serializable{
 	public Tournament getTournament(){return tnmt;}
 	public int getHighScore(){return highScore;}
 	public int getNumPlayers(){return numPlayers;}
-	public int getTurnIndex(){return turnIndex;}
 	public ArrayList<Player> getPlayers(){return players;}
 	public Colour getLastColour() { return this.lastColour; }
 	
 	public void setHighScore(int i){highScore = i;}
-	public void setTurnIndex(int i){turnIndex = i;}
 	public void setNumPlayers(int i){numPlayers = i;}
 	public void setLastColour(Colour colour) { this.lastColour = colour; }
 	

@@ -736,6 +736,9 @@ public class ClientView extends JFrame {
 				case "Riposte":
 					addPlayerOptions(actionCard, options);
 					break;
+				case "Riposte":
+					addPlayerOptions(actionCard, options);
+					break;
 				case "Stunned":
 					addPlayerOptions(actionCard, options);
 					break;

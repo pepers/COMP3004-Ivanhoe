@@ -100,10 +100,16 @@ public class StartTournament implements CommandInterface {
 					if (c instanceof DisplayCard) {
 						if (r.makeChoice(this.skill)) {
 							Colour col = ((DisplayCard) c).getColour();
-							if (col.equals(new Colour(Colour.c.NONE))) {
-								cChoices.add(r.get(cTokens));
+							// if colour is purple, last tournament wasn't purple
+							if ((!col.equals(new Colour(Colour.c.PURPLE))) || 
+									(!this.g.getLastColour().equals(new Colour(Colour.c.PURPLE)))) {
+								if (col.equals(new Colour(Colour.c.NONE))) {
+									cChoices.add(r.get(cTokens));
+								} else {
+									cChoices.add(col);
+								}
 							} else {
-								cChoices.add(col);
+								cChoices.add(r.get(pChoices));
 							}
 						} else {
 							cChoices.add(r.get(pChoices));
@@ -139,9 +145,15 @@ public class StartTournament implements CommandInterface {
 					
 					int lowest = blue;
 					if ((green < lowest) && (green > 0)) { lowest = green;
-					} else if ((purple < lowest) && (purple > 0)) { lowest = purple;
 					} else if ((red < lowest) && (red > 0)) { lowest = red;
 					} else if ((yellow < lowest) && (yellow > 0)) { lowest = yellow; }
+					
+					// last tournament was purple
+					if (this.g.getLastColour().equals(new Colour(Colour.c.PURPLE))) {
+						purple = -1;
+					} else {
+						if ((purple < lowest) && (purple > 0)) lowest = purple;
+					}
 					
 					ArrayList<Colour> cLowest = new ArrayList<Colour>();
 					
