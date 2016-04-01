@@ -627,6 +627,7 @@ public class ClientView extends JFrame {
 	    		ArrayList<Object> options = client.getGameState().getTargets(actionCard, client.getPlayer());
 	    		
 		    	switch(card.toString()){
+		    	//TODO Adapt
 				case "Break Lance":
 					addPlayerOptions(actionCard, options);
 					break;
@@ -720,6 +721,9 @@ public class ClientView extends JFrame {
 					break;
 				case "Retreat":
 					addCardOptions(actionCard, options);
+					break;
+				case "Riposte":
+					addPlayerOptions(actionCard, options);
 					break;
 				case "Stunned":
 					addPlayerOptions(actionCard, options);

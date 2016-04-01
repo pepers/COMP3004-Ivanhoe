@@ -52,7 +52,6 @@ public class RulesTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		s.getGameState().setTurnIndex(0);
 	}
 
 	@Test
