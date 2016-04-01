@@ -360,7 +360,7 @@ public class Client implements Runnable {
 				this.player.reset();
 				return true;
 			}
-			this.player = gameState.getPlayer(this.player.getName());
+			this.player = gameState.getPlayer(this.player.getId());
 			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
 			
 			if (gui) {

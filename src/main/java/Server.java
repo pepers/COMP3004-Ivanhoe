@@ -360,10 +360,11 @@ public class Server implements Runnable, Serializable {
 	private boolean evaluate(ActionWrapper action) {
 
 		if (action.object instanceof SetName) {
+			String temp = action.origin.getName();
 			String requested = ((SetName) action.object).getName();
 			if(checkNewName(action.origin, requested)){
 				action.origin.setName(requested);
-				String s = (action.origin.getName() + " changed name to \"" + ((SetName) action.object).getName()+ "\"");
+				String s = (temp + " changed name to \"" + ((SetName) action.object).getName()+ "\"");
 				broadcast(s);
 				return true;
 			}

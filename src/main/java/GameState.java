@@ -716,7 +716,7 @@ public class GameState implements Serializable{
 	}
 	
 	public int canPlay(Card card, Player player){
-		if(player.isTurn() && card.toString().equalsIgnoreCase("ivanhoe")){
+		if(player.isTurn() || card.toString().equalsIgnoreCase("ivanhoe")){
 			if(card instanceof DisplayCard){
 				if (getTournament() == null) {
 					return 0;

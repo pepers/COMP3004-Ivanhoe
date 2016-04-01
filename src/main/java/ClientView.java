@@ -77,7 +77,7 @@ public class ClientView extends JFrame {
 	//Public members
 	public CardPanel hand;												//Hand of cards for the user
 	public DisplayPanel arena;											//Main area where displays are shown
-	public JButton endTurn, translate, shutdown;
+	public JButton endTurn, translate, changeName, shutdown;
 	JToggleButton censor;
 	public ImagePanel banner;
 	public ImagePanel weaponIcon;
@@ -212,6 +212,7 @@ public class ClientView extends JFrame {
 		ImagePanel buttons = new ImagePanel("./res/scroll.png", ImagePanel.CENTER_SCALE);
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
 		buttons.setOpaque(false);
+		buttons.add(Box.createRigidArea(new Dimension(0, this.getHeight()/20)));
 		
 		endTurn = new JButton();
 		endTurn.setText("End Turn");
@@ -225,7 +226,6 @@ public class ClientView extends JFrame {
                 if(client != null)client.cmdEnd();
             }
         });      
-		buttons.add(Box.createRigidArea(new Dimension(0, this.getHeight()/20)));
 		buttons.add(endTurn);
 		
 		censor = new JToggleButton();
@@ -259,11 +259,25 @@ public class ClientView extends JFrame {
             	        null,
 	            	    Language.Dialect.values(),
             	        "none");
-            	System.out.println("Setting language to " + choice.toString());
                 if(client != null)client.cmdTranslate(choice.toString());
             }
         });      
 		buttons.add(translate);
+		
+		changeName = new JButton();
+		changeName.setText("Change Name");
+		changeName.setOpaque(false);
+		changeName.setBackground(DARK_SAND);
+		changeName.setForeground(Color.black);
+		changeName.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+		changeName.setAlignmentX(CENTER_ALIGNMENT);
+		changeName.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+            	String newName = JOptionPane.showInputDialog(null, "Enter a new name.", "Change Name", JOptionPane.QUESTION_MESSAGE);
+                if(client != null && newName != null && newName.length() > 0)client.cmdSetname(new String[]{newName});
+            }
+        });      
+		buttons.add(changeName);
 		
 		shutdown = new JButton();
 		shutdown.setText("Shutdown");
