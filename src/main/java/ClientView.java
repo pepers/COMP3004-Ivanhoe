@@ -1036,6 +1036,7 @@ public class ClientView extends JFrame {
 		private JButton connect = new JButton("Connect");
 		private JPanel labels = new JPanel();
 		private JPanel textfields = new JPanel();
+		private JPanel connectionBox =new JPanel();
 		
 		public LoginView(String path) {
 			this(path, ImagePanel.TILE);
@@ -1047,6 +1048,9 @@ public class ClientView extends JFrame {
 			
 			this.labels.setLayout(new BoxLayout(this.labels, BoxLayout.Y_AXIS));
 			this.labels.setOpaque(false);
+			
+			this.connectionBox.setLayout(new BoxLayout(this.connectionBox, BoxLayout.Y_AXIS));
+			this.connectionBox.setOpaque(false);
 			
 			this.textfields.setLayout(new GridBagLayout());
 			GridBagConstraints gbc = new GridBagConstraints();
@@ -1118,12 +1122,13 @@ public class ClientView extends JFrame {
 			
 			// set properties of Connect button
 			this.connect.setFont(new Font("Book Antiqua", Font.BOLD, 20));
+			this.connectionBox.add(connect);
 			
 			// add each line
 			this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 			this.add(this.labels);
 			this.add(this.textfields);
-			this.add(this.connect);
+			this.add(this.connectionBox);
 			
 			// send info when ready button is clicked
 			this.connect.addActionListener(new ActionListener() {
@@ -1140,6 +1145,9 @@ public class ClientView extends JFrame {
 						if (client.guiStartUp(getAddress(), port)) {
 							connected = true;
 							connect.setEnabled(false);
+						}else{
+							JOptionPane.showMessageDialog(null, "No server found at that location...", "KNIGHT!", JOptionPane.DEFAULT_OPTION);
+							connect.setText("Try Again");
 						}
 					}
 				}
