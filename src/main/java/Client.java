@@ -441,7 +441,10 @@ public class Client implements Runnable {
 		} else if (o instanceof EndTurn) {
 			if(view != null)view.toFront();
 			return true;
-
+			
+		} else if (o instanceof EndGame) {
+			if(view != null)view.endGame(((EndGame) o).getWinner());
+			return true;
 			// unrecognized object
 		} else {
 			Exception e = new Exception(this.player.getName() + ": unrecognized object received");

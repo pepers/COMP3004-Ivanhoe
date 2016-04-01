@@ -15,6 +15,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -45,6 +46,7 @@ import main.java.Display;
 import main.java.DisplayCard;
 import main.java.Player;
 import main.java.Tournament;
+import main.java.ClientView2.ImagePanel;
 import main.resources.Language;
 import main.resources.Trace;
 import net.miginfocom.swing.MigLayout;
@@ -128,6 +130,8 @@ public class ClientView extends JFrame {
 	public boolean enterLobby() {
 		this.lobbyView = new LobbyView();
 		this.setSize(900, 680);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		this.setContentPane(this.lobbyView);
 		this.revalidate();
 		return true;
@@ -151,6 +155,8 @@ public class ClientView extends JFrame {
 		inGame = true;
 		//Setup the parent JPanel and general layout of the view
 		this.setSize(1255, 685);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		gameView = new JPanel(new MigLayout("fill", 
 				"5[200::]5[200::]5[200::]5[200::]5[200::]5[200::]5",
 				"5[120::]5[120::]5[120::]5[120::]5[120::]20"));
@@ -846,7 +852,7 @@ public class ClientView extends JFrame {
 				@Override
 				public void mouseMoved(MouseEvent e) {
 					ImagePanel panel = ((ImagePanel) ((ImagePanel) controls).getComponent(1));
-					if(e.getX() > xm-37 && e.getX() < xm+37 && e.getY()>70 && e.getY() < 70 + (20 * display.size()-1) + 106){
+					if(inGame && e.getX() > xm-37 && e.getX() < xm+37 && e.getY()>70 && e.getY() < 70 + (20 * display.size()-1) + 106){
 						int i = (e.getY() - 70) / 20;
 						if (i > display.size() - 1)i = display.size() - 1;
 						
@@ -1298,5 +1304,27 @@ public class ClientView extends JFrame {
     	        JOptionPane.QUESTION_MESSAGE, null, options.toArray(new Object[1]), options.get(0));
     	System.out.println("Chosen token: " + choice.toString());
         return choice;
+	}
+	
+	public void endGame(Player winner) {
+		inGame = false;
+		JFrame victoryFrame = new JFrame("End Game");
+		victoryFrame.setSize(400, 500);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		victoryFrame.setLocation(dim.width/2-victoryFrame.getSize().width/2, dim.height/2-victoryFrame.getSize().height/2);
+		victoryFrame.setAlwaysOnTop(true);
+		victoryFrame.setAutoRequestFocus(true);
+
+		JPanel parent = new JPanel(new MigLayout("fill"));
+		
+		JLabel text = new JLabel(winner.getName() + " has won the game.");
+		parent.add(text, "wrap");
+		
+		ImagePanel img = new ImagePanel("./res/victory.png", ImagePanel.CENTER);
+		parent.add(img);
+		
+		
+		victoryFrame.add(parent);
+		victoryFrame.setVisible(true);
 	}
 }

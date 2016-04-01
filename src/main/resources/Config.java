@@ -5,6 +5,8 @@ public class Config {
 	public static String DEFAULT_HOST = "127.0.0.1";
 	public static int MAX_PLAYERS = 5;
 	public static int MIN_PLAYERS = 2;
+	public static int MAX_PLAYER_TOKENS = 4;
+	public static int MIN_PLAYER_TOKENS = 5;
 	
 	// possible commands:
 	public enum ClientCommand { 

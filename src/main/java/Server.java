@@ -541,13 +541,13 @@ public class Server implements Runnable, Serializable {
 			}
 			gameState.endTournament();
 			//check if the game is done
-			if (gameState.getNumPlayers() < 4 && winner.getNumTokens() == 5){
+			if (gameState.getNumPlayers() < 4 && winner.getNumTokens() == Config.MIN_PLAYER_TOKENS){
 				broadcast(winner.getName() + " has won the game. Play again soon!");
-				endGame();
+				endGame(winner);
 				return true;
-			} else if (gameState.getNumPlayers() >= 4 && winner.getNumTokens() == 4){
+			} else if (gameState.getNumPlayers() >= 4 && winner.getNumTokens() == Config.MAX_PLAYER_TOKENS){
 				broadcast(winner.getName() + " has won the game. Play again soon!");
-				endGame();
+				endGame(winner);
 				return true;
 			}
 			next = winner;
@@ -702,7 +702,7 @@ public class Server implements Runnable, Serializable {
 		return c;
 	}
 
-	public boolean endGame() {
+	public boolean endGame(Player winner) {
 
 		gameState.setNumPlayers(0);
 		updateGameStates();
@@ -710,6 +710,7 @@ public class Server implements Runnable, Serializable {
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
+			t.send(new EndGame(winner));
 			if (clients.get(t).getReadyValue() == Player.IN_GAME) {
 				clients.get(t).reset();
 			}
@@ -1175,7 +1176,7 @@ public class Server implements Runnable, Serializable {
 		} else if (arg.equals("-g")) {
 			if (gameState != null) {
 				broadcast("Server ending game.");
-				endGame();
+				endGame(null);
 				return true;
 			} else {
 				System.out.println("Error: no game running.");

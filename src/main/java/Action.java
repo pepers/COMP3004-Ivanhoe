@@ -79,6 +79,18 @@ class EndTurn implements Action {
 	}
 }
 
+class EndGame implements Action {
+
+	private static final long serialVersionUID = 1L;
+	private Player winner;
+	
+	public EndGame (Player winner) {
+		this.winner = winner;
+		Trace.getInstance().test(this, this.getAction());
+	}
+	public Player getWinner(){return winner;}
+}
+
 /*
  * when a player plays card 
  */
