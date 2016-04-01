@@ -930,6 +930,11 @@ public class ClientView extends JFrame {
 	            
 	            g2.setColor(Color.darkGray);
 	            g2.fillRect(xm-width/2, 0, width, 60);
+	            if(player.isTurn()){
+		        	g2.setColor(new Color(0, 0, 0));
+					g2.setStroke(new BasicStroke(5));
+					g2.drawRect(xm-width/2, 0, width, 60);
+	            }
 	            
 	            g2.setColor(Color.white);
 	            g2.setFont(new Font("Book Antiqua", Font.BOLD, 20));
