@@ -1308,9 +1308,17 @@ public class ClientView extends JFrame {
 		scroll.add(tokens, "grow, cell 0 1 4 3");
 		
 		JButton back = new JButton("Return To Lobby");
-		back.setFont(new Font("Book Antiqua", Font.ITALIC, 18));
+		back.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		back.setOpaque(false);
+		back.setBorderPainted(false);
 		back.setBackground(DARK_SAND);
+		back.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				enterLobby();
+				victoryFrame.dispose();
+			}
+		});
 		scroll.add(back, "grow, cell 0 4 4 1");
 		
 		ImagePanel img = new ImagePanel("./res/victory.png", ImagePanel.STRETCH);
