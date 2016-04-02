@@ -310,7 +310,8 @@ public class ClientView extends JFrame {
 		//Setup hand panel below controls that shows card images
 		hand = new CardPanel("./res/wood2.png", ImagePanel.TILE);
 		hand.setToolTipText("hand");
-		gameView.add(hand, "cell 4 3 2 2, grow");
+		JScrollPane scrollPane = new JScrollPane(hand, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		gameView.add(scrollPane, "cell 4 3 2 2, grow");
 		//end hand setup
 		
 		
@@ -469,13 +470,13 @@ public class ClientView extends JFrame {
 		
 		public CardPanel(String s) {
 			super(s);
-			this.setLayout(new FlowLayout());
+			this.setLayout(new WrapLayout());
 			hand = new ArrayList<Card>();
 			images = new HashMap<Card, BufferedImage>();	
 		}
 		public CardPanel(String s, int mode) {
 			super(s, mode);
-			this.setLayout(new FlowLayout());
+			this.setLayout(new WrapLayout());
 			hand = new ArrayList<Card>();
 			images = new HashMap<Card, BufferedImage>();	
 		}
@@ -1275,6 +1276,8 @@ public class ClientView extends JFrame {
 			return console;
 		}
 	}
+	
+	
 	
 	public void setBannerType(Colour c){
 		switch(c.toString()){
