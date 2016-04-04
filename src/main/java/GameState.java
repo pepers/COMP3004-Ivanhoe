@@ -14,6 +14,8 @@ public class GameState implements Serializable{
 	private ArrayList<Player> players;
 	private int numPlayers;
 	private int highScore = 0;
+
+	private int turnIndex;
 	
 	public static final int NO_TOURNAMENT = 1;
 	public static final int  INVALID_COLOUR = 2;
@@ -36,6 +38,7 @@ public class GameState implements Serializable{
 		players = new ArrayList<Player>();
 		deck = new Deck();
 		deck.initialize();
+		turnIndex = -1;
 	}
 
 	public Card drawFromDeck(){
@@ -90,17 +93,21 @@ public class GameState implements Serializable{
 		}
 	}
 	
+	
 	public Player nextTurn(){
-		
+		/*
 		boolean switcher = false;
 		Player nextPlayer = null;
+		System.out.println("Members " + getTournamentParticipants().size());
 		for (Player p : getTournamentParticipants()){
 			System.out.println("Participant : " + p.getName() + " = " + p.isTurn());
 			if(p.isTurn()){
+				System.out.println("Is turn, so setting to false, and turning on switch");
 				p.setTurn(false);
 				switcher = true;
 			}else{
 				if(switcher){
+					System.out.println("Setting to this player's turn");
 					p.setTurn(true);
 					nextPlayer = p;
 					switcher = false;
@@ -112,8 +119,12 @@ public class GameState implements Serializable{
 			nextPlayer.setTurn(true);
 		}
 		return nextPlayer;
+		*/
 		
-		/*
+		if (turnIndex == -1){
+			turnIndex = (new Random()).nextInt(getNumPlayers());
+		}
+		
 		for (Player p : players){
 			System.out.println("Index : " + turnIndex + " - " + p.getName() + " : " + p.isTurn());
 		}
@@ -136,7 +147,7 @@ public class GameState implements Serializable{
 		players.get(turnIndex).setTurn(true);
 		System.out.println("END = Index : " + turnIndex + " - " + players.get(turnIndex).getName() + " : " + players.get(turnIndex).isTurn());
 		return players.get(turnIndex);
-		*/
+		
 	}
 
 	public boolean addDisplay(Player player, DisplayCard card) {

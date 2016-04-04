@@ -229,7 +229,13 @@ public class ClientView extends JFrame {
 		endTurn.setAlignmentX(CENTER_ALIGNMENT);
 		endTurn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                if(client != null)client.cmdEnd();
+                if(client != null){
+                	if (client.getGameState().hasHighScore(client.getPlayer())){
+                		client.cmdEnd();
+                	}else{
+                		client.cmdWithdraw();
+                	}
+                }
             }
         });      
 		buttons.add(endTurn);

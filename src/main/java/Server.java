@@ -571,6 +571,7 @@ public class Server implements Runnable, Serializable {
 		}
 		message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
 		messageExcept(next.getName() + " has begun their turn!", next);
+		updateGameStates();
 		return false;
 	}
 	
@@ -678,9 +679,12 @@ public class Server implements Runnable, Serializable {
 			}
 		}
 		updateGameStates();
+		/*
 		int startIndex = (new Random()).nextInt(gameState.getNumPlayers());
 		Player startPlayer = gameState.getPlayers().get(startIndex);
 		gameState.setTurn(startPlayer);
+		*/
+		Player startPlayer = gameState.nextTurn();
 		Card drew = gameState.drawFromDeck();
 		gameState.addHand(startPlayer, drew); 
 		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
