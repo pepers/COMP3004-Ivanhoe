@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import main.java.ai.ClientAI;
@@ -679,11 +678,6 @@ public class Server implements Runnable, Serializable {
 			}
 		}
 		updateGameStates();
-		/*
-		int startIndex = (new Random()).nextInt(gameState.getNumPlayers());
-		Player startPlayer = gameState.getPlayers().get(startIndex);
-		gameState.setTurn(startPlayer);
-		*/
 		Player startPlayer = gameState.nextTurn();
 		Card drew = gameState.drawFromDeck();
 		gameState.addHand(startPlayer, drew); 

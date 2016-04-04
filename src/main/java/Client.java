@@ -370,7 +370,11 @@ public class Client implements Runnable {
 			Trace.getInstance().write(this, this.player.getName() + ": game state has been updated");
 			
 			if (gui) {
-				if(!view.inGame)view.setupGameView();
+				if(!view.inGame){
+					view.setupGameView();
+				}else{
+					view.updateComponents(gameState, player);
+				}
 			}
 			return true;
 
@@ -1005,8 +1009,12 @@ public class Client implements Runnable {
 
 	// withdraw from the current tournament
 	public boolean cmdWithdraw() {
+		if (!player.isTurn()){
+			outputText("Cannot withdraw when its not your turn.", ClientView.INFO);
+			return false;
+		}
 		if (this.gameState.getTournament() == null) {
-			System.out.println("Client: can not withdraw from tournament when no tournament is running.");
+			outputText("Cannot withdraw from tournament when no tournament is running.", ClientView.INFO);
 			return false;
 		} else {
 			player.setParticipation(false);

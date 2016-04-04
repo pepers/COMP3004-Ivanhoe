@@ -52,13 +52,27 @@ public class DisplayCard extends Card{
 	}
 	
 	@Override
-	public boolean equals(Object o) {
-		Card c = (Card) o;
-		return c.toString().equals(this.toString());
-	}
-	
-	@Override
 	public String toToolTip(){
 		return toString();
+	}	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DisplayCard other = (DisplayCard) obj;
+		if (colour == null) {
+			if (other.colour != null)
+				return false;
+		} else if (!colour.equals(other.colour))
+			return false;
+		if (value != other.value)
+			return false;
+		return true;
 	}
+	
 }

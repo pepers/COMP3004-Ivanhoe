@@ -6,7 +6,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -27,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -57,7 +57,7 @@ public class ClientView extends JFrame {
 	private ImagePanel header, title, controls, cardContext;
 	private ConsoleView console;	
 	private Client client;												//Reference to the parent client
-	private HashMap<Card, BufferedImage> images;						//Map to hold card images
+	private Map<Card, BufferedImage> images;						//Map to hold card images
 	private LobbyView lobbyView;
 	public boolean inGame = false;
 	private boolean isCountdown = false;
@@ -123,14 +123,13 @@ public class ClientView extends JFrame {
 		this.setVisible(true);
 		
 		enterLobby();
-		
-		// hacky way to wait until connected to server
+		/*
 		while (!connected) {
-			System.out.println("");
+			System.out.print("");
 		}
 		
 		enterLobby();
-
+	*/
 	}
 	
 	/*
@@ -1152,6 +1151,7 @@ public class ClientView extends JFrame {
 						if (client.guiStartUp(getAddress(), port)) {
 							connected = true;
 							connect.setEnabled(false);
+							enterLobby();
 						}else{
 							JOptionPane.showMessageDialog(null, "No server found at that location...", "KNIGHT!", JOptionPane.DEFAULT_OPTION);
 							connect.setText("Try Again");

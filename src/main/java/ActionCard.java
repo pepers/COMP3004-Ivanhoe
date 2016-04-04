@@ -82,12 +82,6 @@ public class ActionCard extends Card {
 	public String toToolTip() {
 		return "<html><p width=\"180\">" +this.name + "<BR/><BR/>" + this.description+"</p></html>";
 	}
-	
-	@Override
-	public boolean equals(Object o) {
-		Card c = (Card) o;
-		return c.toString().equals(this.toString());
-	}
 
 	public boolean hasTargets() {
 		switch(name){
@@ -96,8 +90,6 @@ public class ActionCard extends Card {
 		case("Charge"):
 			return false;
 		case("Countercharge"):
-			return false;
-		case("Knock Down"):
 			return false;
 		case("Outmaneuver"):
 			return false;
@@ -115,5 +107,20 @@ public class ActionCard extends Card {
 	@Override
 	public Colour getColour() {
 		return new Colour(Colour.c.NONE);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		ActionCard other = (ActionCard) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
 	}
 }
