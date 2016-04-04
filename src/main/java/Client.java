@@ -1026,7 +1026,6 @@ public class Client implements Runnable {
 		}
 	}
 
-	// print a modicum of gamestate
 	public boolean cmdGameState(GameState g) {
 		if (g == null) {
 			return false;

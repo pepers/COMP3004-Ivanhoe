@@ -251,11 +251,10 @@ public class GameState implements Serializable{
 	/* 
 	 * deal with Action Cards' special abilities
 	 */
-	public <T> boolean execute(ActionWrapper action, Server s) {
+	public <T> boolean execute(ActionWrapper action, Server server) {
 		ArrayList<Player> ps;
 		Play play = (Play) action.object;
 		ActionCard c = (ActionCard) play.getCard(); // the Action Card to be played
-		Server server = s;
 		CommandInterface prompt; // part of Command Pattern
 		CommandInvoker invoker = new CommandInvoker(); // part of Command Pattern
 		String clientInput = null; // client's input after prompted

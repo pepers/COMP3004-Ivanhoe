@@ -91,6 +91,8 @@ public class ActionCard extends Card {
 			return false;
 		case("Countercharge"):
 			return false;
+		case("Drop Weapon"):
+			return false;
 		case("Outmaneuver"):
 			return false;
 		case("Disgrace"):

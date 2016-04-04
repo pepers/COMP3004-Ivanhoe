@@ -41,8 +41,7 @@ public class ClientTest {
 		g = new GameState();
 		c.initialize(p, g);
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c.cmdSetname(arr);
-		
+		c.send(p);
 	}
 	
 	@After
@@ -68,7 +67,7 @@ public class ClientTest {
 		// attempt to connect (should fail if Server is not reachable)
 		assertTrue(c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT));
 		
-		c2.cmdSetname(arr2);
+		c2.send(p2);
 
 		System.out.println(c2.getPlayer().getName() + " is leaving...");
 		c2.shutdown();
@@ -107,9 +106,9 @@ public class ClientTest {
 	public void TestSend() {
 		System.out.println("\n@Test(): send()");
 		Trace.getInstance().test(this, "@Test(): send to Server");
-		Object o = new Player("TEST PLAYER");
+		Object o = new String("TEST PLAYER");
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		assertFalse(c.send(o)); // not an action
+		assertTrue(c.send(o));
 	}
 	
 	@Test
@@ -126,7 +125,7 @@ public class ClientTest {
 		GameState g3 = new GameState();
 		c3.initialize(p3, g3);
 		c3.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c3.cmdSetname(arr3);
+		c3.send(p3);
 		assertTrue(c3.shutdown());
 	}
 	
@@ -202,12 +201,12 @@ public class ClientTest {
 		
 		assertFalse(c.cmdEnd()); // not your turn
 		
-		s.getGameState().setTurn(p);
+		c.getPlayer().setTurn(true);
 		assertTrue(c.cmdEnd()); // is your turn
 		
 		Card card = new DisplayCard(3, purple);
 		p.addToHand(card);
-		s.getGameState().setTurn(p);
+		c.getPlayer().setTurn(true);
 		assertFalse(c.cmdEnd()); // not in tournament, and have card to start tournament with
 	}
 	 
@@ -268,8 +267,7 @@ public class ClientTest {
 		
 		assertTrue(c.cmdPlay("ivanhoe")); // can play Ivanhoe when not your turn
 		
-		s.getGameState().setTurn(p);
-		assertFalse(c.cmdPlay("purple:3")); // is turn, but no tournament running
+		c.getPlayer().setTurn(true);
 		assertFalse(c.cmdPlay("Drop Weapon"));  // is turn, but no tournament running
 		
 		Tournament t = new Tournament(purple);
@@ -345,7 +343,7 @@ public class ClientTest {
 		assertFalse(c.cmdTournament(args1)); // can't start, not your turn 
 		assertFalse(c.cmdTournament(args2));
 		
-		s.getGameState().setTurn(p);;
+		c.getPlayer().setTurn(true);
 		assertFalse(c.cmdTournament(args1)); // can't start, don't have card in hand
 		assertFalse(c.cmdTournament(args2));
 		
@@ -354,7 +352,6 @@ public class ClientTest {
 		p.addToHand(card1);
 		p.addToHand(card2);
 		assertTrue(c.cmdTournament(args1)); // can start tournament
-		assertTrue(c.cmdTournament(args2));
 		
 		t = new Tournament(purple);
 		g.startTournament(t);
@@ -388,6 +385,9 @@ public class ClientTest {
 	public void TestWithdraw() {
 		System.out.println("\n@Test(): cmdWithdraw()");
 		Trace.getInstance().test(this, "@Test(): /withdraw"); 
+		c.getPlayer().setTurn(true);
+		Tournament t = new Tournament(purple);
+		g.startTournament(t);
 		assertTrue(c.cmdWithdraw());
 	}
 }
