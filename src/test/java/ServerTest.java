@@ -53,9 +53,9 @@ public class ServerTest {
 		System.out.println("\nTest: Drawing a Card");
 		Client c = new Client();
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c.cmdSetname(new String[] { "Client" });
-		GameState g = new GameState();
 		Player p = new Player("Player1");
+		c.send(p);
+		GameState g = new GameState();
 		g.addPlayer(p);
 		Tournament t = new Tournament(new Colour(Colour.c.BLUE));
 		g.startTournament(t);
@@ -81,7 +81,7 @@ public class ServerTest {
 		System.out.println("\nTest: Joined Client");
 		Client c = new Client();
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c.cmdSetname(new String[] { "Client" });
+		c.send(new Player("Player1"));
 		try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
@@ -95,7 +95,7 @@ public class ServerTest {
 		System.out.println("\nTest: Kicking a Client");
 		Client c = new Client();
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c.cmdSetname(new String[] { "Client" });
+		c.send(new Player("Client"));
 		try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
@@ -117,7 +117,7 @@ public class ServerTest {
 		for (int i = 0; i < 6; i++) {
 			Client c = new Client();
 			c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-			c.cmdSetname(new String[] { "Client" + i });
+			c.send(new Player("Client" + i));
 		}
 
 		try {
@@ -133,7 +133,7 @@ public class ServerTest {
 		System.out.println("\nTest: Banning a Client");
 		Client c = new Client();
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c.cmdSetname(new String[] { "Client" });
+		c.send(new Player("Client"));
 		try {
 			Thread.sleep(400);
 		} catch (InterruptedException e) {
@@ -169,7 +169,7 @@ public class ServerTest {
 		s.unban("127.0.0.1");
 		c = new Client();
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c.cmdSetname(new String[] { "Client" });
+		c.send(new Player("Client"));
 		try {
 			Thread.sleep(400);
 		} catch (InterruptedException e) {
@@ -187,11 +187,11 @@ public class ServerTest {
 		
 		Client c1 = new Client();
 		c1.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c1.cmdSetname(new String[] { "Client1" });
+		c1.send(new Player("Client1"));
 		
 		Client c2 = new Client();
 		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c2.cmdSetname(new String[] { "Client2" });
+		c2.send(new Player("Client2"));
 		
 		assert(s.getGameState() != null);
 	}
