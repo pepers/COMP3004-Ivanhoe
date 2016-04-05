@@ -135,19 +135,19 @@ public class GameState implements Serializable{
 	}
 
 	public boolean addDisplay(Player player, DisplayCard card) {
-		return getPlayer(player.getName()).getDisplay().add(card);
+		return getPlayer(player.getId()).getDisplay().add(card);
 	}
 
 	public boolean removeDisplay(Player player, DisplayCard card) {
-		return getPlayer(player.getName()).getDisplay().remove(card);
+		return getPlayer(player.getId()).getDisplay().remove(card);
 	}
 	
 	public int addHand(Player player, Card card) {
-		return getPlayer(player.getName()).addToHand(card);
+		return getPlayer(player.getId()).addToHand(card);
 	}
 	
 	public int removeHand(Player player, Card card) {
-		return getPlayer(player.getName()).removeFromHand(card);
+		return getPlayer(player.getId()).removeFromHand(card);
 	}
 	
 	public boolean startTournament(Tournament t){
