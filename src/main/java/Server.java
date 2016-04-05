@@ -514,7 +514,7 @@ public class Server implements Runnable, Serializable {
 		// check if tournament has a winner
 		ArrayList<Player> a = gameState.getTournamentParticipants();
 		Player next = null;
-		if (a.size() <= 1) {
+		if (a.size() == 1) {
 			Player winner = a.get(0);
 			message("YOU have been VICTORIOUS in " + gameState.getTournament().getName() + "!", winner);
 			messageExcept(winner.getName() + " has been VICTORIOUS in " + gameState.getTournament().getName() + "!", winner);

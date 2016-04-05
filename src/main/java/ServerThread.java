@@ -107,7 +107,7 @@ public class ServerThread extends Thread {
 			output.reset();
 			output.writeObject(gameState);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client with id " + id + " disconnected.");
 			return false;
 		}
 		return true;

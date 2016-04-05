@@ -411,6 +411,7 @@ public class Client implements Runnable {
 			return true;
 			// Prompt
 		} else if (o instanceof Prompt) {
+			
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " was prompted: " + ((Prompt) o).getMessage());
 			this.promptOptions = ((Prompt) o).getOptions();
 			String s = null;
@@ -1053,6 +1054,11 @@ public class Client implements Runnable {
 		if (this.view != null)
 			view.writeConsole(message, type);
 		Trace.getInstance().write(this, (this.player == null) ? "New Player" : this.player.getName() + ": " + message);
+		return true;
+	}
+	
+	public boolean returnPrompt(String s){
+		send(new Prompt(s));
 		return true;
 	}
 
