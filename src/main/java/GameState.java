@@ -319,8 +319,11 @@ public class GameState implements Serializable{
 				}else{
 					target = getPlayer(play.getOpponents().get(0).getName());
 				}
-				target.getDisplay().removeAll(new Colour(Colour.c.PURPLE));
-				System.out.println("Removed all Purple cards from " + clientInput + "'s Display.");
+				if (target.getDisplay().removeAll(new Colour(Colour.c.PURPLE))) {
+					System.out.println("Removed all Purple cards from " + clientInput + "'s Display.");
+				} else {
+					System.out.println("Couldn't remove cards from " + clientInput + "'s Display.");
+				}
 				break;
 			case "Change Weapon":
 				if(getTargets(c, action.origin).size() == 0){
@@ -358,7 +361,11 @@ public class GameState implements Serializable{
 					System.out.println("No cards in Displays, the lowest valued cards were not removed.");
 				} else {
 					for (Player p : ps) {
-						p.getDisplay().removeValue(lowest);
+						if (p.getDisplay().removeValue(lowest)) {
+							System.out.println("All cards of value " + lowest + " were removed from " + p.getName() + "'s display.");
+						} else {
+							System.out.println("Cards of value " + lowest + " were not removed from " + p.getName() + "'s display.");
+						}
 					}
 					System.out.println("All Display Cards of the value " + lowest + " were removed.");
 				}
@@ -376,7 +383,11 @@ public class GameState implements Serializable{
 					System.out.println("No cards in Displays, the highest valued cards were not removed.");
 				} else {
 					for (Player p : ps) {
-						p.getDisplay().removeValue(highest);
+						if (p.getDisplay().removeValue(highest)) {
+							System.out.println("All cards of value " + highest + " were removed from " + p.getName() + "'s display.");
+						} else {
+							System.out.println("Cards of value " + highest + " were not removed from " + p.getName() + "'s display.");
+						}
 					}
 					System.out.println("All Display Cards of the value " + highest + " were removed.");
 				}
@@ -385,7 +396,11 @@ public class GameState implements Serializable{
 				// shielded players aren't affected
 				ps = removeShielded(getTournamentParticipants(), c);
 				for (Player p: ps) {
-					p.getDisplay().removeAll(new Colour(Colour.c.NONE));
+					if (p.getDisplay().removeAll(new Colour(Colour.c.NONE))) {
+						System.out.println("All supporters were removed from " + p.getName() + "'s display.");
+					} else {
+						System.out.println("Supporters were not removed from " + p.getName() + "'s display.");
+					}
 				}
 				System.out.println("All players remove all their supporters from their Display.");
 				break;
@@ -409,8 +424,11 @@ public class GameState implements Serializable{
 					target = getPlayer(play.getOpponents().get(0).getName());
 					dc = (DisplayCard) play.getCards().get(0);
 				}
-				target.getDisplay().remove(dc);
-				System.out.println(dc.toString() + " was removed from " + target.getName() + "'s Display.");
+				if (target.getDisplay().remove(dc)) {
+					System.out.println(dc.toString() + " was removed from " + target.getName() + "'s Display.");
+				} else {
+					System.out.println(dc.toString() + " was not removed from " + target.getName() + "'s Display.");
+				}
 				break;
 			case "Drop Weapon":
 				String tcol = getTournament().getColour().toString();
@@ -571,9 +589,12 @@ public class GameState implements Serializable{
 				}else{
 					dc = (DisplayCard) play.getCards().get(0);
 				}
-				action.origin.getDisplay().remove(dc);
-				action.origin.addToHand(dc);
-				System.out.println(dc.toString() + " was removed from " + action.origin.getName() + "'s Display, and added to their hand.");
+				if (action.origin.getDisplay().remove(dc)) {
+					action.origin.addToHand(dc);
+					System.out.println(dc.toString() + " was removed from " + action.origin.getName() + "'s Display, and added to their hand.");
+				} else {
+					System.out.println(dc.toString() + " could not be removed from " + action.origin.getName() + "'s Display, and added to their hand.");
+				}
 				break;
 			case "Riposte":
 				if(play.getOpponents() == null) {
@@ -593,7 +614,7 @@ public class GameState implements Serializable{
 						System.out.println(dc.toString() + " was removed from " + target.getName() + 
 								"'s Display, and added to " + action.origin.getName() + "'s Display.");
 					} else {
-					System.out.println("Last card of " + target.getName() + "'s Display could not be removed and added to " 
+						System.out.println("Last card of " + target.getName() + "'s Display could not be removed and added to " 
 							+ action.origin.getName() + "'s Display.");
 					}
 				} else {
@@ -653,6 +674,7 @@ public class GameState implements Serializable{
 	public ArrayList<Object> getTargets(ActionCard ac, Player controller){
 		ArrayList<Object> targets = new ArrayList<Object>();
 		ArrayList<Player> unshielded = new ArrayList<Player>();
+		ArrayList<Player> affectable = new ArrayList<Player>();
 		switch(ac.toString()){
 			case "Adapt":
 				// shielded players aren't affected
@@ -662,7 +684,14 @@ public class GameState implements Serializable{
 			case "Break Lance":
 				// shielded players aren't affected
 				unshielded = removeShielded(getOpponents(controller), ac);
-				targets.addAll(unshielded);
+				// players who can't remove a purple card aren't affected 
+				for (Player p : unshielded) {
+					if ((p.getDisplay().size() > 1) && 
+							(p.getDisplay().hasColour(new Colour(Colour.c.PURPLE)))) {
+						affectable.add(p);
+					}
+				}
+				targets.addAll(affectable);
 				break;
 			case "Change Weapon":
 				if(getTournament().getColour().equals("purple") || getTournament().getColour().equals("green")){
@@ -676,7 +705,13 @@ public class GameState implements Serializable{
 			case "Dodge":
 				// shielded players aren't affected
 				unshielded = removeShielded(getOpponents(controller), ac);
-				targets.addAll(unshielded);
+				// opponents must have at least 2 cards
+				for (Player p : unshielded) {
+					if (p.getDisplay().size() > 1) { 
+						affectable.add(p);
+					}
+				}
+				targets.addAll(affectable);
 				break;
 			case "Knock Down":
 				targets.addAll(getOpponents(controller));
@@ -692,7 +727,13 @@ public class GameState implements Serializable{
 			case "Riposte":
 				// shielded players aren't affected
 				unshielded = removeShielded(getOpponents(controller), ac);
-				targets.addAll(unshielded);
+				// opponents must have at least 2 cards
+				for (Player p : unshielded) {
+					if (p.getDisplay().size() > 1) { 
+						affectable.add(p);
+					}
+				}
+				targets.addAll(affectable);
 				break;
 			case "Stunned":
 				targets.addAll(getOpponents(controller));

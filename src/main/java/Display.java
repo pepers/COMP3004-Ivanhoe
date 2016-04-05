@@ -92,6 +92,7 @@ public class Display implements Serializable {
 	 * remove card from display
 	 */
 	public boolean remove (DisplayCard c) {
+		if (this.display.size() == 1) { return false; } // can't remove last card
 		if (this.display.remove(c)) {
 			this.score -= c.getValue();
 			GameState.getDeck().discard(c);
@@ -106,12 +107,32 @@ public class Display implements Serializable {
 	 */
 	public boolean removeAll (Colour colour) {
 		if (this.display.isEmpty()) { return false; }
+		
+		// can't remove last card of display
+		if ((this.display.size() == 1) && (this.display.get(0).getColour().equals(colour))) {
+			return false;
+		}
+		
+		// determine how many cards will be removed
+		int numToBeRemoved = 0;
+		for (DisplayCard c : this.display) {
+			if (c.getColour().equals(colour)) { numToBeRemoved += 1; }
+		}
+		boolean saveCard = false;
+		if (numToBeRemoved == this.display.size()) { saveCard = true; }
+		
+		// remove all cards of colour
 		for (Iterator<DisplayCard> iterator = this.display.iterator(); iterator.hasNext();) {
 		    DisplayCard card = iterator.next();
 		    if (card.getColour().equals(colour)) {
-		        iterator.remove();
-		        this.score -= card.getValue();
-		        GameState.getDeck().discard(card);
+		    	// save the first card if all cards of display are to be removed
+		    	if (!saveCard) {
+		    		iterator.remove();
+		    		this.score -= card.getValue();
+		    		GameState.getDeck().discard(card);
+		    	} else {
+		    		saveCard = false;
+		    	}
 		    }
 		}
 		return true;
@@ -122,12 +143,31 @@ public class Display implements Serializable {
 	 */
 	public boolean removeValue (int value) {
 		if (this.display.isEmpty()) { return false; }
+		
+		// can't remove last card of display
+		if ((this.display.size() == 1) && (this.display.get(0).getValue() == value)) {
+			return false;
+		}
+		
+		// determine how many cards will be removed
+		int numToBeRemoved = 0;
+		for (DisplayCard c : this.display) {
+			if (c.getValue() == value) { numToBeRemoved += 1; }
+		}
+		boolean saveCard = false;
+		if (numToBeRemoved == this.display.size()) { saveCard = true; }
+		
 		for (Iterator<DisplayCard> iterator = this.display.iterator(); iterator.hasNext();) {
 		    DisplayCard card = iterator.next();
 		    if (card.getValue() == value) {
-		        iterator.remove();
-		        this.score -= card.getValue();
-		        GameState.getDeck().discard(card);
+		    	// save the first card if all cards of display are to be removed
+		    	if (!saveCard) {
+		    		iterator.remove();
+		    		this.score -= card.getValue();
+		    		GameState.getDeck().discard(card);
+		    	} else {
+		    		saveCard = false;
+		    	}
 		    }
 		}
 		return true;
@@ -137,7 +177,7 @@ public class Display implements Serializable {
 	 * remove the last played card on the display
 	 */
 	public boolean removeLast() {
-		if (this.display.size() > 0) {
+		if (this.display.size() > 1) { // can't remove last card if only one card
 			DisplayCard d = (DisplayCard) this.display.get(this.display.size()-1);
 			if (this.display.remove(this.display.size()-1) != null) {
 				this.score -= d.getValue();
@@ -216,6 +256,17 @@ public class Display implements Serializable {
 		if (this.display.isEmpty()) { return false; }
 		for (DisplayCard card : this.display) {
 			if (card.equals(c)) { return true; }
+		}
+		return false;
+	}
+	
+	/*
+	 * checks if the display has at least one card of a specific colour
+	 */
+	public boolean hasColour(Colour colour) {
+		if (this.display.isEmpty()) { return false; }
+		for (DisplayCard card : this.display) {
+			if (card.getColour().equals(colour)) { return true; }
 		}
 		return false;
 	}
