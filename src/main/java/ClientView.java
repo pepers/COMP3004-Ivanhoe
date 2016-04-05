@@ -1317,7 +1317,9 @@ public class ClientView extends JFrame {
 	public String showPromptOptions(ArrayList<String> options, String message, String title) {
 		String choice = (String) JOptionPane.showInputDialog(null, message, title,
     	        JOptionPane.QUESTION_MESSAGE, null, options.toArray(new Object[1]), options.get(0));
-    	System.out.println("Chosen token: " + choice.toString());
+		if(choice == null){
+			return options.get(0);
+		}
         return choice;
 	}
 	

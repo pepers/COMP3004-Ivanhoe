@@ -410,10 +410,7 @@ public class Client implements Runnable {
 			outputText(message, ClientView.CHAT);
 			return true;
 			// Prompt
-		} else if (o instanceof Prompt) {
-			
-			
-			
+		} else if (o instanceof Prompt) {			
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " was prompted: " + ((Prompt) o).getMessage());
 			this.promptOptions = ((Prompt) o).getOptions();
 			String s = null;
