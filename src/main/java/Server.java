@@ -199,14 +199,13 @@ public class Server implements Runnable, Serializable {
 			serverThread = new ServerThread(this, socket);
 			Player requestedPlayer = ((Player) serverThread.receive());
 			String name = requestedPlayer.getName();
-			Player newPlayer = new Player(requestedPlayer.getName(), serverThread.getID(), requestedPlayer.getColor());
+			Player newPlayer = new Player(requestedPlayer.getName(), numClients++, requestedPlayer.getColor());
 			if(!checkNewName(newPlayer, name)){
 				newPlayer.setName(name + serverThread.getID());
 			}
 			clients.put(serverThread, newPlayer);
 			serverThread.send(newPlayer);
 			serverThread.start();
-			numClients++;
 		} else {
 			try {
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -443,15 +442,17 @@ public class Server implements Runnable, Serializable {
 				message("You withdraw from " + gameState.getTournament().getName() + "!", p);
 				messageExcept(p.getName() + " has withdrew from " + gameState.getTournament().getName() + "!", p);
 				if (p.getDisplay().hasMaiden()) { // check for maiden
-					if (p.getNumTokens() > 0) { // if they have tokens
+					if (p.getNumTokens() > 1) { // if they have tokens
 						ArrayList<Object> tokens = new ArrayList<Object>();
 						for (Object obj : p.getTokens()) {
 							tokens.add(obj);
 						}
 						String strTok = prompt("You had a Maiden in your Display, please choose a token to return: ", p, tokens);
-						Colour colour = new Colour(strTok);
+						Colour colour = new Colour(strTok.split(" ")[0]);
 						Token token = new Token(colour, "token to remove");
 						p.removeToken(token);
+					}else if (p.getNumTokens() == 1){
+						p.removeToken(p.getTokens().get(0));
 					}
 				}
 				p.getDisplay().clear();
@@ -698,10 +699,8 @@ public class Server implements Runnable, Serializable {
 		while (i.hasNext()) {
 			ServerThread t = i.next();
 			Player p = clients.get(t);
-			if (p.getReadyValue() == Player.IN_GAME) {
-				if (t.update(gameState))
-					c++;
-			}
+			if (t.update(gameState))
+				c++;
 		}
 		return c;
 	}
@@ -845,6 +844,14 @@ public class Server implements Runnable, Serializable {
 		} else {
 			colour = gameState.getTournament().getColour();
 		}
+		for (Player p : gameState.getPlayers()) {
+			String tokens = "";
+			for (Token t : p.getTokens()){
+				tokens += t.getColour().toString().substring(0, 1) + " ";
+			}
+			System.out.printf("%-20s", tokens);
+		}
+		System.out.println();
 		for (Player p : gameState.getPlayers()) {
 			String display = p.getName() + " (" + p.getDisplay().score(colour)	+ ")";
 			if (p.getShielded()) { // show if shielded

@@ -852,8 +852,10 @@ public class Client implements Runnable {
 					}
 					return false;
 				}
-				gameState.addDisplay(player, (DisplayCard) c);
-				gameState.removeHand(player, c);
+				if(gui){
+					gameState.addDisplay(player, (DisplayCard) c);
+					gameState.removeHand(player, c);
+				}
 				// action card
 			} else {
 				if(errorCode > 0){
@@ -980,9 +982,11 @@ public class Client implements Runnable {
 				return false;
 			}
 		}
-		gameState.addDisplay(player, displayCard);
-		gameState.removeHand(player, displayCard);
-		gameState.startTournament(new Tournament(colour));
+		if(gui){
+			gameState.addDisplay(player, displayCard);
+			gameState.removeHand(player, displayCard);
+			gameState.startTournament(new Tournament(colour));
+		}
 		send(new StartTournament(colour, displayCard));
 		return true;
 	}

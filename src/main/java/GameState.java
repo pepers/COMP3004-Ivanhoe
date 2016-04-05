@@ -99,26 +99,15 @@ public class GameState implements Serializable{
 	
 	
 	public Player nextTurn(){
-		System.out.println("NextTurn() called. Index is " + turnIndex);
-
-		
-		for (Player p : players){
-			System.out.println("Player - " + p.getName() + " : " + p.isTurn());
-		}
 		if (turnIndex == -1){
 			turnIndex = (new Random()).nextInt(getNumPlayers());
 		}else if(tnmt == null){
-			System.out.print("No tournament is running...");
 			players.get(turnIndex).setTurn(false);
-			System.out.print("Changing turnIndex from " + turnIndex);
 			turnIndex++;
 			if(turnIndex >= players.size()){
 				turnIndex = 0;
 			}
-			System.out.println(" to " + turnIndex);
 		}else{
-			System.out.print("A tournament is running...");
-			System.out.print("Changing turnIndex from " + turnIndex);
 			do{
 				players.get(turnIndex).setTurn(false);
 				turnIndex++;
@@ -126,10 +115,8 @@ public class GameState implements Serializable{
 					turnIndex = 0;
 				}
 			}while(!players.get(turnIndex).getParticipation());
-			System.out.println(" to " + turnIndex);
 		}
 		players.get(turnIndex).setTurn(true);
-		System.out.println("END = Index : " + turnIndex + " - " + players.get(turnIndex).getName() + " : " + players.get(turnIndex).isTurn());
 		return players.get(turnIndex);
 		
 	}
@@ -760,7 +747,7 @@ public class GameState implements Serializable{
 				if (!(((DisplayCard) card).getColour().equals("none")
 						|| getTournament().getColour().equals(((DisplayCard) card).getColour()))) {
 					return INVALID_COLOUR;
-				} else if (card.toString().equalsIgnoreCase("Maiden:6") && player.getDisplay().hasCard((DisplayCard) card)) {
+				} else if (card.toString().equalsIgnoreCase("Maiden:6") && player.getDisplay().hasCard(new DisplayCard("Maiden:6"))) {
 					return MULTIPLE_MAIDEN;
 				}
 				return 0;
