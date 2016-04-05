@@ -26,7 +26,7 @@ public class Client implements Runnable {
 	private Player player = null; // the local copy of this client's player
 	private ClientView view = null;
 	private static boolean gui = true; // start in gui mode or not (command line mode)
-	
+	public boolean testMode = false;
 	public Prompt lastPrompt = null;
 	
 	// AI Client
@@ -412,9 +412,17 @@ public class Client implements Runnable {
 			// Prompt
 		} else if (o instanceof Prompt) {
 			
+			
+			
 			Trace.getInstance().write(this, this.player.getName() + ": " + o.getClass().getSimpleName() + " was prompted: " + ((Prompt) o).getMessage());
 			this.promptOptions = ((Prompt) o).getOptions();
 			String s = null;
+			
+			//if testing, return the first option.
+			if(testMode){
+				send(new Prompt(promptOptions.get(0).toString()));
+			}
+			
 			if (ai) { // Client is run by AI	
 				while (aiPrompt == null) { // wait for AI to answer prompt
 					try {

@@ -13,7 +13,6 @@ import main.java.GameState;
 import main.java.Player;
 import main.java.Server;
 import main.java.Token;
-import main.java.Tournament;
 import main.resources.Config;
 
 public class GameLogicTest {
@@ -33,24 +32,28 @@ public class GameLogicTest {
 
 		c1 = new Client();
 		c1.setGui(false);
+		c1.testMode = true;
 		c1.initialize(p1, g);
 		c1.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c1.send(p1);
 		
 		c2 = new Client();
 		c2.setGui(false);
+		c1.testMode = true;
 		c2.initialize(p2, g);
 		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c2.send(p2);
 		
 		c3 = new Client();
 		c3.setGui(false);
+		c1.testMode = true;
 		c3.initialize(p3, g);
 		c3.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c3.send(p3);
 		
 		c4 = new Client();
 		c4.setGui(false);
+		c1.testMode = true;
 		c4.initialize(p4, g);
 		c4.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c4.send(p4);
@@ -70,31 +73,50 @@ public class GameLogicTest {
 	}
 	
 	@Test
-	public void TestTournament1Green() {
-		System.out.println("\nTest: Green tournament 1 Card.\n******************************\n");
-		s.cmdGive(0, "green:1");
-		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+	public void TestTournament1() {
+		System.out.println("\nTest: Tournament 1 Card.\n******************************\n");
 		c1.setGameState(s.getGameState());
 		c2.setGameState(s.getGameState());
 		c3.setGameState(s.getGameState());
 		c4.setGameState(s.getGameState());
-		c1.cmdTournament("green:1".split(" "));
-		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
-		assertEquals(new Colour(Colour.c.GREEN), s.getGameState().getTournament().getColour());
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().size());
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().score(new Colour(Colour.c.GREEN)));
-		s.getGameState().setTurn(c2.getPlayer());
-		s.cmdGive(1, "green:2");
-		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
-		c2.cmdPlay("green:2");
-		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
-		assertEquals(1, s.getGameState().getPlayer(c2.getPlayer()).getDisplay().size());
-		assertEquals(1, s.getGameState().getPlayer(c2.getPlayer()).getDisplay().score(new Colour(Colour.c.GREEN)));
-		assertEquals(4, s.getGameState().getTournamentParticipants().size());
+		
+		String[] cards = {"green:1", "blue:3", "yellow:3", "red:5"};
+		for(String card : cards){
+			s.getGameState().setTurn(c1.getPlayer());
+			s.cmdGive(0, card);
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			c1.cmdTournament(card.split(" "));
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			
+			assertEquals(new Colour(card.split(":")[0]), s.getGameState().getTournament().getColour());
+			assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().size());
+			if(cards.equals("green:1")){
+				assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().score(new Colour(card.split(":")[0])));
+			}else{
+				assertEquals(new DisplayCard(card).getValue(), s.getGameState().getPlayer(c1.getPlayer()).getDisplay().score(new Colour(card.split(":")[0])));
+			}
+			
+			
+			s.getGameState().setTurn(c2.getPlayer());
+			s.cmdGive(1, card);
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			c2.cmdPlay(card);
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			assertEquals(1, s.getGameState().getPlayer(c2.getPlayer()).getDisplay().size());
+			c2.cmdWithdraw();
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			s.getGameState().setTurn(c3.getPlayer());
+			c3.cmdWithdraw();
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			s.getGameState().setTurn(c4.getPlayer());
+			c4.cmdWithdraw();
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			if(c1.getPlayer().getTokens().size() > 0)c1.getPlayer().getTokens().remove(0);
+		}
 	}
 	
 	@Test
-	public void TestTournamentM1Green() {
+	public void TestTournamentM1() {
 		System.out.println("\nTest: Green tournament multiple 1 Card.\n******************************\n");
 		s.cmdGive(0, "green:1");
 		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
@@ -130,7 +152,7 @@ public class GameLogicTest {
 	}
 	
 	@Test
-	public void TestTournamentSquireGreen() {
+	public void TestTournamentSquire() {
 		System.out.println("\nTest: Green tournament 1 Squire.\n******************************\n");
 		s.cmdGive(0, "green:1");
 		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
@@ -159,7 +181,7 @@ public class GameLogicTest {
 	}
 	
 	@Test
-	public void TestTournamentMaidenGreen() {
+	public void TestTournamentMaiden() {
 		System.out.println("\nTest: Green tournament 1 Maiden.\n******************************\n");
 		s.cmdGive(0, "green:1");
 		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
@@ -194,7 +216,7 @@ public class GameLogicTest {
 	}
 	
 	@Test
-	public void TestTournamentSupportersGreen() {
+	public void TestTournamentSupporters() {
 		System.out.println("\nTest: Green tournament 1 Maiden.\n******************************\n");
 		s.cmdGive(0, "green:1");
 		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
@@ -344,7 +366,7 @@ public class GameLogicTest {
 	}
 	
 	@Test
-	public void TestTournamentA1Green() {
+	public void TestTournamentA1() {
 		System.out.println("\nTest: Green tournament all 1 Card.\n******************************\n");
 		s.cmdGive(0, "green:1");
 		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
@@ -389,35 +411,51 @@ public class GameLogicTest {
 	}
 	
 	@Test
-	public void TestTournamentXGreen() {
-		System.out.println("\nTest: Green tournament X Card.\n******************************\n");
-		s.cmdGive(0, "green:1");
-		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+	public void TestTournamentX() {
+		System.out.println("\nTest: Tournament 1 Card.\n******************************\n");
 		c1.setGameState(s.getGameState());
 		c2.setGameState(s.getGameState());
 		c3.setGameState(s.getGameState());
 		c4.setGameState(s.getGameState());
-		c1.cmdTournament("green:1".split(" "));
-		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
-		assertEquals(new Colour(Colour.c.GREEN), s.getGameState().getTournament().getColour());
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().size());
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().score(new Colour(Colour.c.GREEN)));
-		s.getGameState().setTurn(c2.getPlayer());
-		s.cmdGive(1, "green:2");
-		s.cmdGive(1, "green:2");
-		s.cmdGive(1, "green:2");
-		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
-		c2.cmdPlay("green:2");
-		c2.cmdPlay("green:2");
-		c2.cmdPlay("green:2");
-		try {Thread.sleep(500);} catch (InterruptedException e) {e.printStackTrace();}	
-		assertEquals(3, s.getGameState().getPlayer(c2.getPlayer()).getDisplay().size());
-		assertEquals(3, s.getGameState().getPlayer(c2.getPlayer()).getDisplay().score(new Colour(Colour.c.GREEN)));
-		assertEquals(4, s.getGameState().getTournamentParticipants().size());
+		
+		String[] cards = {"green:1", "blue:3", "yellow:3", "red:5"};
+		for(String card : cards){
+			s.getGameState().setTurn(c1.getPlayer());
+			s.cmdGive(0, card);
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			c1.cmdTournament(card.split(" "));
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			
+			assertEquals(new Colour(card.split(":")[0]), s.getGameState().getTournament().getColour());
+			assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().size());
+			if(cards.equals("green:1")){
+				assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().score(new Colour(card.split(":")[0])));
+			}else{
+				assertEquals(new DisplayCard(card).getValue(), s.getGameState().getPlayer(c1.getPlayer()).getDisplay().score(new Colour(card.split(":")[0])));
+			}
+			
+			s.getGameState().setTurn(c2.getPlayer());
+			s.cmdGive(1, card);
+			s.cmdGive(1, card);
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			c2.cmdPlay(card);
+			c2.cmdPlay(card);
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			assertEquals(2, s.getGameState().getPlayer(c2.getPlayer()).getDisplay().size());
+			c2.cmdWithdraw();
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			s.getGameState().setTurn(c3.getPlayer());
+			c3.cmdWithdraw();
+			try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
+			s.getGameState().setTurn(c4.getPlayer());
+			c4.cmdWithdraw();
+			try {Thread.sleep(500);} catch (InterruptedException e) {e.printStackTrace();}	
+			if(c1.getPlayer().getTokens().size() > 0)c1.getPlayer().getTokens().remove(0);
+		}
 	}
 	
 	@Test
-	public void TestTournamentMXGreen() {
+	public void TestTournamentMX() {
 		System.out.println("\nTest: Green tournament multiple X Card.\n******************************\n");
 		s.cmdGive(0, "green:1");
 		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
@@ -461,7 +499,7 @@ public class GameLogicTest {
 	}
 	
 	@Test
-	public void TestTournamentAXGreen() {
+	public void TestTournamentAX() {
 		System.out.println("\nTest: Green tournament multiple X Card.\n******************************\n");
 		s.cmdGive(0, "green:1");
 		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}	
