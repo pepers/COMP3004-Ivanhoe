@@ -31,14 +31,14 @@ public class RulesTest {
 		Player p1 = new Player(String.join(" ", arr));
 		c1.initialize(p1, g);
 		c1.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c1.cmdSetname(arr);
+		c1.send(p1);
 
 		c2 = new Client();
 		String[] arr2 = { "TEST PLAYER 2" };
 		Player p2 = new Player(String.join(" ", arr2));
 		c2.initialize(p2, g);
 		c2.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		c2.cmdSetname(arr2);
+		c2.send(p2);
 
 		try {
 			Thread.sleep(200);
