@@ -115,6 +115,10 @@ The game is implemented using a Server/Client socket system. Its primary actors 
       - the Marker Interface Pattern allowed us to group all Client actions under one interface which doesn't need to specify much common behaviour
       - the interface enforces a getAction() method to get the name of the Action, but more importantly in enforces all actions extending Serializable
       - allows for the Client and Server to create and send serializable Action objects, which made sending data back and forth extremely easy
+
+  3. Misc Pattersn:
+    * Proxy Pattern for loading images
+      -Images are loaded into a storage structure when they are first needed. Subsequent requests for the image go through the images proxe first before attempting to load a new picture.
   
 
 
