@@ -14,7 +14,7 @@ group project for COMP3004 (Object-Oriented Software Engineering)
   - [Patterns](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#patterns)
   - [Refactoring](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#refactoring)
   - [Pros/Cons](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#proscons)
-6. [Extra Features](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#extra-features)
+6. [Additional Features](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#additional-features)
 
 ---
 ## Authors:
@@ -146,4 +146,31 @@ Since iteration 1, the following has been refactored:
 2.The delegation of the game rules to the GameState class bloated it far more that our team felt was necessary. In retrospect, a more detailed examination of the exact responsibilities of this class perhaps would have organized the code and split its functions, members into subclasses and sibling classes that would have made sense.  
 
 ---
-## Extra Features:
+## Additional Features:
+- AI
+- Real-Time Ivanhoe
+  - start Server with `java -jar Server.jar -r`  (has `-r` argument)
+  - there is no turn order, all Players play at once
+  - when any Player ends their turn, all Players draw a card from the deck instead
+- Ban / Unban Clients - from Server
+  - `/ban [client ip address]` - adds ip address to banList.txt, and prevents that Client from connecting
+  - `/pardon [client ip address]` - removes ip address from banList.txt
+- Global Chat
+  - Translating - translate chat to another language (word replacement)
+    - Server:
+      - `/translate oldEnglish` to translate chat to Old English
+      - `/translate none` to stop translating chat
+    - Client:
+      - CLI Mode:
+        - `/translate oldEnglish` to translate chat to Old English
+        - `/translate none` to stop translating chat
+      - GUI Mode:
+        - click the `Translate` button on the Menu Scroll and select option from the dialog box
+  - Censoring - censors profanity in the chat
+    - Server:
+      - `/censor` to toggle censoring on/off
+    - Client:
+      - CLI Mode:
+        - `/censor` to toggle censoring on/off
+      - GUI Mode:
+        - click the `Censor` button on the Menu Scroll to toggle censoring on/off
