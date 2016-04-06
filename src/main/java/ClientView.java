@@ -60,7 +60,7 @@ public class ClientView extends JFrame {
 	private ConsoleView console;	
 	private Client client;												//Reference to the parent client
 	private Map<Card, BufferedImage> images;						//Map to hold card images
-	private LobbyView lobbyView;
+	public LobbyView lobbyView;
 	public boolean inGame = false;
 	private boolean isCountdown = false;
 	private boolean connected = false; // connected to server
@@ -84,7 +84,7 @@ public class ClientView extends JFrame {
 	public CardPanel hand;												//Hand of cards for the user
 	public DisplayPanel arena;											//Main area where displays are shown
 	public JButton endTurn, translate, changeName, shutdown;
-	JToggleButton censor;
+	public JToggleButton censor;
 	public ImagePanel banner;
 	public ImagePanel weaponIcon;
 	
@@ -125,13 +125,6 @@ public class ClientView extends JFrame {
 		this.setVisible(true);
 		
 		enterLobby();
-		/*
-		while (!connected) {
-			System.out.print("");
-		}
-		
-		enterLobby();
-	*/
 	}
 	
 	/*
@@ -372,7 +365,7 @@ public class ClientView extends JFrame {
 	 */
 	
 	
-	class ImagePanel extends JPanel {
+	public class ImagePanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		public static final int STRETCH = 1;
 		public static final int TILE = 2;
@@ -471,7 +464,7 @@ public class ClientView extends JFrame {
 		}
 	}
 
-	class CardPanel extends ImagePanel {
+	public class CardPanel extends ImagePanel {
 		private static final long serialVersionUID = 1L;
 		private ArrayList<Card> hand;
 		
@@ -501,12 +494,13 @@ public class ClientView extends JFrame {
 		}
 	}
 
-	class CardView extends JPanel {
+	public class CardView extends JPanel {
 		private static final long serialVersionUID = 1L;
 		
 		private Card card;
 		private BufferedImage img;
-		boolean mouseOver = false;
+		private boolean mouseOver = false;
+		public boolean highlighted = false;
 		private int w = 75;
 		private int h = 106;
 		
@@ -591,11 +585,13 @@ public class ClientView extends JFrame {
 			g2.drawImage(img,0,0, w, h, null);
 			if(client.getGameState().canPlay(card, client.getPlayer()) == 0){
 				if (mouseOver) {
+					highlighted = true;
 					g2.setColor(new Color(0, 0, 0, 70));
 					g2.setStroke(new BasicStroke(w / 2));
 					g2.drawRect(0, 0, w, h);
 				}
 			}else{
+				highlighted = false;
 				g2.setColor(new Color(0, 0, 0, 100));
 				g2.fillRect(0, 0, w, h);
 			}
@@ -995,11 +991,11 @@ public class ClientView extends JFrame {
         }
 	}
 	
-	class LobbyView extends JPanel{
+	public class LobbyView extends JPanel{
 		private static final long serialVersionUID = 1L;
 
-		private ConsoleView console;
-		private LoginView login;
+		public ConsoleView console;
+		public LoginView login;
 		
 		public LobbyView(){
 			setLayout(new MigLayout(
@@ -1035,20 +1031,20 @@ public class ClientView extends JFrame {
 	/*
 	 * enter name, server address, server port
 	 */
-	class LoginView extends ImagePanel {
+	public class LoginView extends ImagePanel {
 		private static final long serialVersionUID = 1L;
-		private JLabel lname    = new JLabel("Your Name: ");
-		private JLabel laddress = new JLabel("Server Address: ");
-		private JLabel lport    = new JLabel("Server Port: ");
-		private JLabel lcolor    = new JLabel("Color: ");
-		private JTextField tname = new JTextField(10);
-		private JTextField taddress = new JTextField(10);
-		private JTextField tport = new JTextField(10);
-		private JButton tcolor = new JButton("Choose");
-		private JButton connect = new JButton("Connect");
-		private JPanel labels = new JPanel();
-		private JPanel textfields = new JPanel();
-		private JPanel connectionBox =new JPanel();
+		public JLabel lname    = new JLabel("Your Name: ");
+		public JLabel laddress = new JLabel("Server Address: ");
+		public JLabel lport    = new JLabel("Server Port: ");
+		public JLabel lcolor    = new JLabel("Color: ");
+		public JTextField tname = new JTextField(10);
+		public JTextField taddress = new JTextField(10);
+		public JTextField tport = new JTextField(10);
+		public JButton tcolor = new JButton("Choose");
+		public JButton connect = new JButton("Connect");
+		public JPanel labels = new JPanel();
+		public JPanel textfields = new JPanel();
+		public JPanel connectionBox =new JPanel();
 		
 		public LoginView(String path) {
 			this(path, ImagePanel.TILE);
@@ -1173,19 +1169,20 @@ public class ClientView extends JFrame {
 		public Color getColor() { return this.tcolor.getBackground(); }
 	}
 	
-	class ConsoleView extends ImagePanel{
+	public class ConsoleView extends ImagePanel{
 		private static final long serialVersionUID = 1L;
 		public static final int COMMAND = 0;
 		public static final int USER_INPUT = 1;
 		private String inputText = null;
 		int mode = COMMAND;
 		
-		JScrollPane areaScrollPane;
-		JTextPane textArea;
-		JTextField input;
-		private JButton ready = new JButton("Ready");
+		public JScrollPane areaScrollPane;
+		public JTextPane textArea;
+		public JTextField input;
+		public JButton ready = new JButton("Ready");
 		private boolean isReady = false;
 		private JPanel bottom = new JPanel();
+		public String lastMessage = null;
 		
 		public ConsoleView(String path){
 			this(path, ImagePanel.TILE, false);
@@ -1260,6 +1257,7 @@ public class ClientView extends JFrame {
 			this.mode = mode;
 		}
 		public void write(String s, int type) {
+			lastMessage = s;
 			StyledDocument doc = textArea.getStyledDocument();
 			Style style = textArea.addStyle("", null);
 			try {
