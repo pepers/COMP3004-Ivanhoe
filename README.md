@@ -116,8 +116,7 @@ The game is implemented using a Server/Client socket system. Its primary actors 
       - the interface enforces a getAction() method to get the name of the Action, but more importantly in enforces all actions extending Serializable
       - allows for the Client and Server to create and send serializable Action objects, which made sending data back and forth extremely easy
 
-  3. Misc Patterns:
-    * Proxy Pattern for loading images:
+  4. Proxy Pattern for loading images:
       - Images are loaded into a storage structure when they are first needed. Subsequent requests for the image go through the images proxy first before attempting to load a new picture.
 
 #### Refactoring:
@@ -149,15 +148,30 @@ Since iteration 1, the following has been refactored:
 
 ---
 ## Additional Features:
-- AI
+- AI - Server can start AI Clients that will connect to the Server and play on their own
+  - AI have four skills (which are recorded as numbers from -1 to 1):
+    - StartTournament skill
+    - PlayCard skill
+    - EndTurn skill
+    - Withdraw skill
+  - Server starts AI Client with:
+    - `/ai [StartTournament skill] [PlayCard skill] [EndTurn skill] [Withdraw skill]`
+      - eg: `/ai 1 0.85 0 -0.2`
+    - OR `/ai [AI Profile Name]`
+      - eg: `/ai Max Power`
+      - AI Profile Names are the name corresponding to a profile in `aiprofiles.txt` which is loaded when the Server starts
+        - to see which profiles are loaded on Server, type `/listai`
+        - each line in the `aiprofiles.txt` file is a new profile, and new profiles can be manually added with a text editor
+          - syntax is: `[AI Profile Name] [StartTournament skill] [PlayCard skill] [EndTurn skill] [Withdraw skill]`
+            - eg: `Max Power 1 1 1 1`
 - Real-Time Ivanhoe
   - start Server with `java -jar Server.jar -r`  (has `-r` argument)
   - there is no turn order, all Players play at once
   - when any Player ends their turn, all Players draw a card from the deck instead
 - Ban / Unban Clients - from Server
-  - `/ban [client ip address]` - adds ip address to banList.txt, and prevents that Client from connecting
-  - `/pardon [client ip address]` - removes ip address from banList.txt
-- Global Chat
+  - `/ban [client ip address]` - adds ip address to `banList.txt`, and prevents that Client from connecting
+  - `/pardon [client ip address]` - removes ip address from `banList.txt`
+- Global Chat - Clients and Server can all talk to each other through messages
   - Translating - translate chat to another language (word replacement)
     - Server:
       - `/translate oldEnglish` to translate chat to Old English
