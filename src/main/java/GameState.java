@@ -278,7 +278,7 @@ public class GameState implements Serializable{
 					if (play.getCards() == null) {
 						// get all different values of cards in Display
 						Set<Integer> values = p.getDisplay().getValues();
-						if (values.isEmpty()) { break; }
+						if ((values == null) || (values.isEmpty())) { break; }
 						for (Integer v : values) {
 							// get all cards of value v
 							ArrayList<DisplayCard> cards =  p.getDisplay().getAll(v);
