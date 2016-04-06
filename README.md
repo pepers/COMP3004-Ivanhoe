@@ -22,7 +22,8 @@ Team #13:
 
 ---
 ## About:
-Ivanhoe is a card game by Reiner Knizia.  The rules and faq for the game can be found at [/doc/rules/](https://github.com/pepers/COMP3004-Ivanhoe/tree/master/doc/rules).  This Java project attempts to faithfully recreate the original game as a digital computer game, in which you can connect to other players over a network.
+Ivanhoe is a playing card game where players take the role of knights battling in tournaments. Players play numbered weapons and supporter cards to combat each other, while using special action cards to swing the tournament in their favor. The game supports up to five players. As in any turn based card game, players must consider the unknowns of their opponent’s hand, the cards in the deck, and think many steps ahead to become victorious. The rules and faq for the game can be found at [/doc/rules/](https://github.com/pepers/COMP3004-Ivanhoe/tree/master/doc/rules).  
+This Java project attempts to faithfully recreate the original game as a digital computer game, in which you can connect to other players over a network.
 
 ---
 ## Major Releases:
