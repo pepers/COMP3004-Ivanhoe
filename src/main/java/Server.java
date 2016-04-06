@@ -82,8 +82,10 @@ public class Server implements Runnable, Serializable {
 	public static void main(String[] args) {
 		System.out.println("Beginning server setup...");
 		Server s = new Server(Config.DEFAULT_PORT);
-		if (args[0].equals("-r")){
-			s.realTime = true;
+		if (args.length != 0) {
+			if (args[0].equals("-r")){
+				s.realTime = true;
+			}
 		}
 		if (s.startup()) {
 			System.out.println("Setup successful.");
