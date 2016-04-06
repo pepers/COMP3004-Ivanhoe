@@ -1,0 +1,67 @@
+Player2 has begun their turn!
+DISPLAYS: 
+ ===== Tournament of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (0)          Player3 (2) (SHIELD)
+                                        Blue:2              
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+DISPLAYS: 
+ ===== Tournament of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (0)          Player3 (2) (SHIELD)
+                                        Blue:2              
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+/give 1 knock down
+Knock Down Action Card given to Player2.
+DISPLAYS: 
+ ===== Tournament of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (0)          Player3 (2) (SHIELD)
+                                        Blue:2              
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 is playing a Knock Down
+DISPLAYS: 
+ ===== Tournament of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (0)          Player3 (2) (SHIELD)
+                                        Blue:2              
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Red:5 was taken from Player's Hand, and added to Player2's Hand.
+DISPLAYS: 
+ ===== Tournament of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (0)          Player3 (2) (SHIELD)
+                                        Blue:2              
+                                                            

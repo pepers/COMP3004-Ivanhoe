@@ -63,6 +63,8 @@ public class Server implements Runnable, Serializable {
 	private ArrayList<String[]> profiles;
 	private File aiprofiles;
 	private BufferedReader aiReader;
+
+	public boolean noDrawing = false;
 	
 	public GameState getGameState(){return gameState;}
 	public int getConnected() {return numClients;}
@@ -671,8 +673,10 @@ public class Server implements Runnable, Serializable {
 			if (clients.get(t).getReadyValue() == Player.READY) {
 				clients.get(t).setReady(Player.IN_GAME);
 				
-				for (int j = 0; j < 8; j++) {
-					clients.get(t).addToHand(gameState.drawFromDeck());
+				if(!noDrawing){
+					for (int j = 0; j < 8; j++) {
+						clients.get(t).addToHand(gameState.drawFromDeck());
+					}
 				}
 				
 				gameState.addPlayer(clients.get(t));
@@ -681,7 +685,7 @@ public class Server implements Runnable, Serializable {
 		updateGameStates();
 		Player startPlayer = gameState.nextTurn();
 		Card drew = gameState.drawFromDeck();
-		gameState.addHand(startPlayer, drew); 
+		if(!noDrawing)gameState.addHand(startPlayer, drew); 
 		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
 		message("You are the starting player, and drew a " + drew.toString() + " card.", startPlayer);
 		message("Start a tournament if able.", startPlayer);

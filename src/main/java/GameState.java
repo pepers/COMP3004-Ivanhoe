@@ -133,6 +133,10 @@ public class GameState implements Serializable{
 		return getPlayer(player.getId()).addToHand(card);
 	}
 	
+	public void removeHand(Player player) {
+		getPlayer(player.getId()).emptyHand();
+	}
+	
 	public int removeHand(Player player, Card card) {
 		return getPlayer(player.getId()).removeFromHand(card);
 	}

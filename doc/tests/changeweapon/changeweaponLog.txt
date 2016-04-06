@@ -1,0 +1,75 @@
+Player3 has begun their turn!
+DISPLAYS: 
+ ===== Grand Tourney of Willowsbank (Red) =====
+                                                            
+Player3 (0)         Player (9)          Player2 (11)        
+                    Red:4               Red:4               
+                    Red:5               Squire:2            
+                                        Squire:3            
+                                        Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+DISPLAYS: 
+ ===== Grand Tourney of Willowsbank (Red) =====
+                                                            
+Player3 (0)         Player (9)          Player2 (11)        
+                    Red:4               Red:4               
+                    Red:5               Squire:2            
+                                        Squire:3            
+                                        Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+/give 2 change weapon
+Change Weapon Action Card given to Player3.
+DISPLAYS: 
+ ===== Grand Tourney of Willowsbank (Red) =====
+                                                            
+Player3 (0)         Player (9)          Player2 (11)        
+                    Red:4               Red:4               
+                    Red:5               Squire:2            
+                                        Squire:3            
+                                        Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 is playing a Change Weapon
+DISPLAYS: 
+ ===== Grand Tourney of Willowsbank (Red) =====
+                                                            
+Player3 (0)         Player (9)          Player2 (11)        
+                    Red:4               Red:4               
+                    Red:5               Squire:2            
+                                        Squire:3            
+                                        Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Tournament colour changed to Blue
+DISPLAYS: 
+ ===== Grand Tourney of Willowsbank (Blue) =====
+                                                            
+Player3 (0)         Player (9)          Player2 (11)        
+                    Red:4               Red:4               
+                    Red:5               Squire:2            
+                                        Squire:3            
+                                        Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            

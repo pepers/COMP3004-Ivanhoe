@@ -1,0 +1,53 @@
+DISPLAYS: 
+ ===== Grand Tourney of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (8)          Player3 (9)         
+                    Blue:4              Blue:5              
+                    Blue:4              Squire:2            
+                                        Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+/give 1 outmaneuver
+Outmaneuver Action Card given to Player2.
+DISPLAYS: 
+ ===== Grand Tourney of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (8)          Player3 (9)         
+                    Blue:4              Blue:5              
+                    Blue:4              Squire:2            
+                                        Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 is playing a Outmaneuver
+DISPLAYS: 
+ ===== Grand Tourney of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (8)          Player3 (9)         
+                    Blue:4              Blue:5              
+                    Blue:4              Squire:2            
+                                        Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+All opponents of Player2 remove the last card of their Display.
+DISPLAYS: 
+ ===== Grand Tourney of New Year’s Day (Blue) =====
+                                                            
+Player2 (0)         Player (4)          Player3 (7)         
+                    Blue:4              Blue:5              
+                                        Squire:2            
+                                                            

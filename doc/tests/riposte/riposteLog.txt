@@ -1,0 +1,61 @@
+/give 1 riposte
+Riposte Action Card given to Player2.
+DISPLAYS: 
+ ===== Karthmere Fort Celebratory Competition (Blue) =====
+                                                            
+Player3 (7)         Player (8) (SHIELD) Player2 (0)         
+Blue:5              Blue:2                                  
+Squire:2            Maiden:6                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 plays a Blue:4
+DISPLAYS: 
+ ===== Karthmere Fort Celebratory Competition (Blue) =====
+                                                            
+Player3 (7)         Player (8) (SHIELD) Player2 (4)         
+Blue:5              Blue:2              Blue:4              
+Squire:2            Maiden:6                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 is playing a Riposte
+DISPLAYS: 
+ ===== Karthmere Fort Celebratory Competition (Blue) =====
+                                                            
+Player3 (7)         Player (8) (SHIELD) Player2 (4)         
+Blue:5              Blue:2              Blue:4              
+Squire:2            Maiden:6                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Squire:2 was removed from Player3's Display, and added to Player2's Display.
+DISPLAYS: 
+ ===== Karthmere Fort Celebratory Competition (Blue) =====
+                                                            
+Player3 (5)         Player (8) (SHIELD) Player2 (6)         
+Blue:5              Blue:2              Blue:4              
+                    Maiden:6            Squire:2            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            

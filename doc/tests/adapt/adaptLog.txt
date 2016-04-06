@@ -1,0 +1,39 @@
+/give 2 adapt
+Adapt Action Card given to Player3.
+DISPLAYS: 
+ ===== Maetrine Stronghold Celebratory Competition (Yellow) =====
+                                                            
+Player (7)          Player3 (7)         Player2 (6) (SHIELD)
+Yellow:2            Squire:2            Yellow:2            
+Squire:2            Squire:2            Yellow:4            
+Yellow:3            Yellow:3                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 is playing a Adapt
+DISPLAYS: 
+ ===== Maetrine Stronghold Celebratory Competition (Yellow) =====
+                                                            
+Player (7)          Player3 (7)         Player2 (6) (SHIELD)
+Yellow:2            Squire:2            Yellow:2            
+Squire:2            Squire:2            Yellow:4            
+Yellow:3            Yellow:3                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 is Shielded from the Adapt card.
+Each player keeps one Display Card of each value.
+DISPLAYS: 
+ ===== Maetrine Stronghold Celebratory Competition (Yellow) =====
+                                                            
+Player (5)          Player3 (5)         Player2 (6) (SHIELD)
+Yellow:2            Squire:2            Yellow:2            
+Yellow:3            Yellow:3            Yellow:4            

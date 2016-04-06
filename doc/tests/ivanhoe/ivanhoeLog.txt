@@ -1,0 +1,36 @@
+DISPLAYS: 
+ ===== Tournament of Narlington Fort (Purple) =====
+                                                            
+Player3 (4)         Player (6)          Player2 (0)         
+Purple:4            Maiden:6                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 is playing a Unhorse
+DISPLAYS: 
+ ===== Tournament of Narlington Fort (Purple) =====
+                                                            
+Player3 (4)         Player (6)          Player2 (0)         
+Purple:4            Maiden:6                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 blocks a Play card with Ivanhoe!
+Player3 blocks a Play card with Ivanhoe!
+DISPLAYS: 
+ ===== Tournament of Narlington Fort (Purple) =====
+                                                            
+Player3 (4)         Player (6)          Player2 (0)         
+Purple:4            Maiden:6                          

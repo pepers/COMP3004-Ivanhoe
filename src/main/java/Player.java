@@ -259,7 +259,12 @@ public class Player implements Serializable{
 	public ArrayList<Token> getTokens() {
 		return tokens;
 	}
+	
 	public void setColor(Color color) {
 		this.playerColor = color;
+	}
+	
+	public void emptyHand() {
+		this.hand.clear();
 	}
 }

@@ -1,0 +1,37 @@
+Retreat Action Card given to Player.
+DISPLAYS: 
+ ===== Grand Tourney of St. George’s Day (Blue) =====
+                                        
+Player (10)         Player2 (0)         
+Blue:3                                  
+Squire:3                                
+Blue:4                                  
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Player is playing a Retreat
+DISPLAYS: 
+ ===== Grand Tourney of St. George’s Day (Blue) =====
+                                        
+Player (10)         Player2 (0)         
+Blue:3                                  
+Squire:3                                
+Blue:4                                  
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Blue:4 was removed from Player's Display, and added to their hand.
+DISPLAYS: 
+ ===== Grand Tourney of St. George’s Day (Blue) =====
+                                        
+Player (6)          Player2 (0)         
+Blue:3                                  
+Squire:3              

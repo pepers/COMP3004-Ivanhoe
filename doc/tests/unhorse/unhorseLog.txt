@@ -1,0 +1,70 @@
+Player plays a Purple:5
+DISPLAYS: 
+ ===== Tournament of Pernstow Fort (Purple) =====
+                                        
+Player (5)          Player2 (9) (SHIELD)
+Purple:5            Squire:3            
+                    Maiden:6            
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Player plays a Squire:2
+DISPLAYS: 
+ ===== Tournament of Pernstow Fort (Purple) =====
+                                        
+Player (7)          Player2 (9) (SHIELD)
+Purple:5            Squire:3            
+Squire:2            Maiden:6            
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+/give 0 unhorse
+Unhorse Action Card given to Player.
+DISPLAYS: 
+ ===== Tournament of Pernstow Fort (Purple) =====
+                                        
+Player (7)          Player2 (9) (SHIELD)
+Purple:5            Squire:3            
+Squire:2            Maiden:6            
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Player is playing a Unhorse
+DISPLAYS: 
+ ===== Tournament of Pernstow Fort (Purple) =====
+                                        
+Player (7)          Player2 (9) (SHIELD)
+Purple:5            Squire:3            
+Squire:2            Maiden:6            
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Tournament colour changed to Blue
+DISPLAYS: 
+ ===== Tournament of Pernstow Fort (Blue) =====
+                                        
+Player (7)          Player2 (9) (SHIELD)
+Purple:5            Squire:3            
+Squire:2            Maiden:6            
+                                        
+                                
