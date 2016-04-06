@@ -1,0 +1,121 @@
+DISPLAYS: 
+ ===== Middleborough Keep Competition (Green) =====
+Y B P                                   
+Player (1)          Player2 (0)         
+Squire:3                                
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Player2 has withdrew from Middleborough Keep Competition!
+Player has been VICTORIOUS in Middleborough Keep Competition!
+DISPLAYS: 
+ ========================================================== 
+Y B P G                                 
+Player (0)          Player2 (0)         
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Player has begun their turn!
+DISPLAYS: 
+ ========================================================== 
+Y B P G                                 
+Player (0)          Player2 (0)         
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+DISPLAYS: 
+ ========================================================== 
+Y B P G                                 
+Player (0)          Player2 (0)         
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Tournament of Ardleby Fort started by Player (Red)
+DISPLAYS: 
+ ===== Tournament of Ardleby Fort (Red) =====
+Y B P G                                 
+Player (6)          Player2 (0)         
+Maiden:6                                
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Player2 has begun their turn!
+DISPLAYS: 
+ ===== Tournament of Ardleby Fort (Red) =====
+Y B P G                                 
+Player (6)          Player2 (0)         
+Maiden:6                                
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+DISPLAYS: 
+ ===== Tournament of Ardleby Fort (Red) =====
+Y B P G                                 
+Player (6)          Player2 (0)         
+Maiden:6                                
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Player2 has withdrew from Tournament of Ardleby Fort!
+Player has been VICTORIOUS in Tournament of Ardleby Fort!
+DISPLAYS: 
+ ========================================================== 
+Y B P G R                               
+Player (0)          Player2 (0)         
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+Player has won the game. Play again soon!
+Game is finished

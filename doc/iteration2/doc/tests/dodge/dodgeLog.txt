@@ -1,0 +1,147 @@
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (0) (STUNNED)Player (4)          Player4 (5)         Player2 (2) (SHIELD)
+                    Blue:4              Squire:2            Squire:2            
+                                        Squire:3                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+Player2 plays a Blue:4
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (0) (STUNNED)Player (4)          Player4 (5)         Player2 (6) (SHIELD)
+                    Blue:4              Squire:2            Squire:2            
+                                        Squire:3            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+Player3 has begun their turn!
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (0) (STUNNED)Player (4)          Player4 (5)         Player2 (6) (SHIELD)
+                    Blue:4              Squire:2            Squire:2            
+                                        Squire:3            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (0) (STUNNED)Player (4)          Player4 (5)         Player2 (6) (SHIELD)
+                    Blue:4              Squire:2            Squire:2            
+                                        Squire:3            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+Player3 plays a Blue:5
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (5) (STUNNED)Player (4)          Player4 (5)         Player2 (6) (SHIELD)
+Blue:5              Blue:4              Squire:2            Squire:2            
+                                        Squire:3            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (5) (STUNNED)Player (4)          Player4 (5)         Player2 (6) (SHIELD)
+Blue:5              Blue:4              Squire:2            Squire:2            
+                                        Squire:3            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+Player3 has withdrew from Swanton Keep Competition!
+Player has begun their turn!
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (0) (STUNNED)Player (4)          Player4 (5)         Player2 (6) (SHIELD)
+                    Blue:4              Squire:2            Squire:2            
+                                        Squire:3            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (0) (STUNNED)Player (4)          Player4 (5)         Player2 (6) (SHIELD)
+                    Blue:4              Squire:2            Squire:2            
+                                        Squire:3            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+Player is playing a Dodge
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (0) (STUNNED)Player (4)          Player4 (5)         Player2 (6) (SHIELD)
+                    Blue:4              Squire:2            Squire:2            
+                                        Squire:3            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+Squire:2 was removed from Player4's Display.
+DISPLAYS: 
+ ===== Swanton Keep Competition (Blue) =====
+                                                                                
+Player3 (0) (STUNNED)Player (4)          Player4 (3)         Player2 (6) (SHIELD)
+                    Blue:4              Squire:3            Squire:2            
+                                                            Blue:4              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                

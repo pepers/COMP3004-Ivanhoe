@@ -1,0 +1,39 @@
+/give 2 drop weapon
+Drop Weapon Action Card given to Player3.
+DISPLAYS: 
+ ===== Tournament of All Hallows Eve (Red) =====
+                                                            
+Player3 (3)         Player (0)          Player2 (3)         
+Squire:3                                Red:3               
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 is playing a Drop Weapon
+DISPLAYS: 
+ ===== Tournament of All Hallows Eve (Red) =====
+                                                            
+Player3 (3)         Player (0)          Player2 (3)         
+Squire:3                                Red:3               
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Tournament colour changed from Red to green.
+DISPLAYS: 
+ ===== Tournament of All Hallows Eve (Green) =====
+                                                            
+Player3 (1)         Player (0)          Player2 (1)         
+Squire:3                                Red:3               
+                                                            
+                                          

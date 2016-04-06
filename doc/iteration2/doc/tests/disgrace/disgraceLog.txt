@@ -1,0 +1,55 @@
+DISPLAYS: 
+ ===== Grand Tourney of Kalepeck Fort (Yellow) =====
+                                                            
+Player3 (6) (SHIELD)Player (8)          Player2 (0)         
+Squire:3            Squire:2                                
+Squire:3            Maiden:6                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+/give 1 disgrace
+Disgrace Action Card given to Player2.
+DISPLAYS: 
+ ===== Grand Tourney of Kalepeck Fort (Yellow) =====
+                                                            
+Player3 (6) (SHIELD)Player (8)          Player2 (0)         
+Squire:3            Squire:2                                
+Squire:3            Maiden:6                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 is playing a Disgrace
+DISPLAYS: 
+ ===== Grand Tourney of Kalepeck Fort (Yellow) =====
+                                                            
+Player3 (6) (SHIELD)Player (8)          Player2 (0)         
+Squire:3            Squire:2                                
+Squire:3            Maiden:6                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 is Shielded from the Disgrace card.
+All supporters were removed from Player's display.
+Supporters were not removed from Player2's display.
+All players remove all their supporters from their Display.
+DISPLAYS: 
+ ===== Grand Tourney of Kalepeck Fort (Yellow) =====
+                                                            
+Player3 (6) (SHIELD)Player (2)          Player2 (0)         
+Squire:3            Squire:2                                
+Squire:3      

@@ -1,0 +1,66 @@
+Player has begun their turn!
+DISPLAYS: 
+ ===== Grand Tourney of Candlemas (Purple) =====
+                                                            
+Player3 (9)         Player (0)          Player2 (4)         
+Purple:4                                Purple:4            
+Purple:5                                                    
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+DISPLAYS: 
+ ===== Grand Tourney of Candlemas (Purple) =====
+                                                            
+Player3 (9)         Player (0)          Player2 (4)         
+Purple:4                                Purple:4            
+Purple:5                                                    
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+/give 0 break lance
+Break Lance Action Card given to Player.
+DISPLAYS: 
+ ===== Grand Tourney of Candlemas (Purple) =====
+                                                            
+Player3 (9)         Player (0)          Player2 (4)         
+Purple:4                                Purple:4            
+Purple:5                                                    
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player is playing a Break Lance
+DISPLAYS: 
+ ===== Grand Tourney of Candlemas (Purple) =====
+                                                            
+Player3 (9)         Player (0)          Player2 (4)         
+Purple:4                                Purple:4            
+Purple:5                                                    
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Removed all Purple cards from null's Display.
+DISPLAYS: 
+ ===== Grand Tourney of Candlemas (Purple) =====
+                                                            
+Player3 (4)         Player (0)          Player2 (4)         
+Purple:4                                Purple:4           

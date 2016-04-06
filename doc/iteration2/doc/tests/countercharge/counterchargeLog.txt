@@ -1,0 +1,70 @@
+Player3 has begun their turn!
+DISPLAYS: 
+ ===== Nightwell Fortress Competition (Blue) =====
+                                                            
+Player3 (7)         Player (8)          Player2 (10) (SHIELD)
+Blue:4              Blue:4              Blue:4              
+Squire:3            Squire:2            Maiden:6            
+                    Squire:2                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+DISPLAYS: 
+ ===== Nightwell Fortress Competition (Blue) =====
+                                                            
+Player3 (7)         Player (8)          Player2 (10) (SHIELD)
+Blue:4              Blue:4              Blue:4              
+Squire:3            Squire:2            Maiden:6            
+                    Squire:2                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+/give 2 countercharge
+Countercharge Action Card given to Player3.
+DISPLAYS: 
+ ===== Nightwell Fortress Competition (Blue) =====
+                                                            
+Player3 (7)         Player (8)          Player2 (10) (SHIELD)
+Blue:4              Blue:4              Blue:4              
+Squire:3            Squire:2            Maiden:6            
+                    Squire:2                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 is playing a Countercharge
+DISPLAYS: 
+ ===== Nightwell Fortress Competition (Blue) =====
+                                                            
+Player3 (7)         Player (8)          Player2 (10) (SHIELD)
+Blue:4              Blue:4              Blue:4              
+Squire:3            Squire:2            Maiden:6            
+                    Squire:2                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 is Shielded from the Countercharge card.
+All cards of value 4 were removed from Player3's display.
+All cards of value 4 were removed from Player's display.
+All Display Cards of the value 4 were removed.
+DISPLAYS: 
+ ===== Nightwell Fortress Competition (Blue) =====
+                                                            
+Player3 (3)         Player (4)          Player2 (10) (SHIELD)
+Squire:3            Squire:2            Blue:4              
+                    Squire:2            Maiden:6         

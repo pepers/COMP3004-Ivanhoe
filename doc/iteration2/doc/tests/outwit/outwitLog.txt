@@ -1,0 +1,67 @@
+Player2 plays a Green:1
+DISPLAYS: 
+ ===== Maetrine Stronghold Competition (Green) =====
+                                                            
+Player3 (2)         Player (2) (SHIELD) Player2 (3)         
+Squire:3            Blue:2              Blue:4              
+Squire:2            Blue:5              Squire:3            
+                                        Green:1             
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 has begun their turn!
+DISPLAYS: 
+ ===== Maetrine Stronghold Competition (Green) =====
+                                                            
+Player3 (2)         Player (2) (SHIELD) Player2 (3)         
+Squire:3            Blue:2              Blue:4              
+Squire:2            Blue:5              Squire:3            
+                                        Green:1             
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+DISPLAYS: 
+ ===== Maetrine Stronghold Competition (Green) =====
+                                                            
+Player3 (2)         Player (2) (SHIELD) Player2 (3)         
+Squire:3            Blue:2              Blue:4              
+Squire:2            Blue:5              Squire:3            
+                                        Green:1             
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 is playing a Outwit
+DISPLAYS: 
+ ===== Maetrine Stronghold Competition (Green) =====
+                                                            
+Player3 (2)         Player (2) (SHIELD) Player2 (3)         
+Squire:3            Blue:2              Blue:4              
+Squire:2            Blue:5              Squire:3            
+                                        Green:1             
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player3 took a Blue:4 card from Player2, and gave them a Squire:3 card.
+DISPLAYS: 
+ ===== Maetrine Stronghold Competition (Green) =====
+                                                            
+Player3 (2)         Player (2) (SHIELD) Player2 (3)         
+Squire:3            Blue:2              Blue:4              
+Squire:2            Blue:5              Squire:3            
+                                        Green:1             

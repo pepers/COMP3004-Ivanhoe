@@ -1,0 +1,56 @@
+Player2 plays a Squire:2
+DISPLAYS: 
+ ===== Leyebourne Stronghold Competition (Red) =====
+                                                            
+Player2 (2)         Player (6)          Player3 (10)        
+Squire:2            Red:3               Red:5               
+                    Red:3               Red:5               
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+/give 1 charge
+Charge Action Card given to Player2.
+DISPLAYS: 
+ ===== Leyebourne Stronghold Competition (Red) =====
+                                                            
+Player2 (2)         Player (6)          Player3 (10)        
+Squire:2            Red:3               Red:5               
+                    Red:3               Red:5               
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Player2 is playing a Charge
+DISPLAYS: 
+ ===== Leyebourne Stronghold Competition (Red) =====
+                                                            
+Player2 (2)         Player (6)          Player3 (10)        
+Squire:2            Red:3               Red:5               
+                    Red:3               Red:5               
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+Cards of value 2 were not removed from Player2's display.
+All cards of value 2 were removed from Player's display.
+All cards of value 2 were removed from Player3's display.
+All Display Cards of the value 2 were removed.
+DISPLAYS: 
+ ===== Leyebourne Stronghold Competition (Red) =====
+                                                            
+Player2 (2)         Player (6)          Player3 (10)        
+Squire:2            Red:3               Red:5               
+                    Red:3               Red:5           
