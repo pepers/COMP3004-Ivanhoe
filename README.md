@@ -57,26 +57,26 @@ Ivanhoe is a card game by Reiner Knizia.  The rules and faq for the game can be 
 ---
 ## Design:
 #### Networking:
+Our strategy for networking was to pass lots of serializable objects between the Clients and Server.  When the Client is started, a new thread is created for reading user input, another thread for receiving objects from the Server over the socket.  When the Server is started, a thread is created for reading user input from the console, another thread is created just to wait for new Clients that are attempting to connect, and a final thread to handle the Server's responsibilities to the game.  On both the Client and Server, everything that is receieved is a serializable object, including all Client Actions, Chat messages, and Player and GameState objects, etc.
 
 #### Overall Architecture:
 
 #### Patterns:
   1. Chain-of-Responsibility:
-    1. ValidCommand class ([ValidCommand UML Class Diagram](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/doc/uml/class%20diagrams/CD-ValidCommand.png)):
+    * ValidCommand class ([ValidCommand UML Class Diagram](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/doc/uml/class%20diagrams/CD-ValidCommand.png)):
       - the Client and Server each have a list of commands that the user can type in, in Command Line (CLI) Mode
       - each command starts with `/` and a list of commands and their syntax can be viewed by typing `/help`
       - the commands are required to play through the game, with such favourites as `/play [card]` and `/withdraw`
       - it was quickly noticed that when checking for the validity of typed commands (such as their arguments, and whether it was an appropriate time to use that command or not), there were a lot of repetition in what we were checking for, and often many checks would need to happen in a row
       - the Chain-of-Responsibility design pattern allowed us to chain multiple validity checks together, reuse those checks for multiple commands, and return quickly if any one check failed
   2. Command:
-    1. PromptCommand concrete class, CommandInterface, and CommandInvoker class ([ExecuteActionCards UML Class Diagram](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/doc/uml/class%20diagrams/CD-ExecuteActionCards.png)):
-    2. eoui
+    * PromptCommand concrete class, CommandInterface, and CommandInvoker class ([ExecuteActionCards UML Class Diagram](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/doc/uml/class%20diagrams/CD-ExecuteActionCards.png)):
       - the Server has a prompt(String,Player,ArrayList) method that prompts a Client, corresponding to a Player, for a choice from the ArrayList
       - this is used to get the player's choice for things such as which token they want after winning a purple tournament, but also for Action card choices when they attempt to play an Action card
       - we realized that it would be a good design choice to encapsulate the rules of the game involving Action cards within the GameState class, but the GameState does not have knowledge of the Server or the Client (which we believe it shouldn't)
       - but we still needed to prompt the Client for choices involving Action cards while they're rules were being executed in the GameState
       - the Command design pattern allowed us to invoke a concrete PromptCommand class to run the prompt method on the Server, from within the execute method in the GameState
-    2. ClientAI ([corresponding UML Class Diagram](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/doc/uml/class%20diagrams/CD-AI.png)):
+    * ClientAI ([corresponding UML Class Diagram](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/doc/uml/class%20diagrams/CD-AI.png)):
       - the ClientAI class runs a Client through AI decisions
       - multiple AI can play against each other or against human players
       - ClientAI makes use of the Command design pattern by executing the concrete classes: StartTournament, PlayCard, EndTurn, and Withdraw
