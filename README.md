@@ -4,6 +4,8 @@ group project for COMP3004 (Object-Oriented Software Engineering)
 ## Table of Contents:
 1. [Authors](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#authors)     
 2. [About](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#about)
+  - [From the Rules Description](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#from-the-rules-description)
+  - [Overview](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#overview)
 3. [Major Releases](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#major-releases)
 4. [Installation/Setup](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#installation--setup)
 5. [Running](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#running)
@@ -13,6 +15,7 @@ group project for COMP3004 (Object-Oriented Software Engineering)
   - [Patterns](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#patterns)
   - [Refactoring](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#refactoring)
   - [Pros/Cons](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#proscons)
+6. [Extra Features](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#extra-features)
 
 ---
 ## Authors:
@@ -24,7 +27,7 @@ Team #13:
 ## About:
 Ivanhoe is a playing card game where players take the role of knights battling in tournaments. Players play numbered weapons and supporter cards to combat each other, while using special action cards to swing the tournament in their favor. The game supports up to five players. As in any turn based card game, players must consider the unknowns of their opponent’s hand, the cards in the deck, and think many steps ahead to become victorious. The rules and faq for the game can be found at [/doc/rules/](https://github.com/pepers/COMP3004-Ivanhoe/tree/master/doc/rules).
 
-#### From the rules description:   
+#### From the Rules Description:   
 *Take on the role of a knight and join the prestigious tournaments at the king’s court. Use your cards to win the jousting competitions, or fight with your sword, axe or morningstar. Rally your squires, gain the support of a maiden, and surprise your opponents. The first player to win four or five different tournaments becomes the overall victor.*
 
 This Java project attempts to faithfully recreate the original game as a digital computer game, in which you can connect to other players over a network.
@@ -145,3 +148,5 @@ Since iteration 1, the following has been refactored:
 1.The implementation of action cards required them to be hard-coded in on a per card basis. This obviously means that new action cards would require moderate refactoring and heavy testing before they could be considered implemented. However, given that the number of cards was finite, and there were no plans to add custom cards, this was deemed acceptable, and for the most part, less work overall.  
 2.The delegation of the game rules to the GameState class bloated it far more that our team felt was necessary. In retrospect, a more detailed examination of the exact responsibilities of this class perhaps would have organized the code and split its functions, members into subclasses and sibling classes that would have made sense.  
 
+---
+## Extra Features:
