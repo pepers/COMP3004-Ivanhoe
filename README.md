@@ -47,7 +47,10 @@ Ivanhoe is a card game by Reiner Knizia.  The rules and faq for the game can be 
   - for Iteration 1: [/doc/iteration1/](https://github.com/pepers/COMP3004-Ivanhoe/tree/master/doc/iteration1)
   - for Final Iteration: TBA
 - run the Server
-  - `java -jar Server.jar`
+  - normal game
+    - `java -jar Server.jar`
+  - real-time Ivanhoe
+    - `java -jar Server.jar -r`
 - run the Client(s)
   - in GUI Mode
     - `java -jar Client.jar`
@@ -69,6 +72,7 @@ Our strategy for networking was to pass lots of serializable objects between the
       - the commands are required to play through the game, with such favourites as `/play [card]` and `/withdraw`
       - it was quickly noticed that when checking for the validity of typed commands (such as their arguments, and whether it was an appropriate time to use that command or not), there were a lot of repetition in what we were checking for, and often many checks would need to happen in a row
       - the Chain-of-Responsibility design pattern allowed us to chain multiple validity checks together, reuse those checks for multiple commands, and return quickly if any one check failed
+
   2. Command:
     * PromptCommand concrete class, CommandInterface, and CommandInvoker class ([ExecuteActionCards UML Class Diagram](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/doc/uml/class%20diagrams/CD-ExecuteActionCards.png)):
       - the Server has a prompt(String,Player,ArrayList) method that prompts a Client, corresponding to a Player, for a choice from the ArrayList
@@ -82,6 +86,10 @@ Our strategy for networking was to pass lots of serializable objects between the
       - ClientAI makes use of the Command design pattern by executing the concrete classes: StartTournament, PlayCard, EndTurn, and Withdraw
       - each time the AI invokes the concrete classes's methods, it makes a decision to take action or not (based on the AI's skill levels)
       - this was an excellent design decision and allowed us to encapsulate all actions and information needed for the AI to make each of it's four major decisions
+
+  3. Strategy:
+  
+  4. Facade:
 
 
 #### Refactoring:
