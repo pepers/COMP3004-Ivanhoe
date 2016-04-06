@@ -694,14 +694,36 @@ public class ClientView extends JFrame {
 						submenu.setForeground(Color.white);
 						title = new JLabel("Their cards");
 						submenu.add(title);
-						for (Card theirCard : p.getDisplay().elements()){
+						ArrayList<Card> theirCards = new ArrayList<Card>();
+						theirCards.addAll(p.getDisplay().elements());
+						if (p.getShielded()) { theirCards.add(new ActionCard("Shield")); }
+						if (p.getStunned()) { theirCards.add(new ActionCard("Stunned")); }
+						for (Card theirCard : theirCards){
 							JMenu theirItem = new JMenu(theirCard.toString());
 							theirItem.setOpaque(true);
 							theirItem.setBackground(toRGB(theirCard.getColour()));
 							theirItem.setForeground(Color.white);
 							title = new JLabel("Your cards");
 							theirItem.add(title);
-							for (Card yourCard : client.getPlayer().getDisplay().elements()){
+							ArrayList<Card> yourCards = new ArrayList<Card>();
+							/* 
+							 * can't choose your Shield or Stunned if:
+							 * their card is display Card 
+							 * AND they only have one card in display
+							 */
+							if (!((theirCard instanceof DisplayCard) && (p.getDisplay().size() == 1))) {
+								if (client.getPlayer().getShielded()) { yourCards.add(new ActionCard("Shield")); }
+								if (client.getPlayer().getStunned()) { yourCards.add(new ActionCard("Stunned")); }
+							}
+							/*
+							 * can't choose your display card if:
+							 * their card is not display card
+							 * AND you only have one card in display
+							 */
+							if (!(!(theirCard instanceof DisplayCard) && (client.getPlayer().getDisplay().size() < 2))) {
+								yourCards.addAll(client.getPlayer().getDisplay().elements());
+							}
+							for (Card yourCard : yourCards){
 								JMenuItem yourItem = new JMenuItem(yourCard.toString());
 								yourItem.setOpaque(true);
 								yourItem.setBackground(toRGB(theirCard.getColour()));
@@ -715,24 +737,6 @@ public class ClientView extends JFrame {
 								theirItem.add(yourItem);
 							}
 							submenu.add(theirItem);
-						}
-						if(p.getShielded()){
-							JMenuItem item = new JMenuItem("Shield");
-							ArrayList<Player> players = new ArrayList<Player>();
-							players.add(p);
-							ArrayList<Card> cards = new ArrayList<Card>();
-							cards.add(new ActionCard("Shield"));
-							item.addMouseListener(commandGenerator(actionCard, null, players, cards));
-							submenu.add(item);
-						}
-						if(p.getStunned()){
-							JMenuItem item = new JMenuItem("Stunned");
-							ArrayList<Player> players = new ArrayList<Player>();
-							players.add(p);
-							ArrayList<Card> cards = new ArrayList<Card>();
-							cards.add(new ActionCard("Stunned"));
-							item.addMouseListener(commandGenerator(actionCard, null, players, cards));
-							submenu.add(item);
 						}
 						add(submenu);
 					}

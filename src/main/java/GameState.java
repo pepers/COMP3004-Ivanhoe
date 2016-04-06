@@ -478,7 +478,17 @@ public class GameState implements Serializable{
 					
 					// populate options with player's cards
 					ArrayList<Object> options = new ArrayList<Object>();
-					options.addAll(action.origin.getDisplay().elements()); // add Display Cards to options
+					/* 
+					 * if player has only 1 dc, allow that dc for trade if:
+					 * target has display cards
+					 */
+					if (action.origin.getDisplay().size() == 1) {
+						if (target.getDisplay().size() != 0) {
+							options.addAll(action.origin.getDisplay().elements()); // add Display Cards to options
+						}
+					} else {
+						options.addAll(action.origin.getDisplay().elements()); // add Display Cards to options
+					}
 					if (action.origin.getStunned()) { // add Stunned to options
 						Card stunned = new ActionCard("Stunned");
 						options.add(stunned);
@@ -486,6 +496,11 @@ public class GameState implements Serializable{
 					if (action.origin.getShielded()) { // add Shield to options
 						Card shield = new ActionCard("Shield");
 						options.add(shield);
+					}
+					
+					if (options.isEmpty()) {
+						System.out.println("Error: Outwit: no cards to give to " + target.getName());
+						return false;
 					}
 					
 					prompt = new PromptCommand(server, "Which card would you like to give to " + target.getName() + "?", action.origin, options);
@@ -504,14 +519,32 @@ public class GameState implements Serializable{
 
 					// populate options with target's cards
 					options.clear();
-					options.addAll(target.getDisplay().elements()); // add Display Cards to options
-					if (target.getStunned()) { // add Stunned to options
-						Card stunned = new ActionCard("Stunned");
-						options.add(stunned);
+					/*
+					 *  only allow display cards if:
+					 *  opponent has more than one
+					 *  OR
+					 *  player chose to give a dc
+					 */
+					if ((target.getDisplay().size() > 1) || (dc != null)) {
+						options.addAll(target.getDisplay().elements()); // add Display Cards to options
 					}
-					if (target.getShielded()) { // add Shield to options
-						Card shield = new ActionCard("Shield");
-						options.add(shield);
+					/* don't allow stunned and shielded if:
+					 * player's display was less than 2 cards, and they chose to trade a display card
+					 */
+					if (!((action.origin.getDisplay().size() > 2) && (dc != null))) {
+						if (target.getStunned()) { // add Stunned to options
+							Card stunned = new ActionCard("Stunned");
+							options.add(stunned);
+						}
+						if (target.getShielded()) { // add Shield to options
+							Card shield = new ActionCard("Shield");
+							options.add(shield);
+						}
+					}
+					
+					if (options.isEmpty()) {
+						System.out.println("Error: Outwit: no cards to take from " + target.getName());
+						return false;
 					}
 					
 					prompt = new PromptCommand(server, "Which card would you like to take from " + target.getName() + "?", action.origin, options);
@@ -713,7 +746,10 @@ public class GameState implements Serializable{
 				targets.addAll(unshielded);
 				break;
 			case "Retreat":
-				targets.addAll(controller.getDisplay().elements());
+				// must have at least 2 cards (can't be left with none in display)
+				if (controller.getDisplay().size() > 1) {
+					targets.addAll(controller.getDisplay().elements());
+				}
 				break;
 			case "Riposte":
 				// shielded players aren't affected
