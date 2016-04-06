@@ -2,11 +2,11 @@
 group project for COMP3004 (Object-Oriented Software Engineering)
 
 ### Table of Contents:
-1. [Authors](README.md#authors)     
-2. [About](README.md#about)
-3. [Major Releases](README.md#major-releases)
-4. [Installation/Setup](README.md#installation--setup)
-5. [Running](README.md#running)
+1. [Authors](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#authors)     
+2. [About](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#about)
+3. [Major Releases](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#major-releases)
+4. [Installation/Setup](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#installation--setup)
+5. [Running](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#running)
 
 ---
 ### Authors:
