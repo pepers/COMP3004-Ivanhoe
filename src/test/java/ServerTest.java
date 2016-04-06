@@ -157,16 +157,15 @@ public class ServerTest {
 		
 		s.ban("127.0.0.1");
 		Client c = new Client();
-		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
-		// c.cmdSetname(new String[]{"Client"});
+		assertEquals(0, s.getConnected());
+
+		s.unban("127.0.0.1");
 		try {
 			Thread.sleep(400);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		assertEquals(0, s.getConnected());
-
-		s.unban("127.0.0.1");
+		
 		c = new Client();
 		c.connect(Config.DEFAULT_HOST, Config.DEFAULT_PORT);
 		c.send(new Player("Client"));

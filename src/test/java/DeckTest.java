@@ -46,4 +46,10 @@ public class DeckTest {
 		Card top2 = d.peek();
 		assert(!top.equals(top2));
 	}
+	
+	@Test
+	public void TestTotal(){
+		System.out.println("/nTest: Counting the cards.");
+		assert(d.size() == 110);
+	}
 }

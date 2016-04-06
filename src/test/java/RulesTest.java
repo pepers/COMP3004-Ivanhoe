@@ -85,36 +85,6 @@ public class RulesTest {
 	}
 
 	@Test
-	public void TestRewards() {
-		System.out.println("\nTest: Token Rewards.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, new Colour("blue")));
-		s.getGameState().startTournament(new Tournament(new Colour("blue")));
-
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		c1.setGameState(s.getGameState());
-		c1.cmdPlay("blue:1");
-		c1.cmdEnd();
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		c2.setGameState(s.getGameState());
-		c2.cmdEnd();
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).hasToken(new Token(new Colour("blue"), "unknown")));
-	}
-
-	@Test
 	public void TestRewardsRestrict() {
 		System.out.println("\nTest: Rewards with restriction.");
 		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(1, new Colour("red")));
@@ -173,100 +143,6 @@ public class RulesTest {
 		}
 
 		assertEquals(true, s.getGameState().startTournament(new Tournament(new Colour("green"))));
-	}
-
-	@Test
-	public void TestTournamentGreen() {
-		System.out.println("\nTest: Test green tournament.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(2, new Colour("green")));
-		s.getGameState().startTournament(new Tournament(new Colour("green")));
-		assertEquals("green", s.getGameState().getTournament().getColour());
-
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		c1.setGameState(s.getGameState());
-		c1.cmdPlay("green:2");
-		c1.cmdEnd();
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().size());
-		assertEquals(1, s.getGameState().getPlayer(c1.getPlayer()).getDisplay().score(new Colour(Colour.c.GREEN)));
-
-		c2.setGameState(s.getGameState());
-		c2.cmdEnd();
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void TestTournamentPurple() {
-		System.out.println("\nTest: Test purple tournament.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(2, new Colour("purple")));
-		s.getGameState().startTournament(new Tournament(new Colour("purple")));
-		assertEquals("purple", s.getGameState().getTournament().getColour());
-
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		c1.setGameState(s.getGameState());
-		c1.cmdPlay("purple:2");
-		c1.cmdEnd();
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		c2.setGameState(s.getGameState());
-		c2.cmdEnd();
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		assertEquals ("purple", s.getGameState().getLastColour());
-	}
-	
-	@Test
-	public void TestTournamentYellow() {
-		System.out.println("\nTest: Test yellow tournament.");
-		s.getGameState().addHand(c1.getPlayer(), new DisplayCard(3, new Colour("yellow")));
-		s.getGameState().startTournament(new Tournament(new Colour("yellow")));
-		assertEquals("yellow", s.getGameState().getTournament().getColour());
-
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		c1.setGameState(s.getGameState());
-		c1.cmdPlay("yellow:3");
-		c1.cmdEnd();
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		c2.setGameState(s.getGameState());
-		c2.cmdEnd();
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		assertEquals ("yellow", s.getGameState().getLastColour());
 	}
 	
 	@After

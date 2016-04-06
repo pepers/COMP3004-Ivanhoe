@@ -698,9 +698,7 @@ public class Server implements Runnable, Serializable {
 		int c = 0;
 		while (i.hasNext()) {
 			ServerThread t = i.next();
-			Player p = clients.get(t);
-			if (t.update(gameState))
-				c++;
+			if (t.update(gameState))c++;
 		}
 		return c;
 	}
