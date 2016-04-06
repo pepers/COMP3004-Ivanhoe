@@ -31,14 +31,14 @@ This Java project attempts to faithfully recreate the original game as a digital
 
 #### Architecture:
 The game has the following basic components:
-*Cards
-  *Display cards of a colour and a value
-  *Supporter cards of a value
-  *Action cards with special effects
-*A main player area, where players create their ‘display’ or stack of cards
-*A hand of cards for each player
-*Single deck of cards that player’s draw from
-*Some tokens to mark when a player wins a tournament
+* Cards
+  * Display cards of a colour and a value
+  * Supporter cards of a value
+  * Action cards with special effects
+* A main player area, where players create their ‘display’ or stack of cards
+* A hand of cards for each player
+* Single deck of cards that player’s draw from
+* Some tokens to mark when a player wins a tournament
 
 
 
