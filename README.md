@@ -87,9 +87,12 @@ Our strategy for networking was to pass lots of serializable objects between the
       - each time the AI invokes the concrete classes's methods, it makes a decision to take action or not (based on the AI's skill levels)
       - this was an excellent design decision and allowed us to encapsulate all actions and information needed for the AI to make each of it's four major decisions
 
-  3. Strategy:
+  3. Marker Interface:
+    * Action interface, and Actions ([corresponding UML Class Diagram](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/doc/uml/class%20diagrams/CD-ActionInterface.png)):
+      - the Marker Interface Pattern allowed us to group all Client actions under one interface which doesn't need to specify much common behaviour
+      - the interface enforces a getAction() method to get the name of the Action, but more importantly in enforces all actions extending Serializable
+      - allows for the Client and Server to create and send serializable Action objects, which made sending data back and forth extremely easy
   
-  4. Facade:
 
 
 #### Refactoring:
