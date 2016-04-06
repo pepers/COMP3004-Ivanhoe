@@ -32,7 +32,7 @@ import main.resources.Language.Dialect;
 
 public class Server implements Runnable, Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Thread thread; 									// main thread for the server
 	private ServerInput inputThread; 						// thread that handles console input (commands)
 	private SearchThread searchThread; 						// thread that searches for new players
@@ -65,6 +65,7 @@ public class Server implements Runnable, Serializable {
 	private BufferedReader aiReader;
 
 	public boolean noDrawing = false;
+	public boolean realTime = false;
 	
 	public GameState getGameState(){return gameState;}
 	public int getConnected() {return numClients;}
@@ -81,6 +82,9 @@ public class Server implements Runnable, Serializable {
 	public static void main(String[] args) {
 		System.out.println("Beginning server setup...");
 		Server s = new Server(Config.DEFAULT_PORT);
+		if (args[0].equals("-r")){
+			s.realTime = true;
+		}
 		if (s.startup()) {
 			System.out.println("Setup successful.");
 			System.out.println("Listening at " + s.address + ":" + s.port + "...\n");
@@ -564,15 +568,17 @@ public class Server implements Runnable, Serializable {
 		}else{
 			next = gameState.nextTurn();
 		}
-		Card drew = gameState.drawFromDeck();
-		gameState.addHand(next, drew);
-		for (ServerThread s : clients.keySet()){
-			if (clients.get(s).equals(next)){
-				s.send(new EndTurn());
+		if(!realTime){
+			Card drew = gameState.drawFromDeck();
+			gameState.addHand(next, drew);
+			for (ServerThread s : clients.keySet()){
+				if (clients.get(s).equals(next)){
+					s.send(new EndTurn());
+				}
 			}
+			message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
+			messageExcept(next.getName() + " has begun their turn!", next);
 		}
-		message("Your turn has begun.  You drew a " + drew.toString() + " card!", next);
-		messageExcept(next.getName() + " has begun their turn!", next);
 		updateGameStates();
 		return false;
 	}
@@ -667,6 +673,7 @@ public class Server implements Runnable, Serializable {
 		broadcast("Preparing to start a game...");
 
 		gameState = new GameState();
+		gameState.realTime = this.realTime;
 		Iterator<ServerThread> i = clients.keySet().iterator();
 		while (i.hasNext()) {
 			ServerThread t = i.next();
@@ -685,10 +692,12 @@ public class Server implements Runnable, Serializable {
 		updateGameStates();
 		Player startPlayer = gameState.nextTurn();
 		Card drew = gameState.drawFromDeck();
-		if(!noDrawing)gameState.addHand(startPlayer, drew); 
-		messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
-		message("You are the starting player, and drew a " + drew.toString() + " card.", startPlayer);
-		message("Start a tournament if able.", startPlayer);
+		if(!realTime){
+			if(!noDrawing)gameState.addHand(startPlayer, drew); 
+			messageExcept(startPlayer.getName() + " starts their turn.", startPlayer);
+			message("You are the starting player, and drew a " + drew.toString() + " card.", startPlayer);
+			message("Start a tournament if able.", startPlayer);
+		}
 		updateGameStates();
 		return true;
 	}

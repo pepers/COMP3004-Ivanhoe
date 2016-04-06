@@ -14,7 +14,8 @@ public class GameState implements Serializable{
 	private ArrayList<Player> players;
 	private int numPlayers;
 	private int highScore = 0;
-
+	public boolean realTime = false;
+	
 	private int turnIndex;
 	
 	public static final int NO_TOURNAMENT = 1;
@@ -86,7 +87,6 @@ public class GameState implements Serializable{
 	public void setTurn(Player nextPlayer){
 		int counter = 0;
 		for (Player player: players) {
-			
 			if (player.equals(nextPlayer)){
 				player.setTurn(true);
 				turnIndex = counter;
@@ -95,10 +95,23 @@ public class GameState implements Serializable{
 				player.setTurn(false);
 			}
 		}
+		if(realTime){
+			realTimeTurn();
+		}
 	}
 	
+	public void realTimeTurn(){
+		for (Player player: players) {
+			player.setTurn(true);
+			player.addToHand(deck.draw());
+		}
+	}
 	
 	public Player nextTurn(){
+		if(realTime){
+			realTimeTurn();
+			return null;
+		}
 		if (turnIndex == -1){
 			turnIndex = (new Random()).nextInt(getNumPlayers());
 		}else if(tnmt == null){
