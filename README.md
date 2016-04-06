@@ -40,7 +40,10 @@ The game has the following basic components:
 * Single deck of cards that player’s draw from
 * Some tokens to mark when a player wins a tournament
 
-
+The game is implemented using a Server/Client socket system. Its primary actors are the following entities.
+**Server**:This entity is the core of the game. It holds information on its connected players, the state of the game, and regulates network communication while enforcing game rules.  
+**Client**:This entity relays commands from the human player to the server over the network, while simultaneously interpreting information received back from the server into graphical or textual information.  
+**Player**:Ivanhoe requires players to operate. These are entities that make decision on the game to effect it in various ways. They can be human or computer.  
 
 ---
 ## Major Releases:
