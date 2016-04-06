@@ -56,12 +56,12 @@ public class ClientView extends JFrame {
 	//Private members
 	private static Image cardback;										//The image of the cardback
 	private JPanel gameView;
-	private ImagePanel header, title, controls, cardContext;
+	private ImagePanel header, title, controls;
+
+	public ImagePanel cardContext;
 	private ConsoleView console;	
 	private Client client;												//Reference to the parent client
-	private Map<Card, BufferedImage> images;						//Map to hold card images
-	public LobbyView lobbyView;
-	public boolean inGame = false;
+	private Map<Card, BufferedImage> images;						//Map to hold card image
 	private boolean isCountdown = false;
 	private boolean connected = false; // connected to server
 	private double elapsedPercentage;
@@ -87,6 +87,9 @@ public class ClientView extends JFrame {
 	public JToggleButton censor;
 	public ImagePanel banner;
 	public ImagePanel weaponIcon;
+	public LobbyView lobbyView;
+	public boolean inGame = false;
+	public SelectionMenu menu;
 	
 	//UI Images
 	private Image greyBanner, blueBanner, redBanner, greenBanner, yellowBanner, purpleBanner, 
@@ -523,7 +526,7 @@ public class ClientView extends JFrame {
 							if (client.getGameState().getTournament() == null) {
 								//Auto start a tournament
 								if(selected.getColour().equals("none")){
-									SelectionMenu menu = new SelectionMenu(selected);
+									menu = new SelectionMenu(selected);
 								    menu.show(e.getComponent(), e.getX(), e.getY());
 								}else{
 									client.cmdTournament(new String[]{selected.getColour().toString(), selected.toString()});
@@ -538,7 +541,7 @@ public class ClientView extends JFrame {
 							if(selected.hasTargets()){
 								ArrayList<Object> options = client.getGameState().getTargets(selected, client.getPlayer());
 								if ((options != null) && (options.size() > 0)) {
-									SelectionMenu menu = new SelectionMenu(selected);
+									menu = new SelectionMenu(selected);
 								    menu.show(e.getComponent(), e.getX(), e.getY());
 								}
 							}else{
@@ -848,7 +851,7 @@ public class ClientView extends JFrame {
 
     }
 	
-	class DisplayPanel extends ImagePanel{
+	public class DisplayPanel extends ImagePanel{
 		private static final long serialVersionUID = 1L;
 
 		public DisplayPanel(String path, int i){
@@ -869,13 +872,13 @@ public class ClientView extends JFrame {
 		}
 	}
 	
-	class DisplayView extends JPanel{
+	public class DisplayView extends JPanel{
 		private static final long serialVersionUID = 1L;
 		
 		//The data members needed to populate the display
 		Player player;
 		Display display;
-		int height;
+		public int height;
 		int xm;
 		int width = 150;
 		
