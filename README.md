@@ -34,7 +34,7 @@ This Java project attempts to faithfully recreate the original game as a digital
 ---
 ## Major Releases:
 - [Iteration 1](https://github.com/pepers/COMP3004-Ivanhoe/tree/v1.0)
-- Final Iteration - TBA
+- [Final Iteration](https://github.com/pepers/COMP3004-Ivanhoe/tree/v2.0)
 
 ---
 ## Installation / Setup:
