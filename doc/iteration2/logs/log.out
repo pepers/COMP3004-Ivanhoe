@@ -1,1 +1,17 @@
 [ INFO] [Time: 2016-Apr-06 06:03:57:261] [Class: Server      ] Binding to port 5050, please wait  ...
+[ INFO] [Time: 2016-Apr-06 06:14:35:885] [Class: Server      ] Binding to port 5050, please wait  ...
+[ INFO] [Time: 2016-Apr-06 06:14:35:899] [Class: Server      ] Network setup finished.
+[ INFO] [Time: 2016-Apr-06 06:14:35:904] [Class: Server      ] Thread setup finished.
+[ INFO] [Time: 2016-Apr-06 06:14:54:028] [Class: ServerInput ] Server: command processed: /help
+[ INFO] [Time: 2016-Apr-06 06:18:48:012] [Class: Client      ] attempting to connect to server...
+[ INFO] [Time: 2016-Apr-06 06:18:48:030] [Class: Client      ] connected to server: /127.0.0.1 : 59988
+[ INFO] [Time: 2016-Apr-06 06:18:48:030] [Class: Server      ] Client Requesting connection: /127.0.0.1
+[ INFO] [Time: 2016-Apr-06 06:18:48:041] [Class: ServerThread] Opened socket stream at /127.0.0.1:5050
+[ INFO] [Time: 2016-Apr-06 06:18:48:151] [Class: Server      ] Client Accepted: 59988
+[DEBUG] [Time: 2016-Apr-06 06:18:49:615] [Class: Ready       ] Ready
+[ INFO] [Time: 2016-Apr-06 06:18:49:622] [Class: Server      ] Got an action from Player
+[DEBUG] [Time: 2016-Apr-06 06:18:49:630] [Class: Info        ] Info
+[ INFO] [Time: 2016-Apr-06 06:18:49:634] [Class: Client      ] Player: Info received: Player is ready!
+[ INFO] [Time: 2016-Apr-06 06:18:49:643] [Class: Client      ] Player: Player is ready!
+[ERROR] [Time: 2016-Apr-06 06:18:51:731] [Class: ServerThread] Exception thrown: Connection reset 
+
