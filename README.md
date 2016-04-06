@@ -39,6 +39,7 @@ Ivanhoe is a card game by Reiner Knizia.  The rules and faq for the game can be 
   - junit-4.12.jar
   - log4j-1.2.17.jar
   - miglayout-4.0.jar
+  - abbot.jar
 
 ---
 ## Running:
