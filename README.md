@@ -149,7 +149,7 @@ Since iteration 1, the following has been refactored:
 
 ---
 ## Additional Features:
-- AI - Server can start AI Clients that will connect to the Server and play on their own
+- **AI** - Server can start AI Clients that will connect to the Server and play on their own
   - AI have four skills (which are recorded as numbers from -1 to 1):
     - StartTournament skill
     - PlayCard skill
@@ -165,15 +165,16 @@ Since iteration 1, the following has been refactored:
         - each line in the `aiprofiles.txt` file is a new profile, and new profiles can be manually added with a text editor
           - syntax is: `[AI Profile Name] [StartTournament skill] [PlayCard skill] [EndTurn skill] [Withdraw skill]`
             - eg: `Max Power 1 1 1 1`
-- Real-Time Ivanhoe
+- **Real-Time Ivanhoe**
   - start Server with `java -jar Server.jar -r`  (has `-r` argument)
   - there is no turn order, all Players play at once
   - when any Player ends their turn, all Players draw a card from the deck instead
-- Ban / Unban Clients - from Server
-  - `/ban [client ip address]` - adds ip address to `banList.txt`, and prevents that Client from connecting
-  - `/pardon [client ip address]` - removes ip address from `banList.txt`
-- Global Chat - Clients and Server can all talk to each other through messages
-  - Translating - translate chat to another language (word replacement)
+- **Ban / Unban Clients**
+  - from Server:
+    - `/ban [client ip address]` - adds ip address to `banList.txt`, and prevents that Client from connecting
+    - `/pardon [client ip address]` - removes ip address from `banList.txt`
+- **Global Chat** - Clients and Server can all talk to each other through messages
+  - **Translating** - translate chat to another language (word replacement)
     - Server:
       - `/translate oldEnglish` to translate chat to Old English
       - `/translate none` to stop translating chat
@@ -183,7 +184,7 @@ Since iteration 1, the following has been refactored:
         - `/translate none` to stop translating chat
       - GUI Mode:
         - click the `Translate` button on the Menu Scroll and select option from the dialog box
-  - Censoring - censors profanity in the chat
+  - **Censoring** - censors profanity in the chat
     - Server:
       - `/censor` to toggle censoring on/off
     - Client:
