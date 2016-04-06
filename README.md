@@ -118,9 +118,7 @@ The game is implemented using a Server/Client socket system. Its primary actors 
 
   3. Misc Patterns:
     * Proxy Pattern for loading images:
-      - Images are loaded into a storage structure when they are first needed. Subsequent requests for the image go through the images proxe first before attempting to load a new picture.
-  
-
+      - Images are loaded into a storage structure when they are first needed. Subsequent requests for the image go through the images proxy first before attempting to load a new picture.
 
 #### Refactoring:
 Since iteration 1, the following has been refactored:
