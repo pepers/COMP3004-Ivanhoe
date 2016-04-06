@@ -116,10 +116,10 @@ Since iteration 1, the following has been refactored:
 #### Pros/Cons:
 - Pros    
     The general design chosen was done so to maximize outward growth. That is, its underlying mechanism are malleable and expandable. For example, any number of additional actions can be added to the server and client with little to no refactoring. 
-		The serialization of objects was a deliberate choice as it decreased the chances of error given two versions, and it allowed for a simple translation of Java objects over a TCP connection. Alternative solutions would likely not have been easier for a project of this scale.
-		The game’s inner workings are abstracted away from the player, allowing us have a secure experience while maintaining a record of responsibility for changes that occur over the course of a game.
-		Our input/output system allowed us to give options to clients for a GUI mode or a TEXT mode. Since we allowed for varied input and prepared for varied output, we were able to implement this high-impact enhancement with almost zero refactoring.
+   The serialization of objects was a deliberate choice as it decreased the chances of error given two versions, and it allowed for a simple translation of Java objects over a TCP connection. Alternative solutions would likely not have been easier for a project of this scale.
+   The game’s inner workings are abstracted away from the player, allowing us have a secure experience while maintaining a record of responsibility for changes that occur over the course of a game.
+   Our input/output system allowed us to give options to clients for a GUI mode or a TEXT mode. Since we allowed for varied input and prepared for varied output, we were able to implement this high-impact enhancement with almost zero refactoring.
 - Cons   
    The implementation of action cards required them to be hard-coded in on a per card basis. This obviously means that new action cards would require moderate refactoring and heavy testing before they could be considered implemented. However, given that the number of cards was finite, and there were no plans to add custom cards, this was deemed acceptable, and for the most part, less work overall.
-		The delegation of the game rules to the GameState class bloated it far more that our team felt was necessary. In retrospect, a more detailed examination of the exact responsibilities of this class perhaps would have organized the code and split its functions, members into subclasses and sibling classes that would have made sense.
+   The delegation of the game rules to the GameState class bloated it far more that our team felt was necessary. In retrospect, a more detailed examination of the exact responsibilities of this class perhaps would have organized the code and split its functions, members into subclasses and sibling classes that would have made sense.
 
