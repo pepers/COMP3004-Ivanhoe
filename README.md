@@ -5,7 +5,6 @@ group project for COMP3004 (Object-Oriented Software Engineering)
 1. [Authors](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#authors)     
 2. [About](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#about)
   - [From the Rules Description](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#from-the-rules-description)
-  - [Overview](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#overview)
 3. [Major Releases](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#major-releases)
 4. [Installation/Setup](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#installation--setup)
 5. [Running](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#running)
@@ -31,23 +30,6 @@ Ivanhoe is a playing card game where players take the role of knights battling i
 *Take on the role of a knight and join the prestigious tournaments at the king’s court. Use your cards to win the jousting competitions, or fight with your sword, axe or morningstar. Rally your squires, gain the support of a maiden, and surprise your opponents. The first player to win four or five different tournaments becomes the overall victor.*
 
 This Java project attempts to faithfully recreate the original game as a digital computer game, in which you can connect to other players over a network.
-
-#### Overview:
-The game has the following basic components:
-* Cards
-  * Display cards of a colour and a value
-  * Supporter cards of a value
-  * Action cards with special effects
-* A main player area, where players create their ‘display’ or stack of cards
-* A hand of cards for each player
-* Single deck of cards that player’s draw from
-* Some tokens to mark when a player wins a tournament
-
-The game is implemented using a Server/Client socket system. Its primary actors are the following entities.
-
-**Server**:This entity is the core of the game. It holds information on its connected players, the state of the game, and regulates network communication while enforcing game rules.  
-**Client**:This entity relays commands from the human player to the server over the network, while simultaneously interpreting information received back from the server into graphical or textual information.  
-**Player**:Ivanhoe requires players to operate. These are entities that make decision on the game to effect it in various ways. They can be human or computer.  
 
 ---
 ## Major Releases:
@@ -89,6 +71,21 @@ The game is implemented using a Server/Client socket system. Its primary actors 
 Our strategy for networking was to pass lots of serializable objects between the Clients and Server.  When the Client is started, a new thread is created for reading user input, another thread for receiving objects from the Server over the socket.  When the Server is started, a thread is created for reading user input from the console, another thread is created just to wait for new Clients that are attempting to connect, and a final thread to handle the Server's responsibilities to the game.  On both the Client and Server, everything that is receieved is a serializable object, including all Client Actions, Chat messages, and Player and GameState objects, etc.
 
 #### Overall Architecture:
+The game has the following basic components:
+* Cards
+  * Display cards of a colour and a value
+  * Supporter cards of a value
+  * Action cards with special effects
+* A main player area, where players create their ‘display’ or stack of cards
+* A hand of cards for each player
+* Single deck of cards that player’s draw from
+* Some tokens to mark when a player wins a tournament
+
+The game is implemented using a Server/Client socket system. Its primary actors are the following entities.
+
+**Server**:This entity is the core of the game. It holds information on its connected players, the state of the game, and regulates network communication while enforcing game rules.  
+**Client**:This entity relays commands from the human player to the server over the network, while simultaneously interpreting information received back from the server into graphical or textual information.  
+**Player**:Ivanhoe requires players to operate. These are entities that make decision on the game to effect it in various ways. They can be human or computer.  
 
 #### Patterns:
   1. Chain-of-Responsibility:
