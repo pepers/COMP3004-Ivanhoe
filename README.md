@@ -29,7 +29,7 @@ Ivanhoe is a playing card game where players take the role of knights battling i
 
 This Java project attempts to faithfully recreate the original game as a digital computer game, in which you can connect to other players over a network.
 
-#### Architecture:
+#### Overview:
 The game has the following basic components:
 * Cards
   * Display cards of a colour and a value
