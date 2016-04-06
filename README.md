@@ -84,7 +84,21 @@ Ivanhoe is a card game by Reiner Knizia.  The rules and faq for the game can be 
 
 
 #### Refactoring:
-
+Since iteration 1, the following has been refactored:
+- Colour class added:
+  - many classes had a colour, such as DisplayCards, Tournament, Token, etc.
+  - that duplicate code was encapsulated in the new Colour class 
+- ValidCommand class added, and Chain-of-Responsibility pattern:
+  - the list of commands that could be used on the Client and Server grew quite a bit
+  - but the Client and Server verified the commands slightly differently
+  - ValidCommand was added to standardize the checks for valid commands across Client and Server, and removed some duplicate code
+- Executing Action Cards:
+  - rules for Action card execution were checked on Client and Server and GameState at first
+  - most of the execution rules were then brought to the GameState class, so that the rules would be separate, and would only need to be checked in one place
+- GUI and AI were introduced
+- Prompt objects:
+  - were added to send the Client their choices
+  - removed a lot of code were the Client originally made decisions that were better left to the GameState or Server
 
 #### Pros/Cons:
 
