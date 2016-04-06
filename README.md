@@ -7,6 +7,12 @@ group project for COMP3004 (Object-Oriented Software Engineering)
 3. [Major Releases](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#major-releases)
 4. [Installation/Setup](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#installation--setup)
 5. [Running](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#running)
+6. [Design](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#design)
+  - [Networking](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md##networking)
+  - [Overall Architecture](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md##overall-architecture)
+  - [Patterns](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md##patterns)
+  - [Refactoring](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md##refactoring)
+  - [Pros/Cons](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md##pros--cons)
 
 ---
 ### Authors:
@@ -47,3 +53,17 @@ Ivanhoe is a card game by Reiner Knizia.  The rules and faq for the game can be 
     - `java -jar Client.jar`
   - or Command Line Mode
     - `java -jar Client.jar -c`
+
+---
+### Design:
+
+#### Networking:
+
+#### Overall Architecture:
+
+#### Patterns:
+
+#### Refactoring:
+
+#### Pros/Cons:
+
