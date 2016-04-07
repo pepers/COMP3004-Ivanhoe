@@ -24,7 +24,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,16 +53,16 @@ public class ClientView extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	//Private members
-	private static Image cardback;										//The image of the cardback
+	private static Image cardback;				//The image of the cardback
 	private JPanel gameView;
-	private ImagePanel header, title, controls;
+	private ImagePanel header, title, controls; 
 
 	public ImagePanel cardContext;
 	private ConsoleView console;	
-	private Client client;												//Reference to the parent client
-	private Map<Card, BufferedImage> images;						//Map to hold card image
+	private Client client;						//Reference to the parent client
+	private Map<Card, BufferedImage> images;	//Map to hold card image
 	private boolean isCountdown = false;
-	private boolean connected = false; // connected to server
+	private boolean connected = false;          // connected to server
 	private double elapsedPercentage;
 	private Timer timer;
 	
@@ -98,24 +97,24 @@ public class ClientView extends JFrame {
 	public ClientView(Client c) {
 		//load some images
 		try {
-			greyBanner = ImageIO.read(new File("./res/banner_default.png"));
-			redBanner = ImageIO.read(new File("./res/banner_red2.png"));
-			blueBanner = ImageIO.read(new File("./res/banner_blue2.png"));
-			yellowBanner = ImageIO.read(new File("./res/banner_yellow2.png"));
-			greenBanner = ImageIO.read(new File("./res/banner_green2.png"));
-			purpleBanner = ImageIO.read(new File("./res/banner_purple2.png"));
+			greyBanner = ImageIO.read(this.getClass().getResourceAsStream("/banner_default.png"));
+			redBanner = ImageIO.read(this.getClass().getResourceAsStream("/banner_red2.png"));
+			blueBanner = ImageIO.read(this.getClass().getResourceAsStream("/banner_blue2.png"));
+			yellowBanner = ImageIO.read(this.getClass().getResourceAsStream("/banner_yellow2.png"));
+			greenBanner = ImageIO.read(this.getClass().getResourceAsStream("/banner_green2.png"));
+			purpleBanner = ImageIO.read(this.getClass().getResourceAsStream("/banner_purple2.png"));
 			
-			redToken = ImageIO.read(new File("./res/token_red.png"));
-			greenToken = ImageIO.read(new File("./res/token_green.png"));
-			yellowToken = ImageIO.read(new File("./res/token_yellow.png"));
-			purpleToken = ImageIO.read(new File("./res/token_purple.png"));
-			blueToken = ImageIO.read(new File("./res/token_blue.png"));
+			redToken = ImageIO.read(this.getClass().getResourceAsStream("/token_red.png"));
+			greenToken = ImageIO.read(this.getClass().getResourceAsStream("/token_green.png"));
+			yellowToken = ImageIO.read(this.getClass().getResourceAsStream("/token_yellow.png"));
+			purpleToken = ImageIO.read(this.getClass().getResourceAsStream("/token_purple.png"));
+			blueToken = ImageIO.read(this.getClass().getResourceAsStream("/token_blue.png"));
 			
-			handIcon = ImageIO.read(new File("./res/hand_icon.png"));
-			displayIcon = ImageIO.read(new File("./res/display_icon.png"));
+			handIcon = ImageIO.read(this.getClass().getResourceAsStream("/hand_icon.png"));
+			displayIcon = ImageIO.read(this.getClass().getResourceAsStream("/display_icon.png"));
 			
-			stun = ImageIO.read(new File("./res/stunned.png"));
-			shield = ImageIO.read(new File("./res/shield.png"));
+			stun = ImageIO.read(this.getClass().getResourceAsStream("/stunned.png"));
+			shield = ImageIO.read(this.getClass().getResourceAsStream("/shield.png"));
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -170,7 +169,7 @@ public class ClientView extends JFrame {
 		//end parent setup
 		
 		//Setup header (stone wall that shows the tournament type
-		header = new ImagePanel("./res/cobblestone.png", ImagePanel.TILE);
+		header = new ImagePanel("/cobblestone.png", ImagePanel.TILE);
 		header.setLayout(new MigLayout("fill", "", ""));
 		banner = new ImagePanel(greyBanner, ImagePanel.CENTER);
 		banner.setLayout(new BorderLayout());
@@ -179,25 +178,25 @@ public class ClientView extends JFrame {
 		//end header setup
 		
 		//Setup title card "Ivanhoe", top right corner
-		title = new ImagePanel("./res/title.png", ImagePanel.CENTER_SCALE);
+		title = new ImagePanel("/title.png", ImagePanel.CENTER_SCALE);
 		title.setBackground(SAND);
 		gameView.add(title, "cell 4 0 2 1, grow");
 		//end title setup
 		
 		//Setup arena section that shows displays
-		arena = new DisplayPanel("./res/sand.png", ImagePanel.TILE);
+		arena = new DisplayPanel("/sand.png", ImagePanel.TILE);
 		arena.setToolTipText("arena");
 		arena.setLayout(new GridLayout(1,0));
 		gameView.add(arena, "cell 0 1 4 3, grow");
 		//end arena setup
 		
 		//Setup controls arena under title that shows context and turn buttons
-		controls = new ImagePanel("./res/wood1.png", ImagePanel.TILE);
+		controls = new ImagePanel("/wood1.png", ImagePanel.TILE);
 		controls.setToolTipText("context");
 		controls.setLayout(new MigLayout("fill", "5[200::]5[200::]5", "5[]5"));
 		
 		try {
-			cardback = ImageIO.read(new File("./res/displaycards/cardback.png"));
+			cardback = ImageIO.read(this.getClass().getResourceAsStream("/displaycards/cardback.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -212,7 +211,7 @@ public class ClientView extends JFrame {
 		cardDescription.setVisible(false);
 		cardContext.add(cardDescription, "cell 0 1, grow");
 		
-		ImagePanel buttons = new ImagePanel("./res/scroll.png", ImagePanel.CENTER_SCALE);
+		ImagePanel buttons = new ImagePanel("/scroll.png", ImagePanel.CENTER_SCALE);
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
 		buttons.setOpaque(false);
 		buttons.add(Box.createRigidArea(new Dimension(0, this.getHeight()/20)));
@@ -311,7 +310,7 @@ public class ClientView extends JFrame {
 		//end controls setup
 		
 		//Setup hand panel below controls that shows card images
-		hand = new CardPanel("./res/wood2.png", ImagePanel.TILE);
+		hand = new CardPanel("/wood2.png", ImagePanel.TILE);
 		hand.setToolTipText("hand");
 		JScrollPane scrollPane = new JScrollPane(hand, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		gameView.add(scrollPane, "cell 4 3 2 2, grow");
@@ -319,7 +318,7 @@ public class ClientView extends JFrame {
 		
 		
 		//Setup console for input output below the arena
-		console = new ConsoleView("./res/cloth2.png", ImagePanel.TILE, false);
+		console = new ConsoleView("/cloth2.png", ImagePanel.TILE, false);
 		gameView.add(console, "cell 0 4 4 1, grow");
 		//end console setup
 		
@@ -348,12 +347,12 @@ public class ClientView extends JFrame {
 					String[] subs = c.toString().toLowerCase().split(":");
 					String name = String.join("", subs);
 					Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
-					images.put(c, ImageIO.read(new File("./res/displaycards/" + name + ".png")));
+					images.put(c, ImageIO.read(this.getClass().getResourceAsStream("/displaycards/" + name + ".png")));
 				} else if (c instanceof ActionCard) {
 					String[] subs = c.toString().toLowerCase().split(" ");
 					String name = String.join("", subs);
 					Trace.getInstance().write(this, "Loading image for " + c.toString() + " " + name + ".png");
-					images.put(c, ImageIO.read(new File("./res/actioncards/" + name + ".png")));
+					images.put(c, ImageIO.read(this.getClass().getResourceAsStream("/actioncards/" + name + ".png")));
 				}
 			}
 		}catch(IOException e){
@@ -392,7 +391,7 @@ public class ClientView extends JFrame {
 		public ImagePanel(Image i, int m) {img = i; mode = m;}
 		public ImagePanel(String i) {
 			try {
-				img = ImageIO.read(new File(i));
+				img = ImageIO.read(this.getClass().getResourceAsStream(i));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -1008,10 +1007,10 @@ public class ClientView extends JFrame {
 			setSize(900, 680);
 			setBackground(DARK_SAND);
 			
-			ImagePanel cover = new ImagePanel("./res/ivanhoe_cover.png", ImagePanel.CENTER);
+			ImagePanel cover = new ImagePanel("/ivanhoe_cover.png", ImagePanel.CENTER);
 			this.add(cover, "cell 0 0, grow");
 			
-			ImagePanel bricks = new ImagePanel("./res/stonebrick2.png", ImagePanel.TILE, 200, 200);
+			ImagePanel bricks = new ImagePanel("/stonebrick2.png", ImagePanel.TILE, 200, 200);
 			bricks.setLayout(new MigLayout(
 					"fill",
 					"20[410!]20",
@@ -1019,11 +1018,11 @@ public class ClientView extends JFrame {
 			
 			if (!connected) {
 				bricks.removeAll();
-				login = new LoginView("./res/arena.png");
+				login = new LoginView("/arena.png");
 				bricks.add(login);
 			} else {
 				bricks.removeAll();
-				console = new ConsoleView("./res/arena.png", ImagePanel.TILE, true);
+				console = new ConsoleView("/arena.png", ImagePanel.TILE, true);
 				bricks.add(console, "grow");
 			}
 			
@@ -1342,11 +1341,11 @@ public class ClientView extends JFrame {
 		JPanel parent = new JPanel(new MigLayout("fill", "[]", "[][][][][]"));
 		parent.setBackground(DARK_SAND);
 		
-		ImagePanel top = new ImagePanel("./res/wood.png", ImagePanel.TILE);
+		ImagePanel top = new ImagePanel("/wood.png", ImagePanel.TILE);
 		top.setLayout(new MigLayout("fill"));
 		parent.add(top, "grow, cell 0 0 1 2");
 		
-		ImagePanel scroll = new ImagePanel("./res/scroll2.png", ImagePanel.STRETCH);
+		ImagePanel scroll = new ImagePanel("/scroll2.png", ImagePanel.STRETCH);
 		scroll.setLayout(new MigLayout("fill", "80[][][][]80", "20[][][][][]20"));
 		top.add(scroll, "grow");
 		
@@ -1396,7 +1395,7 @@ public class ClientView extends JFrame {
 		});
 		scroll.add(back, "grow, cell 0 4 4 1");
 		
-		ImagePanel img = new ImagePanel("./res/victory.png", ImagePanel.STRETCH);
+		ImagePanel img = new ImagePanel("/victory.png", ImagePanel.STRETCH);
 		parent.add(img, "grow, cell 0 2 1 3");
 		
 		victoryFrame.add(parent);
