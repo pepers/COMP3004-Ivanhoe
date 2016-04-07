@@ -54,7 +54,7 @@ This Java project attempts to faithfully recreate the original game as a digital
 - open a command prompt/terminal
 - navigate to Client.jar and Server.jar files 
   - for Iteration 1: [/doc/iteration1/](https://github.com/pepers/COMP3004-Ivanhoe/tree/master/doc/iteration1)
-  - for Final Iteration: TBA
+  - for Final Iteration: [/doc/iteration2/](https://github.com/pepers/COMP3004-Ivanhoe/tree/master/doc/iteration2)
 - run the Server
   - normal game
     - `java -jar Server.jar`
