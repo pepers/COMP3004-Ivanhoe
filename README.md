@@ -40,6 +40,7 @@ This Java project attempts to faithfully recreate the original game as a digital
 ## Installation / Setup:
 - have the project open in Eclipse
 - make sure the project is using Java 8 (add it to the build path in preferences)
+- add /res/ folder to the build path
 - navigate to /src/test/resources/
 - right-click on the following files, go to 'Build Path' -> 'Add to Build Path':
   - hamcrest-core-1.3.jar
