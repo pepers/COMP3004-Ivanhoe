@@ -1,5 +1,7 @@
 # COMP3004-Ivanhoe
-group project for COMP3004 (Object-Oriented Software Engineering)
+group project for COMP3004 (Object-Oriented Software Engineering) 
+
+[![current release](https://img.shields.io/badge/release-v3.0.0-green.svg?style=flat)](https://github.com/pepers/COMP3004-Ivanhoe/releases/latest)  [![license](https://img.shields.io/badge/license-GPL3-blue.svg?style=flat)](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/LICENSE.md) 
 
 ## Table of Contents:
 1. [Authors](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#authors)     
@@ -33,8 +35,9 @@ This Java project attempts to faithfully recreate the original game as a digital
 
 ---
 ## Major Releases:
+- [Current Release](https://github.com/pepers/COMP3004-Ivanhoe/releases/latest)
+- [Iteration 2](https://github.com/pepers/COMP3004-Ivanhoe/tree/v2.0)
 - [Iteration 1](https://github.com/pepers/COMP3004-Ivanhoe/tree/v1.0)
-- [Final Iteration](https://github.com/pepers/COMP3004-Ivanhoe/tree/v2.0)
 
 ---
 ## Installation / Setup:
