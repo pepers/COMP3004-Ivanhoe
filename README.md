@@ -35,9 +35,9 @@ This Java project attempts to faithfully recreate the original game as a digital
 
 ---
 ## Major Releases:
-- [Current Release](https://github.com/pepers/COMP3004-Ivanhoe/releases/latest)
-- [Iteration 2](https://github.com/pepers/COMP3004-Ivanhoe/tree/v2.0)
-- [Iteration 1](https://github.com/pepers/COMP3004-Ivanhoe/tree/v1.0)
+- [v3.0.0](https://github.com/pepers/COMP3004-Ivanhoe/releases/tag/v3.0.0) - first post-COMP3004 release
+- [Iteration 2](https://github.com/pepers/COMP3004-Ivanhoe/tree/v2.0) - for final project demo
+- [Iteration 1](https://github.com/pepers/COMP3004-Ivanhoe/tree/v1.0) - for first project demo
 
 ---
 ## Installation / Setup:
