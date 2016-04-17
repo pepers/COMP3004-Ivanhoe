@@ -1,7 +1,7 @@
 # COMP3004-Ivanhoe
 group project for COMP3004 (Object-Oriented Software Engineering) 
 
-[![current release](https://img.shields.io/badge/release-v3.0.0-green.svg?style=flat)](https://github.com/pepers/COMP3004-Ivanhoe/releases/latest)  [![license](https://img.shields.io/badge/license-GPL3-blue.svg?style=flat)](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/LICENSE.md) 
+[![current release](https://img.shields.io/badge/release-v3.0.0-green.svg?style=flat)](https://github.com/pepers/COMP3004-Ivanhoe/releases/latest)  [![license](https://img.shields.io/badge/license-GPL3-blue.svg?style=flat)](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/LICENSE) 
 
 ## Table of Contents:
 1. [Authors](https://github.com/pepers/COMP3004-Ivanhoe/blob/master/README.md#authors)     
